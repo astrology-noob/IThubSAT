@@ -1,0 +1,29 @@
+@page "/surveys/{SurveyId:int}"
+@using IThubSAT.Data
+@using IThubSAT.Data.Models
+@inject SurveyService SurveyService
+
+<div class="white_background_content">
+  @if(_survey.Name != string.Empty) {      
+    <TabsBar/>
+    <div class="tab_content">
+      <a href="/surveys/@(SurveyId)/edit">Edit</a>
+    </div>
+  }
+  else {
+    <div>Survey not found</div>
+  }
+</div>
+
+@code {
+  [Parameter]
+  public int SurveyId { get; set; }
+
+  private Survey _survey = new Survey();
+
+  protected async override Task OnInitializedAsync()
+  {
+    _survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? _survey;
+  }
+
+}

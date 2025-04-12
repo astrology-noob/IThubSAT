@@ -1,0 +1,26 @@
+@using IThubSAT.Data.Models
+
+<div class="survey_list_item">
+  <div class="survey_info">
+    <p class="survey_name"><a href="/surveys/@(Survey.Id)">@(Survey.Name)</a></p>
+    <p class="survey_modified">
+      <span>Последнее изменение:
+      @if (Survey.ModifiedAt.Length > 0) {
+        <span>@Survey.ModifiedAt</span>
+      }
+      else {
+        @Survey.CreatedAt
+      }
+      </span>
+    </p>
+  </div>
+  <div class="survey_actions">
+    <button><img src="icons/Pause.svg" /></button>
+    <button><img src="icons/Edit.svg" /></button>
+    <button><img src="icons/Menu.svg" /></button>
+  </div>
+</div>
+
+@code {
+  [Parameter] public Survey Survey { get; set; } = null!;
+} 

@@ -1,0 +1,23 @@
+﻿@inherits LayoutComponentBase
+@using IThubSAT.Components
+
+<PageTitle>IThubSAT</PageTitle>
+
+<div class="page">
+    <main>
+        <div class="content">
+            <TopBar PageName="Главная" Username="User"/>
+            <div class="main_content">  
+                @Body
+            </div>
+        </div>
+    </main>
+
+    <div style="display: none" id="notification-area">
+      <div>${Error}</div>
+    </div>
+
+    <div style="display: none" class="${PopupStatus}" id="popup">
+      ${Popup}
+    </div>
+</div>

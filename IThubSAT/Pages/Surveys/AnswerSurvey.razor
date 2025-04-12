@@ -1,0 +1,37 @@
+@page "/surveys/{SurveyId:int}/answer"
+
+<!--ANSWERSURVEY-->
+<div id="AnswerSurvey">
+    <div class="answer_survey_content">
+    <div class="left_part_survey">
+        <div class="cur_section_wrapper">
+        <CurDisciplineShow/>
+    
+        <AnswerSurveyQuestion>
+            @*здесь высвечивать в зависимости от типа вопроса*@
+            <div>Шкала</div>
+        </AnswerSurveyQuestion>
+        </div>
+        <div class="bottom_navigation">
+        <p>
+            <button onclick="${GoToPrevious}" class="button">Назад</button>
+            <button onclick="${GoToNext}" class="button">Вперёд</button>
+        </p>
+        </div>
+    </div>
+    <div class="survey_navigation">
+        <ul>
+            @* @foreach item in items { *@
+                <SurveyNavItem NavItem=item/>
+                @* <li class="${Active}" onclick="${ChangeDiscipline}">NavItem.Text</li> *@
+            @* } *@
+        </ul>
+    </div>
+    </div>
+</div>
+<!--ANSWERSURVEY-->
+
+@code {
+    [Parameter] public int SurveyId { get; set; }
+    @* private List<Survey> items { get; set; } *@
+}

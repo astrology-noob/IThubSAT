@@ -1,0 +1,29 @@
+    <!--SIGNIN-->
+    <template id="SignIn">
+      <div class="sign_in_wrapper">
+        <div class="sign_in_content">
+          <h1 class="title">Sign in</h1>
+          <form onsubmit="${SignIn}">
+            <div class="fields">
+              <label class="label">Username</label>
+              <div class="control">
+                <input class="text_input short_text_input" bind="${Username}" />
+              </div>
+            </div>
+            <div class="fields">
+              <label class="label">Password</label>
+              <div class="control">
+                <input class="text_input short_text_input" type="password" bind="${Password}" />
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <input type="submit" value="Sign in" class="button" />
+              </div>
+            </div>
+            ${ErrorNotification}
+          </form>
+        </div>
+      </div>
+    </template>
+    <!--SIGNIN-->

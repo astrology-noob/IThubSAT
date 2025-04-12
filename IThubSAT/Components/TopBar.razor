@@ -1,0 +1,22 @@
+<div class="topbar">
+    <div class="page_name">
+      @(PageName)
+      <PageNameBack />
+    </div>
+    <div class="user_info_block">
+      <div class="user_info">
+        <p class="user_name">
+          @(Username)
+        </p>
+        <p class="user_role">Админ</p>
+      </div>
+      <div class="user_avatar">
+        U
+      </div>
+    </div>
+</div>
+
+@code {
+  [Parameter] public string PageName { get; set; } = null!;
+  [Parameter] public string Username { get; set; } = null!;
+}

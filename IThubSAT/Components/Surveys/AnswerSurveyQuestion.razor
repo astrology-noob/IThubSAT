@@ -1,0 +1,13 @@
+<template id="AnswerSurveyQuestion">
+    <div class="answer_survey_question">
+    <p class="question_title">@(QuestionText)</p>
+    @(QuestionContent)
+    </div>
+</template>
+
+@code {
+    private string QuestionText = string.Empty;
+    
+    [Parameter]
+    public RenderFragment QuestionContent { get; set; } = null!;
+}

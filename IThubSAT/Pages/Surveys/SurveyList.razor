@@ -1,0 +1,54 @@
+@page "/surveys"
+@using IThubSAT.Components
+@using IThubSAT.Data
+@using IThubSAT.Data.Models
+@inject SurveyService SurveyService
+
+<div class="white_background_content">
+<div class="tool_bar">
+    <input type="text" class="search_bar"/>
+    <button class="primary_button" @onclick="@(AddSurvey)">Создать +</button>
+</div>
+
+<TabsBar /> <!--Где хранить выбранную вкладку... как...-->
+
+<div class="tab_content surveys_list">
+    @if(surveys.Count > 0){
+        @foreach(var survey in surveys)
+        {
+            <SurveyListItem Survey=survey/>
+        }
+    }
+    else {
+        <p>Не найдено ни.ху.я</p>
+    }
+</div>
+<button class="primary_button fat_button" @onclick="@(AddSurvey)">
+    Создать +
+</button>
+</div>
+
+@code {
+    List<Survey> surveys = new List<Survey>();
+    // здесь хранить выбранную табу, из компонента табсбара коллбэком менять табу здесь
+    
+    protected override void OnInitialized()
+    {
+        surveys = SurveyService.GetSurveys();
+        base.OnInitialized();
+    }
+
+    private void AddSurvey()
+    {
+        SurveyService.CreateSurveyAsync(new Survey() {
+            Id = 1,
+            Name = "СОП", 
+            Description="СОП СОП СОП", 
+            CreatedAt="", 
+            ModifiedAt="", 
+            StartDate="", 
+            EndDate="", 
+            CreatedBy=SurveyService.GetSingleUser()
+        });
+    }
+}
