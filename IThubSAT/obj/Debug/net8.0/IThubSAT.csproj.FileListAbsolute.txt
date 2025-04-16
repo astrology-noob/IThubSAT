@@ -135,3 +135,4 @@ C:\DotNet Projects\IThubSAT\IThubSAT\obj\Debug\net8.0\refint\IThubSAT.dll
 C:\DotNet Projects\IThubSAT\IThubSAT\obj\Debug\net8.0\IThubSAT.pdb
 C:\DotNet Projects\IThubSAT\IThubSAT\obj\Debug\net8.0\IThubSAT.genruntimeconfig.cache
 C:\DotNet Projects\IThubSAT\IThubSAT\obj\Debug\net8.0\ref\IThubSAT.dll
+C:\DotNet Projects\IThubSAT\IThubSAT\obj\Debug\net8.0\IThubSAT.sourcelink.json

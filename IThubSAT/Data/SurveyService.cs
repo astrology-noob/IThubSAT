@@ -13,6 +13,11 @@ public class SurveyService
         _dbContext = db;
     }
 
+    public async Task SaveChanges()
+    {
+        await _dbContext.SaveChangesAsync();
+    }
+
     public List<Survey> GetSurveys()
     {
         return _dbContext.Surveys.ToList();

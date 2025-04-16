@@ -1,4 +1,6 @@
 @using IThubSAT.Data.Models
+@using IThubSAT.Data
+@inject SurveyService SurveyService
 
 <div class="survey_list_item">
   <div class="survey_info">
@@ -6,7 +8,7 @@
     <p class="survey_modified">
       <span>Последнее изменение:
       @if (Survey.ModifiedAt.Length > 0) {
-        <span>@Survey.ModifiedAt</span>
+        @Survey.ModifiedAt
       }
       else {
         @Survey.CreatedAt
@@ -15,12 +17,30 @@
     </p>
   </div>
   <div class="survey_actions">
-    <button><img src="icons/Pause.svg" /></button>
-    <button><img src="icons/Edit.svg" /></button>
-    <button><img src="icons/Menu.svg" /></button>
+    <button @onclick=@OpenPopUp><img src="icons/Pause.svg"/></button>
+    <a href="/surveys/@(Survey.Id)/edit"><img src="icons/Edit.svg" /></a>
+    <button><img src="icons/Menu.svg"/></button>
   </div>
 </div>
 
+<PopUp IsActive=@PopUpState Title="Остановить форму" Content="Остановить сбор ответов?" OnCloseButtonClick=ClosePopUp>
+  <Buttons>
+    <button @onclick=@ClosePopUp>Отменить</button>
+    <button @onclick=@StopSurvey>Остановить</button>
+  </Buttons>
+</PopUp>
+
 @code {
   [Parameter] public Survey Survey { get; set; } = null!;
+  [Parameter] public EventCallback StopSurvey { get; set; }
+
+  public bool PopUpState { get; set; } = false;
+
+  public void OpenPopUp() {
+    PopUpState = true;
+  }
+
+  public void ClosePopUp() {
+    PopUpState = false;
+  }
 } 

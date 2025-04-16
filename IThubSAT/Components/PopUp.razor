@@ -1,7 +1,15 @@
-<template id="PopUp">
-    <div class="popup_window">
-        <div class="popup_header"><div class="popup_title">${PopupTitle}</div><div class="close_popup_button" onclick="${ClosePopup}">x</div></div>
-        <div class="popup_content">${Content}</div>
-        <div class="popup_buttons">${Buttons}</div>
+<div id="popup" class="@(IsActive ? "active" : "")">
+    <div  class="popup_window" style="display: @(IsActive ? "block" : "none")">
+        <div class="popup_header"><div class="popup_title">@(Title)</div><div class="close_popup_button" @onclick=@OnCloseButtonClick>x</div></div>
+        <div class="popup_content">@(Content)</div>
+        <div class="popup_buttons">@(Buttons)</div>
     </div>
-</template>
+</div>
+
+@code {
+    [Parameter] public bool IsActive { get; set; }
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string Content { get; set; } = string.Empty;
+    [Parameter] public RenderFragment Buttons { get; set; } = null!;
+    [Parameter] public EventCallback OnCloseButtonClick { get; set; }
+}
