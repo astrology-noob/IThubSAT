@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Jf5w1+jni89ldah9qeZZbopbeNHhZk9cUySbefKz+As=",
+  "Hash": "NR44hCYZ4V5HtQ4n+NHllCnJmEdack4v7EQypSwr23E=",
   "Source": "IThubSAT",
   "BasePath": "_content/IThubSAT",
   "Mode": "Default",
@@ -304,8 +304,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "wlobcodqr2",
-      "Integrity": "VI2U7PrkmetCHrTwWOxlAXu8JxLBZZ8doLQbrq/fsIY=",
+      "Fingerprint": "atxmqu3m2i",
+      "Integrity": "UmmFYj8NMoWLyo8RTfS1OD6sCtrfs4B/mx1rQ2b6ZoY=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
@@ -1341,6 +1341,51 @@
       ]
     },
     {
+      "Route": "css/site.atxmqu3m2i.css",
+      "AssetFile": "C:\\DotNet Projects\\IThubSAT\\IThubSAT\\wwwroot\\css\\site.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "13317"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"UmmFYj8NMoWLyo8RTfS1OD6sCtrfs4B/mx1rQ2b6ZoY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 15 Apr 2025 17:22:47 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "atxmqu3m2i"
+        },
+        {
+          "Name": "label",
+          "Value": "css/site.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-UmmFYj8NMoWLyo8RTfS1OD6sCtrfs4B/mx1rQ2b6ZoY="
+        }
+      ]
+    },
+    {
       "Route": "css/site.css",
       "AssetFile": "C:\\DotNet Projects\\IThubSAT\\IThubSAT\\wwwroot\\css\\site.css",
       "Selectors": [],
@@ -1351,7 +1396,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "13293"
+          "Value": "13317"
         },
         {
           "Name": "Content-Type",
@@ -1359,11 +1404,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"VI2U7PrkmetCHrTwWOxlAXu8JxLBZZ8doLQbrq/fsIY=\""
+          "Value": "\"UmmFYj8NMoWLyo8RTfS1OD6sCtrfs4B/mx1rQ2b6ZoY=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 15 Apr 2025 17:06:22 GMT"
+          "Value": "Tue, 15 Apr 2025 17:22:47 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1373,52 +1418,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-VI2U7PrkmetCHrTwWOxlAXu8JxLBZZ8doLQbrq/fsIY="
-        }
-      ]
-    },
-    {
-      "Route": "css/site.wlobcodqr2.css",
-      "AssetFile": "C:\\DotNet Projects\\IThubSAT\\IThubSAT\\wwwroot\\css\\site.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "13293"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"VI2U7PrkmetCHrTwWOxlAXu8JxLBZZ8doLQbrq/fsIY=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Tue, 15 Apr 2025 17:06:22 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "wlobcodqr2"
-        },
-        {
-          "Name": "label",
-          "Value": "css/site.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-VI2U7PrkmetCHrTwWOxlAXu8JxLBZZ8doLQbrq/fsIY="
+          "Value": "sha256-UmmFYj8NMoWLyo8RTfS1OD6sCtrfs4B/mx1rQ2b6ZoY="
         }
       ]
     },

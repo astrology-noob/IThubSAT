@@ -1,14 +1,16 @@
 @page "/"
-@using IThubSAT.Components
-@using IThubSAT.Data
-@using IThubSAT.Data.Models
+@using IThubSAT.Components;
+@using IThubSAT.Components.Surveys;
+@using IThubSAT.Data;
+@using IThubSAT.Data.Models;
 @using System.Linq;
-@inject SurveyService SurveyService
+@inject SurveyService SurveyService;
 
 <div class="white_background_content">
     <div class="tool_bar">
-        <input type="text" class="search_bar"/>
-        <button class="primary_button" @onclick="@(AddSurvey)">Создать +</button>
+        @* TODO: Не работает обновление списка на ввод текста, только на смену вкладки. Скорее всего проблема с рендером *@
+        <input type="text" class="search_bar" @bind-value=@_searchBarText @bind-value:event="oninput" @bind:after="@(() => FindSurveys())"/>
+        <button class="primary_button" @onclick=@AddSurvey>Создать +</button>
     </div>
 
     <TabsBar OnTabChosen=@OnTabChosen />
@@ -17,7 +19,7 @@
         @if(_filteredSurveys.Count > 0){
             @foreach(var survey in _filteredSurveys)
             {
-                <SurveyListItem Survey=survey/>
+                <SurveyListItem Survey=@survey />
             }
         }
         else {
@@ -29,6 +31,7 @@
 @code {
     private List<Survey> _surveys = new List<Survey>();
     private List<Survey> _filteredSurveys = new List<Survey>();
+    public string _searchBarText = string.Empty;
 
     public void OnTabChosen (Tab chosenTab) {
         _filteredSurveys = chosenTab switch 
@@ -39,6 +42,12 @@
             Tab.All => _surveys,
             _ => _surveys
         };
+        
+        FindSurveys();
+    }
+
+    private void FindSurveys() {
+        _filteredSurveys = _filteredSurveys.Where(s => s.Name.Contains(_searchBarText)).ToList();
         StateHasChanged();
     }
     
