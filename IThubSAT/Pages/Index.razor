@@ -1,11 +1,74 @@
 ﻿@page "/"
+@using IThubSAT.Components;
+@using IThubSAT.Components.Surveys;
+@using IThubSAT.Data;
+@using IThubSAT.Data.Models;
+@using System.Linq;
+@inject SurveyService SurveyService;
 
 <div class="white_background_content">
-    <h1 class="title">Главная</h1>
-    <p>Основные разделы приложения для создания опросов</p>
-    <ul>
-        <li>
-            <a href="/surveys">Опросы</a>
-        </li>
-    </ul>
+    <div class="tool_bar">
+        @* TODO: Не работает обновление списка на ввод текста, только на смену вкладки. Скорее всего проблема с рендером *@
+        <input type="text" class="search_bar" @bind-value=@_searchBarText @bind-value:event="oninput" @bind:after="@(() => FindSurveys())"/>
+        <button class="primary_button" @onclick=@AddSurvey>Создать +</button>
+    </div>
+
+    <TabsBar OnTabChosen=@OnTabChosen />
+
+    <div class="tab_content surveys_list">
+        @if(_filteredSurveys.Count > 0){
+            @foreach(var survey in _filteredSurveys)
+            {
+                <SurveyListItem Survey=@survey />
+            }
+        }
+        else {
+            <p>Здесь ничего нет...</p>
+        }
+    </div>
 </div>
+
+@code {
+    private List<Survey> _surveys = new List<Survey>();
+    private List<Survey> _filteredSurveys = new List<Survey>();
+    public string _searchBarText = string.Empty;
+
+    public void OnTabChosen (Tab chosenTab) {
+        _filteredSurveys = chosenTab switch 
+        {
+            Tab.Active => _surveys.Where(s => s.IsOpen == true).ToList(),
+            Tab.Stopped => _surveys.Where(s => (s.IsOpen == false) & (s.EndDate != string.Empty)).ToList(),
+            Tab.Drafts => _surveys.Where(s => (s.IsOpen == false) & (s.StartDate != string.Empty)).ToList(),
+            Tab.All => _surveys,
+            _ => _surveys
+        };
+        
+        FindSurveys();
+    }
+
+    private void FindSurveys() {
+        _filteredSurveys = _filteredSurveys.Where(s => s.Name.Contains(_searchBarText)).ToList();
+        StateHasChanged();
+    }
+    
+    protected override void OnInitialized()
+    {
+        _surveys = SurveyService.GetSurveys();
+        OnTabChosen(Tab.Active);
+        base.OnInitialized();
+    }
+
+    private async void AddSurvey()
+    {
+        await SurveyService.CreateSurveyAsync(new Survey() {
+            Id = 1,
+            Name = "СОП", 
+            Description="СОП СОП СОП", 
+            CreatedAt="", 
+            ModifiedAt="", 
+            StartDate="", 
+            EndDate="", 
+            CreatedBy=SurveyService.GetSingleUser()
+        });
+    }
+}

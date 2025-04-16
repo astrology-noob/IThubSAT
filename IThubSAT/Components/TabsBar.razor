@@ -1,10 +1,26 @@
-<!--TABSBAR-->
-<template id="TabsBar">
-    <div class="tabs_bar">
-    ${Tabs}
-    <template id="Tab">
-        <p class="${Active}" onclick="${SetTab}">${TabName}</p>
-    </template>
-    </div>
-</template>
-<!--TABSBAR-->
+@using IThubSAT.Data;
+
+<div class="tabs_bar">
+    @foreach (var tab in Tabs) {
+        <p class="@((_chosenTab == tab) ? "tab_is_active" : "")" @onclick=@(()=>DoOnTabChosen(tab))>@(TabNames[tab])</p>
+    } 
+</div>
+
+@code {
+    private Tab _chosenTab = Tab.Active;
+    [Parameter] public EventCallback<Tab> OnTabChosen { get; set; }
+    
+    List<Tab> Tabs = new() { Tab.Active, Tab.Stopped, Tab.Drafts, Tab.All };
+
+    Dictionary<Tab, string> TabNames = new() {
+        {Tab.Active, "Активные"},
+        {Tab.Stopped, "Остановленные"},
+        {Tab.Drafts, "Черновики"},
+        {Tab.All, "Все"}
+    };
+
+    private void DoOnTabChosen(Tab tab) {
+        _chosenTab = tab;
+        OnTabChosen.InvokeAsync(tab);
+    }
+}
