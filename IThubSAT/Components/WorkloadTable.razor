@@ -3,19 +3,21 @@
 @inject SurveyService SurveyService
 
 <div class="tool_bar">
-  <div class="search_bars">
-    <input type="text" class="search_bar" placeholder="Группа/Подгруппа" name="searchGroupInWorkload" @bind-value=_groupFilter/>
-    <input type="select" class="search_bar" placeholder="Дисциплина" name="searchDisciplineInWorkload" @bind-value=_disciplineFilter/>
-    <input type="text" class="search_bar" placeholder= "Преподаватель" name="searchTeacherInWorkload" @bind-value=_teacherFilter/>
+  <div class="dropdown_bars">
+    <Dropdown Placeholder="Кафедра" />
+    <Dropdown Placeholder="Группа/Подгруппа" />
+    <Dropdown Placeholder="Дисциплина" />
+    <Dropdown Placeholder="Преподаватель" />
   </div>
-  <!-- <button class="button">Edit</button> -->
+
+  <button class="primary_button">Импорт</button>
   <button class="primary_button">Экспорт</button>
-  <!-- <button class="button">Delete</button> -->
 </div>
 <div class="table_wrapper">
   @if (_workload != null) {
     <table class="table is-fullwidth">
       <tr>
+        <th>Кафедра</th>
         <th>Группа</th>
         <th>Дисциплина</th>
         <th>Преподаватель</th>
@@ -25,6 +27,7 @@
       @if (_workload.Count > 0){
         @foreach (var workloadRow in _workload) {
           <tr>
+            <td>@workloadRow.Group.Faculty.Name</td>
             <td>@workloadRow.Group.Name</td>
             <td>@workloadRow.Discipline.Name</td>
             <td>@workloadRow.Teacher.FirstName</td>
@@ -48,9 +51,6 @@
 
 @code {
   [Parameter] public Survey Survey { get; set; } = null!;
-  private Group? _groupFilter { get; set; }
-  private Discipline? _disciplineFilter { get; set; }
-  private Teacher? _teacherFilter { get; set; }
   private List<Workload>? _workload { get; set; }
   protected async override Task OnInitializedAsync()
   {

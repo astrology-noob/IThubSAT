@@ -1,1 +1,10 @@
-<div class="survey_question_info">${QuestionText}</div>
+@using IThubSAT.Data.Models
+
+@(Question.QuestionType.Name switch {
+    "Шкала" => (@<div class="survey_question_info">@Question.Text</div>),
+    _ => (@<div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>)
+})
+
+@code {
+    [Parameter] public Question Question { get; set; } = null!;
+}

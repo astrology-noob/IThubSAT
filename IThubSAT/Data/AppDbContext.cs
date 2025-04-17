@@ -12,7 +12,6 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Survey> Surveys { get; set; } = null!;
-    public DbSet<SectionType> SectionTypes { get; set; } = null!;
     public DbSet<DisciplineType> DisciplineTypes { get; set; } = null!;
     public DbSet<Discipline> Disciplines { get; set; } = null!;
     public DbSet<EnglishLevel> EnglishLevels { get; set; } = null!;

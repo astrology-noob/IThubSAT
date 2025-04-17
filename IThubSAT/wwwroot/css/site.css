@@ -237,16 +237,21 @@ main > .content {
     row-gap: 10px;
 }
 
-    .search_bar {
+.dropdown_bars {
+    display: flex;
+    gap: 5px;
+}
+
+    .search_bar, .dropdown {
         background-color: #F7F9FC;
         border-radius: 10px;
         border: 1px solid #EBEEF5;
         padding-left: 10px;
-        width: 400px;
+        width: 300px;
         min-height: 35px;
     }
 
-    .search_bar:focus {
+    .search_bar:focus, .dropdown:focus {
         outline: 1px solid #AB00EA;
     }
 
@@ -281,7 +286,11 @@ main > .content {
     width: 100%;
 }
 
-.section_info_header {
+.sections {
+    width: 100%;
+}
+
+.section_header {
     width: 100%;
     border-bottom: 1px solid #EBEEF5;
     display: flex;
@@ -289,8 +298,17 @@ main > .content {
     padding: 20px;
     align-items: center;
 }
-    .section_info_header p {
+    .section_info {
+        display: block;
+    }
+    
+    .section_name {
         font-weight: bold;
+        /* margin-bottom: 0 !important; */
+    }
+
+    .section_desc {
+        /* font-weight: bold; */
         margin-bottom: 0 !important;
     }
 
@@ -326,7 +344,7 @@ main > .content {
     background: none;
 }
 
-.search_bars {
+.tabs_bar {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;

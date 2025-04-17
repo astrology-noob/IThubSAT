@@ -26,7 +26,13 @@ public class SurveyService
 
     public async Task<Survey?> GetSurveyByIdAsync(int SurveyId)
     {
-        return await _dbContext.Surveys.Where(s => s.Id == SurveyId).FirstOrDefaultAsync();
+        return await _dbContext.Surveys
+                                .Include(s => s.Questions)
+                                    .ThenInclude(q => q.QuestionType)
+                                .Include(s => s.Questions)
+                                    .ThenInclude(q => q.DisciplineType)
+                                .Where(s => s.Id == SurveyId)
+                                .FirstOrDefaultAsync();
         // return survey;
     }
 
@@ -53,6 +59,7 @@ public class SurveyService
                                     .ThenInclude(w => w.Teacher)
                                 .Include(s => s.Workloads)
                                     .ThenInclude(w => w.Group)
+                                        .ThenInclude(g => g.Faculty)
                                 .Include(s => s.Workloads)
                                     .ThenInclude(w => w.Discipline)
                                 .Where(s => s.Id == SurveyId)

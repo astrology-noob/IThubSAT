@@ -1,0 +1,9 @@
+<input type="text" class="dropdown" placeholder="@Placeholder" @bind-value=_value />
+
+<DropdownMenu />
+
+@code {
+    [Parameter] public string Placeholder { get; set; } = string.Empty;
+    private string _value = string.Empty;
+    
+}

@@ -1,0 +1,24 @@
+@using IThubSAT.Data.Models
+
+<div class="=sections">
+
+  <SurveySectionInfo SectionName="Вступление" SectionDescription=@Survey.IntroductionText/>
+
+  <SurveySectionInfo SectionName="Основная часть" 
+                     SectionDescription="Здесь создаются вопросы, которые будут отображаться для всех дисциплин, кроме физкультурных клубов"
+                     Questions=@Survey.Questions.Where(q => q.DisciplineType.Name == "Тип дисциплины 1")
+                     />
+
+  <SurveySectionInfo SectionName="Физкультурная часть" 
+                     SectionDescription="Здесь создаются вопросы, которые будут отображаться только для физкультурных клубов"
+                     Questions=@Survey.Questions.Where(q => q.DisciplineType.Name == "Физкультурный клуб")
+                     />
+
+  <SurveySectionInfo SectionName="Заключение" SectionDescription=@Survey.ConclusionText/>
+  
+</div>
+
+
+@code {
+  [Parameter] public Survey Survey { get; set; } = null!; 
+}

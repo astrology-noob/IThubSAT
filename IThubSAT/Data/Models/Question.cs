@@ -10,6 +10,5 @@ public class Question
     public int SurveyId { get; set; }
     public Survey Survey { get; set; } = null!;
     public QuestionType QuestionType { get; set; } = null!;
-    public SectionType SectionType { get; set; } = null!;
     public DisciplineType DisciplineType { get; set; } = null!;
 }
