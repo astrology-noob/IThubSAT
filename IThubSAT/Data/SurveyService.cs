@@ -3,6 +3,7 @@ using IThubSAT.Data.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class SurveyService
 {
@@ -45,12 +46,18 @@ public class SurveyService
         return survey;
     }
 
-    public List<Workload> GetWorkloadBySurveyId(int SurveyId)
+    public async Task<List<Workload>> GetWorkloadBySurveyId(int SurveyId)
     {
-        // _dbContext.Workloads.Remove(survey);
-        // await _dbContext.SaveChangesAsync();
-
-        return new List<Workload>();
+        Survey res = await _dbContext.Surveys
+                                .Include(s => s.Workloads)
+                                    .ThenInclude(w => w.Teacher)
+                                .Include(s => s.Workloads)
+                                    .ThenInclude(w => w.Group)
+                                .Include(s => s.Workloads)
+                                    .ThenInclude(w => w.Discipline)
+                                .Where(s => s.Id == SurveyId)
+                                .FirstOrDefaultAsync() ?? new();
+        return res.Workloads ?? new();
     }
 
     public User GetSingleUser()
