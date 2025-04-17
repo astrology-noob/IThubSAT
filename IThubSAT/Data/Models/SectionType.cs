@@ -1,6 +1,6 @@
 namespace IThubSAT.Data.Models;
 using System.ComponentModel.DataAnnotations;
-public class QuestionType
+public class SectionType
 {   
     [Key]
     public int Id { get; set; } 

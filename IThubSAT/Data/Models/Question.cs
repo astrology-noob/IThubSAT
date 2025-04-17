@@ -7,5 +7,9 @@ public class Question
     public int Id { get; set; } 
     public string Text { get; set; } = string.Empty;
     public bool IsRequired { get; set; }
+    public int SurveyId { get; set; }
+    public Survey Survey { get; set; } = null!;
     public QuestionType QuestionType { get; set; } = null!;
+    public SectionType SectionType { get; set; } = null!;
+    public DisciplineType DisciplineType { get; set; } = null!;
 }

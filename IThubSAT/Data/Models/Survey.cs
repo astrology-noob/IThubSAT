@@ -13,6 +13,7 @@ public class Survey
     public string EndDate { get; set; } = string.Empty;
     public User CreatedBy { get; set; } = null!;
     public bool IsOpen { get; set; }
+    public List<Question> Questions { get; set; } = [];
     public List<Workload> Workloads { get; } = [];
     public List<UserRespondedToSurvey> UsersRespondedToSurvey { get; } = [];
 }
