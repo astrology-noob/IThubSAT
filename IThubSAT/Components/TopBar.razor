@@ -1,6 +1,8 @@
+@inject NavigationManager Navigation
+
 <div class="topbar">
     <div class="page_name">
-      @(PageName)
+      @(Navigation.Uri)
       <PageNameBack />
     </div>
     <div class="user_info_block">
@@ -19,4 +21,5 @@
 @code {
   [Parameter] public string PageName { get; set; } = null!;
   [Parameter] public string Username { get; set; } = null!;
+  // при переходе на новую страницу нужно перерендеривать топбар
 }

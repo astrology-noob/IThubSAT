@@ -1,13 +1,14 @@
-<template id="SurveySectionInfo">
-      <div class="section_info_header">
-        <p>${SectionName}</p>
-        <button class="collapse_button"><img src="icons/Collapse.svg"/></button>
-      </div>
-      <div class="section_collapse">
-        <div class="section_description">${SectionDescription}</div>
-        ${SectionQuestions}
-        <template id="SurveyQuestionInfo">
-          <div class="survey_question_info">${QuestionText}</div>
-        </template>
-      </div>
-</template>
+@using IThubSAT.Data.Models
+
+<div class="section_info_header">
+  <p>${SectionName}</p>
+  <button class="collapse_button"><img src="icons/Collapse.svg"/></button>
+</div>
+<div class="section_collapse">
+  <div class="section_description">${SectionDescription}</div>
+</div>
+
+@code {
+  [Parameter] public Survey Survey { get; set; } = null!;
+  
+}

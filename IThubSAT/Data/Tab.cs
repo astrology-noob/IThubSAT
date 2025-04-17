@@ -3,5 +3,8 @@ public enum Tab
     Active,
     Stopped,
     Drafts,
-    All
+    All,
+    Questions,
+    Workload,
+    Settings
 }

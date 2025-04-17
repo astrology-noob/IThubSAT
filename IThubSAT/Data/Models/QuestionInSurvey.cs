@@ -7,5 +7,5 @@ public class QuestionInSurvey
     public int Id { get; set; } 
     public Question Question { get; set; } = null!;
     public Survey Survey { get; set; } = null!;
-    public QuestionType VisibleForQuestionType { get; set; } = null!;
+    public DisciplineType VisibleForDisciplineType { get; set; } = null!;
 }

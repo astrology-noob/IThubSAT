@@ -1,4 +1,4 @@
-@using IThubSAT.Data;
+@using IThubSAT.Data
 
 <div class="tabs_bar">
     @foreach (var tab in Tabs) {
@@ -7,20 +7,27 @@
 </div>
 
 @code {
-    private Tab _chosenTab = Tab.Active;
     [Parameter] public EventCallback<Tab> OnTabChosen { get; set; }
-    
-    List<Tab> Tabs = new() { Tab.Active, Tab.Stopped, Tab.Drafts, Tab.All };
+    [Parameter] public List<Tab> Tabs { get; set; } = new();
+    private Tab _chosenTab;
 
     Dictionary<Tab, string> TabNames = new() {
         {Tab.Active, "Активные"},
         {Tab.Stopped, "Остановленные"},
         {Tab.Drafts, "Черновики"},
-        {Tab.All, "Все"}
+        {Tab.All, "Все"},
+        {Tab.Questions, "Вопросы"},
+        {Tab.Workload, "Нагрузка"},
+        {Tab.Settings, "Настройки"}
     };
-
+    protected override void OnInitialized()
+    {
+        _chosenTab = Tabs[0];
+        base.OnInitialized();
+    }
     private void DoOnTabChosen(Tab tab) {
         _chosenTab = tab;
         OnTabChosen.InvokeAsync(tab);
+        @* StateHasChanged(); *@
     }
 }

@@ -1,29 +1,44 @@
 @page "/surveys/{SurveyId:int}"
+@using IThubSAT.Components
 @using IThubSAT.Data
 @using IThubSAT.Data.Models
 @inject SurveyService SurveyService
 
 <div class="white_background_content">
-  @if(_survey.Name != string.Empty) {      
-    <TabsBar/>
-    <div class="tab_content">
-      <a href="/surveys/@(SurveyId)/edit">Edit</a>
-    </div>
-  }
-  else {
-    <div>Survey not found</div>
-  }
+  <TabsBar Tabs=Tabs OnTabChosen=OnTabChosen />
+
+  <div class="tab_content">
+    @if(Survey.Name != string.Empty) {
+      <a href="/surveys/@(SurveyId)/edit">Edit</a> @*подумать, сделать редактирование полностью всей формы на отдельном роуте или не делить редактирование и просмотр?*@
+      @(_chosenTab switch {
+        Tab.Questions => (@<SurveySectionInfo Survey=Survey/>),
+        Tab.Workload => (@<WorkloadTable Survey=Survey/>),
+        Tab.Settings => (@<SurveySettings />),
+        _ => (@<p>"Такой вкладки нет здесь"</p>)
+      })
+    }
+    else {
+      <div>Survey not found</div>
+    }
+  </div>
 </div>
 
 @code {
   [Parameter]
   public int SurveyId { get; set; }
+  public List<Tab> Tabs = new() { Tab.Questions, Tab.Workload, Tab.Settings };
+  private Tab _chosenTab;
 
-  private Survey _survey = new Survey();
-
-  protected async override Task OnInitializedAsync()
-  {
-    _survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? _survey;
+  public void OnTabChosen (Tab chosenTab) {
+    _chosenTab = chosenTab;
+    @* Console.WriteLine(chosenTab); *@
   }
 
+  protected Survey Survey = new Survey();
+  protected async override Task OnInitializedAsync()
+  {
+    OnTabChosen(Tabs[0]);
+    Survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? Survey;
+    await base.OnInitializedAsync();
+  }
 }

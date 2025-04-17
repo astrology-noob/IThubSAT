@@ -1,0 +1,37 @@
+@using IThubSAT.Data.Models
+@using IThubSAT.Data
+@inject SurveyService SurveyService
+
+<div class="tool_bar">
+  <div class="search_bars">
+    <input type="text" class="search_bar" placeholder="Дисциплина" name="searchDisciplineInWorkload"/>
+    <input type="text" class="search_bar" placeholder= "Преподаватель" name="searchTeacherInWorkload"/>
+    <input type="text" class="search_bar" placeholder="Группа/Подгруппа" name="searchGroupInWorkload"/>
+  </div>
+  <!-- <button class="button">Edit</button> -->
+  <button class="primary_button">Экспорт</button>
+  <!-- <button class="button">Delete</button> -->
+</div>
+<div class="table_wrapper">
+  <table class="table is-fullwidth">
+    <tr>
+      <th>Дисциплина</th>
+      <th>Преподаватель</th>
+      <th>Группа</th>
+      <th>Часы всего</th>
+      <th>Часы в неделю</th>
+    </tr>
+    ${Workload}
+  </table>
+  <button class="add_workload_row">+</button>
+</div>
+
+@code {
+  [Parameter] public Survey Survey { get; set; } = null!;
+  private List<Workload> _workload { get; set; } = new();
+  protected async override Task OnInitializedAsync()
+  {
+    @* Survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? Survey; *@
+    await base.OnInitializedAsync();
+  }
+}

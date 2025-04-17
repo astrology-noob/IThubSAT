@@ -45,6 +45,14 @@ public class SurveyService
         return survey;
     }
 
+    public List<Workload> GetWorkloadBySurveyId(int SurveyId)
+    {
+        // _dbContext.Workloads.Remove(survey);
+        // await _dbContext.SaveChangesAsync();
+
+        return new List<Workload>();
+    }
+
     public User GetSingleUser()
     {
         return _dbContext.Users.FirstOrDefault();

@@ -15,7 +15,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddScoped<SurveyService>(sp =>
 {
     var dbContext = sp.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
