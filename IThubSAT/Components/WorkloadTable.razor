@@ -13,11 +13,14 @@
   <button class="primary_button">Импорт</button>
   <button class="primary_button">Экспорт</button>
 </div>
+
+@* TODO: Переписать на дивы *@
 <div class="table_wrapper">
   @if (_workload != null) {
     <table class="table is-fullwidth">
       <tr>
         <th>Кафедра</th>
+        <th>Курс</th>
         <th>Группа</th>
         <th>Дисциплина</th>
         <th>Преподаватель</th>
@@ -28,6 +31,7 @@
         @foreach (var workloadRow in _workload) {
           <tr>
             <td>@workloadRow.Group.Faculty.Name</td>
+            <td>@workloadRow.Group.StudyYear</td>
             <td>@workloadRow.Group.Name</td>
             <td>@workloadRow.Discipline.Name</td>
             <td>@workloadRow.Teacher.FirstName</td>

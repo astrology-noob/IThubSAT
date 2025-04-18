@@ -67,6 +67,16 @@ public class SurveyService
         return res.Workloads ?? new();
     }
 
+    public async Task<List<Discipline>> GetDisciplinesOfSurvey(int SurveyId)
+    {
+        List<Discipline> res = await _dbContext.Workloads
+                                    .Include(w => w.Discipline)
+                                    .Where(w => w.SurveyId == SurveyId)
+                                    .Select(w => w.Discipline)
+                                    .ToListAsync();
+        return res;
+    }
+
     public User GetSingleUser()
     {
         return _dbContext.Users.FirstOrDefault();

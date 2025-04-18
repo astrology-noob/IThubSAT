@@ -1,37 +1,79 @@
 @page "/surveys/{SurveyId:int}/answer"
+@using IThubSAT.Components
+@using IThubSAT.Data.Models
+@using IThubSAT.Data
+@inject SurveyService SurveyService
 
-<!--ANSWERSURVEY-->
-<div id="AnswerSurvey">
-    <div class="answer_survey_content">
-    <div class="left_part_survey">
-        <div class="cur_section_wrapper">
-        <CurDisciplineShow/>
-    
-        <AnswerSurveyQuestion>
-            @*здесь высвечивать в зависимости от типа вопроса*@
-            <div>Шкала</div>
-        </AnswerSurveyQuestion>
-        </div>
-        <div class="bottom_navigation">
-        <p>
-            <button onclick="${GoToPrevious}" class="button">Назад</button>
-            <button onclick="${GoToNext}" class="button">Вперёд</button>
-        </p>
-        </div>
-    </div>
-    <div class="survey_navigation">
-        <ul>
-            @* @foreach item in items { *@
-                <SurveyNavItem NavItem=item/>
-                @* <li class="${Active}" onclick="${ChangeDiscipline}">NavItem.Text</li> *@
-            @* } *@
-        </ul>
-    </div>
-    </div>
+<div class="answer_survey_content">
+    @* переосмыслить условие *@
+    @if (_survey is not null && _curDisciplineNumber != -1) {
+        @if (_survey.IsOpen) {
+            <div class="left_part_survey">
+                <div class="cur_section_wrapper">
+                    <p class="discipline_name">@disciplines[_curDisciplineNumber].Name</p>
+                    <div class="answer_survey_questions">
+                        @foreach (var question in filteredQuestions) {
+                            <AnswerSurveyQuestion Question=question/>
+                        }
+                    </div>
+                
+                    <div class="bottom_navigation">
+                        <button @onclick=@(()=>ChangeDiscipline(_curDisciplineNumber - 1)) class="button">Назад</button>
+                        <button @onclick=@(()=>ChangeDiscipline(_curDisciplineNumber + 1)) class="button">Вперёд</button>
+                    </div>
+                </div>
+                <div class="survey_navigation">
+                    @for (var i = 0; i < disciplines.Count; i++) {
+                        <div class="@((i == _curDisciplineNumber) ? "active_item" : "")">@disciplines[i].Name</div>
+                        @* <div class="@((i == _curDisciplineNumber) ? "active_item" : "")" @onclick=@(ChangeDiscipline(i))>@disciplines[i].Name</div> *@
+                            @* сука я забыла как это делать *@
+                    }
+                </div>
+            </div>
+        }
+        else {
+            <SurveyAnswerError ErrorText="Мы сейчас не принимаем ответы на этот опрос :(" />
+        }
+    }
+    else {
+        <SurveyAnswerError ErrorText="Такого опроса не нашли :(" /> 
+        @* отправлять из сервиса ошибку именно? *@
+    }
 </div>
-<!--ANSWERSURVEY-->
 
 @code {
     [Parameter] public int SurveyId { get; set; }
-    @* private List<Survey> items { get; set; } *@
+    private Survey? _survey;
+
+    private Group? _group;
+
+    private int _curDisciplineNumber = 0;
+    private List<Discipline> disciplines;
+
+    protected List<Question> filteredQuestions = new();
+
+    private void ChangeDiscipline(int newIndex)
+    {
+        if (newIndex < 0 || newIndex >= disciplines.Count) {
+            return;
+        }
+        else {
+            _curDisciplineNumber = newIndex;
+            StateHasChanged();
+        }
+    }
+
+    private void OnDisciplineChange()
+    {
+        // получать нужные вопросы (возможно слишком много лишних действий, тк отфильтровывать вопросы понадобится только типа, 2 раза)
+        // по крайней мере проверять, не поменялся ли тип дисциплины
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        _survey = await SurveyService.GetSurveyByIdAsync(SurveyId);
+        disciplines = await SurveyService.GetDisciplinesOfSurvey(SurveyId) ?? new();
+
+        await base.OnInitializedAsync();
+    }
 }

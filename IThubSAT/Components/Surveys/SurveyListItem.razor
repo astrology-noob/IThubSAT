@@ -18,7 +18,13 @@
     </p>
   </div>
   <div class="survey_actions">
-    <button @onclick=@OpenPopUp><img src="icons/Pause.svg"/></button>
+    @if (Survey.IsOpen) {
+      <button ><img src="icons/Link.svg"/></button> // получить ссылку на опрос (открыть попап или показать тостер и скопировать автоматически)
+      <button @onclick=@OpenStopPopUp><img src="icons/Pause.svg"/></button>
+    }
+    else {
+      <button @onclick=@OpenPopUp><img src="icons/Export.svg"/></button>
+    }
     <a href="/surveys/@(Survey.Id)/edit"><img src="icons/Edit.svg" /></a>
     <button><img src="icons/Menu.svg"/></button>
   </div>
@@ -37,8 +43,12 @@
 
   public bool PopUpState { get; set; } = false;
 
-  public void OpenPopUp() {
+  public void OpenStopPopUp() {
     PopUpState = true;
+  }
+
+  public void OpenPopUp() {
+    return;
   }
 
   public void ClosePopUp() {

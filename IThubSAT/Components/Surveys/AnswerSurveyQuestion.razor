@@ -1,13 +1,9 @@
-<template id="AnswerSurveyQuestion">
-    <div class="answer_survey_question">
-    <p class="question_title">@(QuestionText)</p>
-    @(QuestionContent)
-    </div>
-</template>
+@using IThubSAT.Data.Models
+
+<div class="answer_survey_question">
+    <p class="question_title">@(Question.Text)</p>
+</div>
 
 @code {
-    private string QuestionText = string.Empty;
-    
-    [Parameter]
-    public RenderFragment QuestionContent { get; set; } = null!;
+    [Parameter] public Question Question {get; set; } = null!;
 }
