@@ -77,8 +77,18 @@ public class SurveyService
         return res;
     }
 
+    public async Task<List<Question>> GetQuestionsBySurveyId(int SurveyId)
+    {
+        List<Question> res = await _dbContext.Questions
+                                    .Include(q => q.QuestionType)
+                                    .Include(q => q.DisciplineType)
+                                    .Where(q => q.SurveyId == SurveyId)
+                                    .ToListAsync();
+        return res;                 
+    }
+
     public User GetSingleUser()
     {
-        return _dbContext.Users.FirstOrDefault();
+        return _dbContext.Users.FirstOrDefault() ?? new();
     }
 }

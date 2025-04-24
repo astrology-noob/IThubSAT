@@ -1,7 +1,56 @@
 @using IThubSAT.Data.Models
 
 <div class="answer_survey_question">
-    <p class="question_title">@(Question.Text)</p>
+    <p class="question_title">
+        <span class="question_text">@(Question.Text)</span>
+        @if (Question.IsRequired) {
+            <span class="required_mark_span">*</span>
+        }
+    </p>
+    
+    @if (Question.QuestionType.Name == "Шкала") {
+        <div class="=scale_question">
+            <div class="=scale_min_max">
+                "Не знаю, я вообще не ходил(-а) на этот предмет"
+            </div>
+            <div class="scale_buttons">
+                @for (int i = 0; i < 6; i++) {
+                    <div class="scale_button">
+                        <div class="scale_radio_button"></div>
+                        <p>@i</p>
+                    </div>
+                }
+            </div>
+            <div class="=scale_min_max">
+                "Определенно все интересно на занятии" 
+                @* сукаа, а как вот это вот хранить... *@
+            </div>
+        </div>
+    }
+
+    @* @(Question.QuestionType.Name switch {
+        "Шкала" => (
+            @<div class="=scale_question">
+                <div class="=scale_min_max">
+                    "Не знаю, я вообще не ходил(-а) на этот предмет"
+                </div>
+                <div class="scale_buttons">
+                    @for (int i = 0; i < 6; i++) {
+                        <div class="scale_button">
+                            <div class="scale_radio_button"></div>
+                            <p>@i</p>
+                        </div>
+                    }
+                </div>
+                <div class="=scale_min_max">
+                    "Определенно все интересно на занятии" 
+                    @* сукаа, а как вот это вот хранить...
+                </div>
+            </div>
+        ),
+        _ => "Чё за хуйня"
+    }) *@
+
 </div>
 
 @code {

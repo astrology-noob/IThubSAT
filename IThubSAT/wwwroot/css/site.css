@@ -422,6 +422,7 @@ main > .content {
         display: flex;
         flex-direction: column;
     }
+
     .cur_section_wrapper {
         box-sizing: border-box;
         width: 800px;
@@ -430,6 +431,10 @@ main > .content {
         border: solid 1px #EBEEF5;
         border-radius: 10px;
         margin-bottom: 10px;
+        
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
         .discipline_name {
@@ -438,13 +443,37 @@ main > .content {
             margin-bottom: 30px;
         }
 
+        .attendance_checkbox {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .attendance_checkbox p {
+            margin-bottom: 0;
+        }
+
+        .attendance_checkbox .checkbox {
+            border: 1px solid #AB00EA;
+            width: 15px;
+            height: 15px;
+        }
+
         .answer_survey_questions {
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 30px;
         }
-
+        
         .answer_survey_question {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
             padding: 15px 25px 20px 25px;
             background-color: #FFFFFF;
             border: solid 1px #EBEEF5;
@@ -523,12 +552,25 @@ main > .content {
     .bottom_navigation button {
         width: calc((100% - 5px)/2);
         border-radius: 10px;
-        border: solid 1px #EBEEF5;
-        color: #898989;
         height: 60px;
         font-size: 16px;
         font-weight: bold;
+        background-color: #ffffff;
     }
+        
+    .bottom_navigation button:first-child {
+        border: solid 1px #EBEEF5;
+        color: #898989;
+    }
+
+    .bottom_navigation button:last-child {
+        border: solid 1px #EBEEF5;
+        color: #000000;
+    }
+        .bottom_navigation button:hover {
+            background-color: #EBEEF5;
+        }
+
         .bottom_navigation button:focus {
             color: #898989;
         }
