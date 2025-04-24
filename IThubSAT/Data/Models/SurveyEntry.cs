@@ -5,7 +5,7 @@ public class SurveyEntry
 {   
     [Key]
     public int Id { get; set; }
+    public int SurveyId { get; set; }
     public Survey Survey { get; set; } = null!;
-    public Group Group { get; set; } = null!;
     public string SubmittedAt { get; set; } = string.Empty;
 }

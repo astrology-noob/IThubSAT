@@ -25,6 +25,7 @@ public class AppDbContext : DbContext
     public DbSet<Workload> Workloads { get; set; } = null!;
     public DbSet<SurveyEntry> SurveyEntries { get; set; } = null!;
     public DbSet<Answer> Answers { get; set; } = null!;
+    public DbSet<SportClub> SportClubs { get; set; } = null!;
     public DbSet<EnglishGroup> EnglishGroups { get; set; } = null!;
     public DbSet<UserRespondedToSurvey> UsersRespondedToSurveys { get; set; } = null!;
 }

@@ -1,5 +1,4 @@
 namespace IThubSAT.Data.Models;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 public class Group
 {   
@@ -7,5 +6,6 @@ public class Group
     public int Id { get; set; } 
     public string Name { get; set; } = string.Empty;
     public int StudyYear { get; set; }
+    public int FacultyId { get; set; }
     public Faculty Faculty { get; set; } = null!;
 }

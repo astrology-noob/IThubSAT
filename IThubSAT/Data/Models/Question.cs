@@ -1,5 +1,4 @@
 namespace IThubSAT.Data.Models;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 public class Question
 {   
@@ -9,6 +8,8 @@ public class Question
     public bool IsRequired { get; set; }
     public int SurveyId { get; set; }
     public Survey Survey { get; set; } = null!;
+    public int QuestionTypeId { get; set; }
     public QuestionType QuestionType { get; set; } = null!;
+    public int DisciplineTypeId { get; set; }
     public DisciplineType DisciplineType { get; set; } = null!;
 }

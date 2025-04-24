@@ -13,6 +13,7 @@ public class Survey
     public string ModifiedAt { get; set; } = string.Empty;
     public string StartDate { get; set; } = string.Empty;
     public string EndDate { get; set; } = string.Empty;
+    public int CreatedById { get; set; }
     public User CreatedBy { get; set; } = null!;
     public bool IsOpen { get; set; }
     public List<Question> Questions { get; set; } = [];
