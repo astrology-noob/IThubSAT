@@ -10,6 +10,7 @@ public class Question
     public Survey Survey { get; set; } = null!;
     public int QuestionTypeId { get; set; }
     public QuestionType QuestionType { get; set; } = null!;
+    public string QuestionTypeInfo { get; set; } = string.Empty;
     public int DisciplineTypeId { get; set; }
     public DisciplineType DisciplineType { get; set; } = null!;
 }
