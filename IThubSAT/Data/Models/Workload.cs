@@ -6,8 +6,8 @@ public class Workload
     public int Id { get; set; } 
     public int SurveyId { get; set; }
     public Survey Survey { get; set; } = null!;
-    public int GroupId { get; set; }
-    public Group Group { get; set; } = null!;
+    public int? GroupId { get; set; }
+    public Group? Group { get; set; } = null!;
     public int DisciplineId { get; set; }
     public Discipline Discipline { get; set; } = null!;
     public int TeacherId { get; set; }

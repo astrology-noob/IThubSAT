@@ -59,7 +59,7 @@ public class SurveyService
                                     .ThenInclude(w => w.Teacher)
                                 .Include(s => s.Workloads)
                                     .ThenInclude(w => w.Group)
-                                        .ThenInclude(g => g.Faculty)
+                                        .ThenInclude(g => g != null ? g.Faculty : null)
                                 .Include(s => s.Workloads)
                                     .ThenInclude(w => w.Discipline)
                                 .Where(s => s.Id == SurveyId)
