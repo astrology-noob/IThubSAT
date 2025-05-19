@@ -67,7 +67,7 @@ public class SurveyService
         return res.Workloads ?? new();
     }
 
-    public async Task<List<Discipline>> GetDisciplinesOfSurvey(int SurveyId)
+    public async Task<List<Discipline>> GetDisciplinesOfSurvey(int SurveyId) // вообще не нужно
     {
         List<Discipline> res = await _dbContext.Workloads
                                     .Include(w => w.Discipline)
@@ -85,6 +85,27 @@ public class SurveyService
                                     .Where(q => q.SurveyId == SurveyId)
                                     .ToListAsync();
         return res;                 
+    }
+
+    public async Task<List<Group>> GetGroupsBySurveyId(int SurveyId)
+    {
+        List<Group> res = await _dbContext.Workloads
+                                    .Include(w => w.Group)
+                                    .Where(w => w.SurveyId == SurveyId)
+                                    .Select(w => w.Group!)
+                                    .Distinct()
+                                    .ToListAsync();
+        return res;
+    }
+
+    public async Task<List<Workload>> GetWorkloadsBySurveyIdAndStudyGroupId(int SurveyId, int GroupId)
+    {
+        List<Workload> res = await _dbContext.Workloads
+                                    .Where(w => w.SurveyId == SurveyId)
+                                    .Where(w => w.GroupId == GroupId)
+                                    .ToListAsync();
+        Console.WriteLine(res.Count);
+        return res;
     }
 
     public User GetSingleUser()

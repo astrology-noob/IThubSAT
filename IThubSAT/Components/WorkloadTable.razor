@@ -30,9 +30,9 @@
       @if (_workload.Count > 0){
         @foreach (var workloadRow in _workload) {
           <tr>
-            <td>@workloadRow.Group.Faculty.Name</td>
-            <td>@workloadRow.Group.StudyYear</td>
-            <td>@workloadRow.Group.Name</td>
+            <td>(@workloadRow.Group?.Faculty.Name ?? string.Empty)</td>
+            <td>@workloadRow.Group?.StudyYear ?? string.Empty</td>
+            <td>@workloadRow.Group?.Name ?? string.Empty</td>
             <td>@workloadRow.Discipline.Name</td>
             <td>@workloadRow.Teacher.FirstName</td>
             <td>@workloadRow.WeeklyHours</td>
@@ -55,7 +55,7 @@
 
 @code {
   [Parameter] public Survey Survey { get; set; } = null!;
-  private List<Workload>? _workload { get; set; }
+  private List<Workload> _workload { get; set; } = new();
   protected async override Task OnInitializedAsync()
   {
     _workload = await SurveyService.GetWorkloadBySurveyId(Survey.Id);

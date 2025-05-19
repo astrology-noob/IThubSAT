@@ -2,8 +2,10 @@
 
 <div class="topbar">
     <div class="page_name">
-      @(Navigation.Uri)
-      <PageNameBack />
+      @if (HrefBack != string.Empty) {      
+        <a href="@(HrefBack)"><img src="icons/ArrowBack.svg"/></a>
+      }
+      <p>@PageName</p>
     </div>
     <div class="user_info_block">
       <div class="user_info">
@@ -19,7 +21,8 @@
 </div>
 
 @code {
-  [Parameter] public string PageName { get; set; } = null!;
-  [Parameter] public string Username { get; set; } = null!;
+  [Parameter] public string PageName { get; set; } = string.Empty;
+  [Parameter] public string Username { get; set; } = string.Empty;
+  [Parameter] public string HrefBack { get; set; } = string.Empty;
   // при переходе на новую страницу нужно перерендеривать топбар
 }

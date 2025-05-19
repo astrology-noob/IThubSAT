@@ -426,6 +426,9 @@ main > .content {
     .cur_section_wrapper {
         box-sizing: border-box;
         width: 800px;
+        max-height: 80vh;
+        overflow-y: scroll;
+
         padding: 30px 25px;
         background-color: #FFFFFF;
         border: solid 1px #EBEEF5;
@@ -437,7 +440,7 @@ main > .content {
         align-items: center;
     }
 
-        .discipline_name {
+        .section_name {
             font-weight: bold;
             font-size: 24px;
             margin-bottom: 30px;

@@ -6,35 +6,48 @@
 @using System.Linq
 @inject SurveyService SurveyService
 
-<div class="white_background_content">
-    <div class="tool_bar">
-        @* TODO: Не работает обновление списка на ввод текста, только на смену вкладки. Скорее всего проблема с рендером *@
-        <input type="text" class="search_bar" @bind-value=@_searchBarText @bind-value:event="oninput" @bind:after="@(() => FindSurveys())"/>
-        <button class="primary_button" @onclick=@AddSurvey>Создать +</button>
-    </div>
+<TopBar PageName="Главная" Username="User"/>
+<div class="main_content">
+    <div class="white_background_content">
+        <div class="tool_bar">
+            @* TODO: Не работает обновление списка на ввод текста, только на смену вкладки. Скорее всего проблема с рендером *@
+            @* Пока не делаю потому что заёбно и бесполезно, вкладок достаточно *@
+            @* <input type="text" class="search_bar" @bind-value=@_searchBarText @bind-value:event="oninput" @bind:after="@(() => FindSurveys())"/> *@
+            @* <SearchBar Search=@text SearchChanged=@SearchChanged/> *@
+            <button class="primary_button" @onclick=@AddSurvey>
+                Создать +
+            </button>
+        </div>
 
-    <TabsBar Tabs=Tabs OnTabChosen=OnTabChosen />
+        <TabsBar Tabs=Tabs OnTabChosen=OnTabChosen />
 
-    <div class="tab_content surveys_list">
-        @if(_filteredSurveys.Count > 0){
-            @foreach(var survey in _filteredSurveys)
-            {
-                <SurveyListItem Survey=@survey />
+        <div class="tab_content surveys_list">
+            @if(_filteredSurveys.Count > 0){
+                @foreach(var survey in _filteredSurveys)
+                {
+                    <SurveyListItem Survey=@survey />
+                }
             }
-        }
-        else {
-            <p>Здесь ничего нет...</p>
-        }
+            else {
+                <p>Здесь ничего нет...</p>
+            }
+        </div>
     </div>
 </div>
 
 @code {
-    private List<Survey> _surveys = new List<Survey>();
-    private List<Survey> _filteredSurveys = new List<Survey>();
+    protected List<Survey> _surveys = new List<Survey>();
+    private string text = string.Empty;
+    protected List<Survey> _filteredSurveys = new();
+
+    protected override void OnInitialized()
+    {
+        _surveys = SurveyService.GetSurveys();
+        OnTabChosen(Tabs[0]);
+        base.OnInitialized();
+    }
 
     List<Tab> Tabs = new() { Tab.Active, Tab.Stopped, Tab.Drafts, Tab.All };
-    public string _searchBarText = string.Empty;
-
     public void OnTabChosen (Tab chosenTab) {
         _filteredSurveys = chosenTab switch 
         {
@@ -44,22 +57,7 @@
             Tab.All => _surveys,
             _ => _surveys
         };
-        
-        FindSurveys();
     }
-
-    private void FindSurveys() {
-        _filteredSurveys = _filteredSurveys.Where(s => s.Name.Contains(_searchBarText)).ToList();
-        StateHasChanged();
-    }
-    
-    protected override void OnInitialized()
-    {
-        _surveys = SurveyService.GetSurveys();
-        OnTabChosen(Tabs[0]);
-        base.OnInitialized();
-    }
-
     private async void AddSurvey()
     {
         await SurveyService.CreateSurveyAsync(new Survey() {
@@ -73,4 +71,10 @@
             CreatedBy=SurveyService.GetSingleUser()
         });
     }
+
+    @* protected void SearchChanged(string searchText)
+    {
+        text = searchText;
+        _filteredSurveys = _filteredSurveys.Where(s => s.Name.Contains(text)).ToList();
+    } *@
 }

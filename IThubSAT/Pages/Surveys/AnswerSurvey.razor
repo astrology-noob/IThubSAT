@@ -4,82 +4,114 @@
 @using IThubSAT.Data
 @inject SurveyService SurveyService
 
-<div class="answer_survey_content">
-    @* переосмыслить условие *@
-    @if (_survey is not null && _curDisciplineNumber != -1) {
-        @if (_survey.IsOpen) {
+@if (_survey is not null) {
+    <TopBar PageName="@(_survey.Name ?? string.Empty)" Username="User"/>
+    <div class="main_content">
+        <div class="answer_survey_content">
             <div class="left_part_survey">
                 <div class="cur_section_wrapper">
-                    <p class="discipline_name">@disciplines[_curDisciplineNumber].Name</p>
-                    <div class="attendance_checkbox">
-                        <div class="checkbox"></div>
-                        <p>Я не ходил(-а) на этот предмет</p>
-                    </div>
-                    <div class="answer_survey_questions">
-                        @foreach (var question in filteredQuestions) {
-                            <AnswerSurveyQuestion Question=question/>
+                        @if (_survey!.IsOpen) {
+                            @if (_curStepNumber == -1) {
+                                <p class="section_name">Choose group</p>
+                                // здесь надо переделать нормально
+                                <select @bind=@_selectedGroupId @bind:after="@(() => OnGroupChange())">
+                                    @foreach (Group group in allGroups) {
+                                        <option value="@group.Id">@group.Name</option>
+                                    }
+                                </select>
+                            }
+                            else {
+                                @if (_workloads.Count > 0) {
+                                    <p class="section_name">@_workloads[_curStepNumber].Discipline.Name</p>
+                                    <div class="attendance_checkbox">
+                                        <div class="checkbox"></div>
+                                        <p>Я не ходил(-а) на этот предмет</p>
+                                    </div>
+                                    <div class="answer_survey_questions">
+                                        @foreach (var question in filteredQuestions) {
+                                            <AnswerSurveyQuestion Question=question/>
+                                        }
+                                    </div>
+                                }
+                                else {
+                                    <SurveyAnswerError ErrorText="По вашей группе нет данных, обратитесь к администратору" />
+                                }
+                            }
                         }
+                        else {
+                            <SurveyAnswerError ErrorText="Мы сейчас не принимаем ответы на этот опрос :(" />
+                        }
+                    }            
+                    <div class="bottom_navigation">
+                        <button @onclick=@(()=>ChangeDiscipline(_curStepNumber - 1))>Назад</button>
+                        <button @onclick=@(()=>ChangeDiscipline(_curStepNumber + 1))>Вперёд</button>
                     </div>
-                </div>
-                <div class="bottom_navigation">
-                    <button @onclick=@(()=>ChangeDiscipline(_curDisciplineNumber - 1))>Назад</button>
-                    <button @onclick=@(()=>ChangeDiscipline(_curDisciplineNumber + 1))>Вперёд</button>
                 </div>
             </div>
             <div class="survey_navigation">
-                @for (var i = 0; i < disciplines.Count; i++) {
-                    <div class="@((i == _curDisciplineNumber) ? "active_item" : "")">@disciplines[i].Name</div>
-                    @* <div class="@((i == _curDisciplineNumber) ? "active_item" : "")" @onclick=@(ChangeDiscipline(i))>@disciplines[i].Name</div> *@
-                        @* сука я забыла как это делать *@
+                <div class="@((_curStepNumber == -1) ? "active_item" : "")">Вводная часть</div>
+                <div class="@((_curStepNumber > -1) ? "active_item" : "")">Основная часть</div>
+                @if (_workloads.Count > 0) {
+                    @for (var i = 0; i < _workloads.Count; i++) {
+                        <div class="@((i == _curStepNumber) ? "active_item" : "")">@_workloads[i].Discipline.Name</div>
+                    }
                 }
             </div>
-        }
-        else {
-            <SurveyAnswerError ErrorText="Мы сейчас не принимаем ответы на этот опрос :(" />
-        }
-    }
-    else {
-        <SurveyAnswerError ErrorText="Такого опроса не нашли :(" /> 
-        @* отправлять из сервиса ошибку именно? *@
-    }
-</div>
+        </div>
+    </div>
+}
+else {
+    <SurveyAnswerError ErrorText="Такого опроса не нашли :(" /> 
+    @* отправлять из сервиса ошибку именно? *@
+}
 
 @code {
-    // Answer создаются не на "клиенте" а на "сервере", с клиента в сервис отправляются дисциплины, ответы на вопросы по каждой дисциплине и группа
     [Parameter] public int SurveyId { get; set; }
+    private SurveyEntry _surveyEntry = new();
     private Survey? _survey;
-    private Group? _group;
-    private int _curDisciplineNumber = 0;
-    private List<Discipline> disciplines = new();
 
+    protected List<Group> allGroups = new();
+    private int _selectedGroupId = -1;
+
+    private int _curStepNumber = -1;
+    private List<Workload> _workloads = new();
     protected List<Question> allQuestions = new();
     protected List<Question> filteredQuestions = new();
 
     private void ChangeDiscipline(int newIndex)
     {
-        if (newIndex < 0 || newIndex >= disciplines.Count) {
+        if (newIndex < -1 || newIndex >= _workloads.Count) {
             return;
         }
         else {
-            _curDisciplineNumber = newIndex;
+            _curStepNumber = newIndex;
+            OnDisciplineChange();
             StateHasChanged();
         }
     }
 
     private void OnDisciplineChange()
     {
-        filteredQuestions = allQuestions.Where(q => q.DisciplineType == disciplines[_curDisciplineNumber].DisciplineType).ToList();
+        filteredQuestions = allQuestions.Where(q => q.DisciplineType == _workloads[_curStepNumber].Discipline.DisciplineType).ToList();
         // получать нужные вопросы (возможно слишком много лишних действий, тк отфильтровывать вопросы понадобится только типа, 2 раза)
         // по крайней мере проверять, не поменялся ли тип дисциплины
+    }
+
+    private async void OnGroupChange()
+    {
+        Console.WriteLine(_selectedGroupId);
+        _workloads = await SurveyService.GetWorkloadsBySurveyIdAndStudyGroupId(SurveyId, _selectedGroupId) ?? new();
+        Console.WriteLine(_workloads.Count);
     }
 
     protected async override Task OnInitializedAsync()
     {
         _survey = await SurveyService.GetSurveyByIdAsync(SurveyId);
-        disciplines = await SurveyService.GetDisciplinesOfSurvey(SurveyId) ?? disciplines;
-        allQuestions = await SurveyService.GetQuestionsBySurveyId(SurveyId) ?? allQuestions;
+        _surveyEntry.Survey = _survey!;
 
-        OnDisciplineChange();
+        allGroups = await SurveyService.GetGroupsBySurveyId(SurveyId);
+
+        allQuestions = await SurveyService.GetQuestionsBySurveyId(SurveyId) ?? allQuestions;
 
         await base.OnInitializedAsync();
     }

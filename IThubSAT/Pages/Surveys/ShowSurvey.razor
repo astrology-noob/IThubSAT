@@ -4,22 +4,25 @@
 @using IThubSAT.Data.Models
 @inject SurveyService SurveyService
 
-<div class="white_background_content">
-  <TabsBar Tabs=Tabs OnTabChosen=OnTabChosen />
+<TopBar HrefBack="/" PageName="@(Survey.Name ?? string.Empty)" Username="User"/>
+<div class="main_content">
+  <div class="white_background_content">
+    <TabsBar Tabs=Tabs OnTabChosen=OnTabChosen />
 
-  <div class="tab_content">
-    @if(Survey.Name != string.Empty) {
-      <a href="/surveys/@(SurveyId)/edit">Edit</a> @*подумать, сделать редактирование полностью всей формы на отдельном роуте или не делить редактирование и просмотр?*@
-      @(_chosenTab switch {
-        Tab.Questions => (@<SurveySections Survey=Survey/>),
-        Tab.Workload => (@<WorkloadTable Survey=Survey/>),
-        Tab.Settings => (@<SurveySettings />),
-        _ => (@<p>"Такой вкладки нет здесь"</p>)
-      })
-    }
-    else {
-      <div>Survey not found</div>
-    }
+    <div class="tab_content">
+      @if(Survey.Name != string.Empty) {
+        <a href="/surveys/@(SurveyId)/edit">Edit</a> @*подумать, сделать редактирование полностью всей формы на отдельном роуте или не делить редактирование и просмотр?*@
+        @(_chosenTab switch {
+          Tab.Questions => (@<SurveySections Survey=Survey/>),
+          Tab.Workload => (@<WorkloadTable Survey=Survey/>),
+          Tab.Settings => (@<SurveySettings />),
+          _ => (@<p>"Такой вкладки нет здесь"</p>)
+        })
+      }
+      else {
+        <div>Survey not found</div>
+      }
+    </div>
   </div>
 </div>
 
