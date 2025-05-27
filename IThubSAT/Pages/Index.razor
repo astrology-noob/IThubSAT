@@ -7,21 +7,21 @@
 @inject SurveyService SurveyService
 
 <TopBar PageName="Главная" Username="User"/>
-<div class="main_content">
-    <div class="white_background_content">
-        <div class="tool_bar">
+<div class="main-content">
+    <div class="white-background-content">
+        <div class="tool-bar">
             @* TODO: Не работает обновление списка на ввод текста, только на смену вкладки. Скорее всего проблема с рендером *@
             @* Пока не делаю потому что заёбно и бесполезно, вкладок достаточно *@
-            @* <input type="text" class="search_bar" @bind-value=@_searchBarText @bind-value:event="oninput" @bind:after="@(() => FindSurveys())"/> *@
+            @* <input type="text" class="search-bar" @bind-value=@_searchBarText @bind-value:event="oninput" @bind:after="@(() => FindSurveys())"/> *@
             @* <SearchBar Search=@text SearchChanged=@SearchChanged/> *@
-            <button class="primary_button" @onclick=@AddSurvey>
+            <button class="primary-button" @onclick=@AddSurvey>
                 Создать +
             </button>
         </div>
 
         <TabsBar Tabs=Tabs OnTabChosen=OnTabChosen />
 
-        <div class="tab_content surveys_list">
+        <div class="tab-content surveys-list">
             @if(_filteredSurveys.Count > 0){
                 @foreach(var survey in _filteredSurveys)
                 {

@@ -1,56 +1,52 @@
 @using IThubSAT.Data.Models
 @using IThubSAT.Data
+@using IThubSAT.Components
 @inject SurveyService SurveyService
 
-<div class="tool_bar">
-  <div class="dropdown_bars">
+@* Сделать отдельный компонент tool bar? *@
+<div class="tool-bar">
+  <div class="dropdown-bars">
     <Dropdown Placeholder="Кафедра" />
     <Dropdown Placeholder="Группа/Подгруппа" />
     <Dropdown Placeholder="Дисциплина" />
     <Dropdown Placeholder="Преподаватель" />
   </div>
 
-  <button class="primary_button">Импорт</button>
-  <button class="primary_button">Экспорт</button>
+  <button class="primary-button">Импорт</button>
+  <button class="primary-button">Экспорт</button>
 </div>
 
-@* TODO: Переписать на дивы *@
-<div class="table_wrapper">
-  @if (_workload != null) {
-    <table class="table is-fullwidth">
-      <tr>
-        <th>Кафедра</th>
-        <th>Курс</th>
-        <th>Группа</th>
-        <th>Дисциплина</th>
-        <th>Преподаватель</th>
-        <th>Часы в неделю</th>
-        <th>Часы всего</th>
-      </tr>
-      @if (_workload.Count > 0){
-        @foreach (var workloadRow in _workload) {
-          <tr>
-            <td>(@workloadRow.Group?.Faculty.Name ?? string.Empty)</td>
-            <td>@workloadRow.Group?.StudyYear ?? string.Empty</td>
-            <td>@workloadRow.Group?.Name ?? string.Empty</td>
-            <td>@workloadRow.Discipline.Name</td>
-            <td>@workloadRow.Teacher.FirstName</td>
-            <td>@workloadRow.WeeklyHours</td>
-            <td>@workloadRow.TotalHours</td>
-          </tr>
+@* Сделать отдельные компоненты - строка таблицы и ячейка таблицы? *@
+<div class="table-wrapper">
+    <div class="table is-fullwidth">
+        <div class="table-row">
+            <div class="table-cell">Кафедра</div>
+            <div class="table-cell">Курс</div>
+            <div class="table-cell">Группа</div>
+            <div class="table-cell">Дисциплина</div>
+            <div class="table-cell">Преподаватель</div>
+            <div class="table-cell">Часы в неделю</div>
+            <div class="table-cell">Часы всего</div>
+        </div>
+        @if (_workload.Count > 0){
+            @foreach (var workloadRow in _workload) {
+                <div class="table-row">
+                    <div class="table-cell">(@workloadRow.Group?.Faculty.Name ?? string.Empty)</div>
+                    <div class="table-cell">@workloadRow.Group?.StudyYear ?? string.Empty</div>
+                    <div class="table-cell">@workloadRow.Group?.Name ?? string.Empty</div>
+                    <div class="table-cell">@workloadRow.Discipline.Name</div>
+                    <div class="table-cell">@workloadRow.Teacher.FirstName</div>
+                    <div class="table-cell">@workloadRow.WeeklyHours</div>
+                    <div class="table-cell">@workloadRow.TotalHours</div>
+                </div>
+            }
         }
-      }
-      else {
-        <tr>
-          <td>Пока нет вообще никакой нагрузки</td>
-        </tr>
-      }
-    </table>
-    <button class="add_workload_row">+</button>
-  }
-  else {
-    
-  }
+        else {
+        <div class="table-row">
+            <div>Пока нет вообще никакой нагрузки</div>
+        </div>
+        }
+    </div>
 </div>
 
 @code {

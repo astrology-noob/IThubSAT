@@ -1,8 +1,8 @@
 @using IThubSAT.Data
 
-<div class="tabs_bar">
+<div class="tabs-bar">
     @foreach (var tab in Tabs) {
-        <p class="@((_chosenTab == tab) ? "tab_is_active" : "")" @onclick=@(()=>DoOnTabChosen(tab))>@(TabNames[tab])</p>
+        <p class="@((_chosenTab == tab) ? "tab-is-active" : "")" @onclick=@(()=>DoOnTabChosen(tab))>@(TabNames[tab])</p>
     } 
 </div>
 

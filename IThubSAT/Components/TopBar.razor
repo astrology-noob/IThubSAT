@@ -1,20 +1,20 @@
 @inject NavigationManager Navigation
 
-<div class="topbar">
-    <div class="page_name">
+<div class="top-bar">
+    <div class="page-name">
       @if (HrefBack != string.Empty) {      
         <a href="@(HrefBack)"><img src="icons/ArrowBack.svg"/></a>
       }
       <p>@PageName</p>
     </div>
-    <div class="user_info_block">
-      <div class="user_info">
-        <p class="user_name">
+    <div class="user-info-block">
+      <div class="user-info">
+        <p class="user-name">
           @(Username)
         </p>
-        <p class="user_role">Админ</p>
+        <p class="user-role">Админ</p>
       </div>
-      <div class="user_avatar">
+      <div class="user-avatar">
         U
       </div>
     </div>

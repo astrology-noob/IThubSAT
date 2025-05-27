@@ -1,27 +1,27 @@
 @using IThubSAT.Data.Models
 
-<div class="answer_survey_question">
-    <p class="question_title">
-        <span class="question_text">@(Question.Text)</span>
+<div class="answer-survey-question">
+    <p class="question-title">
+        <span class="question-text">@(Question.Text)</span>
         @if (Question.IsRequired) {
-            <span class="required_mark_span">*</span>
+            <span class="required-mark-span">*</span>
         }
     </p>
     
     @if (Question.QuestionType.Name == "Шкала") {
-        <div class="=scale_question">
-            <div class="=scale_min_max">
+        <div class="=scale-question">
+            <div class="=scale-min-max">
                 "Не знаю, я вообще не ходил(-а) на этот предмет"
             </div>
-            <div class="scale_buttons">
+            <div class="scale-buttons">
                 @for (int i = 0; i < 6; i++) {
-                    <div class="scale_button">
-                        <div class="scale_radio_button"></div>
+                    <div class="scale-button">
+                        <div class="scale-radio-button"></div>
                         <p>@i</p>
                     </div>
                 }
             </div>
-            <div class="=scale_min_max">
+            <div class="=scale-min-max">
                 "Определенно все интересно на занятии" 
                 @* сукаа, а как вот это вот хранить... *@
             </div>
@@ -30,25 +30,25 @@
 
     @* @(Question.QuestionType.Name switch {
         "Шкала" => (
-            @<div class="=scale_question">
-                <div class="=scale_min_max">
+            @<div class="=scale-question">
+                <div class="=scale-min-max">
                     "Не знаю, я вообще не ходил(-а) на этот предмет"
                 </div>
-                <div class="scale_buttons">
+                <div class="scale-buttons">
                     @for (int i = 0; i < 6; i++) {
-                        <div class="scale_button">
-                            <div class="scale_radio_button"></div>
+                        <div class="scale-button">
+                            <div class="scale-radio-button"></div>
                             <p>@i</p>
                         </div>
                     }
                 </div>
-                <div class="=scale_min_max">
+                <div class="=scale-min-max">
                     "Определенно все интересно на занятии" 
                     @* сукаа, а как вот это вот хранить...
                 </div>
             </div>
         ),
-        _ => "Чё за хуйня"
+        - => "Чё за хуйня"
     }) *@
 
 </div>

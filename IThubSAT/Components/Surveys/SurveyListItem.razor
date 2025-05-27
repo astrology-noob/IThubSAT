@@ -3,10 +3,10 @@
 @using IThubSAT.Data
 @inject SurveyService SurveyService
 
-<div class="survey_list_item">
-  <div class="survey_info">
-    <p class="survey_name"><a href="/surveys/@(Survey.Id)">@(Survey.Name)</a></p>
-    <p class="survey_modified">
+<div class="survey-list-item">
+  <div class="survey-info">
+    <p class="survey-name"><a href="/surveys/@(Survey.Id)">@(Survey.Name)</a></p>
+    <p class="survey-modified">
       <span>Последнее изменение:
       @if (Survey.ModifiedAt.Length > 0) {
         @Survey.ModifiedAt
@@ -17,7 +17,7 @@
       </span>
     </p>
   </div>
-  <div class="survey_actions">
+  <div class="survey-actions">
     @if (Survey.IsOpen) {
       <button ><img src="icons/Link.svg"/></button> // получить ссылку на опрос (открыть попап или показать тостер и скопировать автоматически)
       <button @onclick=@OpenStopPopUp><img src="icons/Pause.svg"/></button>

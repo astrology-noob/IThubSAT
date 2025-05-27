@@ -1,19 +1,19 @@
 @using IThubSAT.Data.Models
 
 <div class="section">
-  <div class="section_header">
-    <div class="section_info">
-      <p class="section_name">@SectionName</p>
-      <p class="=section_desc">@SectionDescription</p>
+  <div class="section-header">
+    <div class="section-info">
+      <p class="section-name">@SectionName</p>
+      <p class="=section-desc">@SectionDescription</p>
     </div>
 
     @if (Questions != null) {
-      <button class="collapse_button"><img src="icons/Collapse.svg"/></button>
+      <button class="collapse-button"><img src="icons/Collapse.svg"/></button>
     }
   </div>
 
   @if (Questions != null) {
-    <div class="section_collapse">
+    <div class="section-collapse">
       @foreach (var question in Questions) {
         <SurveyQuestion Question=question/>
       }
