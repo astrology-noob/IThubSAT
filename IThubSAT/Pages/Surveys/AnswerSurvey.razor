@@ -6,56 +6,45 @@
 
 @if (_survey is not null) {
     <TopBar PageName="@(_survey.Name ?? string.Empty)" Username="User"/>
-    <div class="main_content">
-        <div class="answer_survey_content">
-            <div class="left_part_survey">
-                <div class="cur_section_wrapper">
-                        @if (_survey!.IsOpen) {
-                            @if (_curStepNumber == -1) {
-                                <p class="section_name">Choose group</p>
-                                // здесь надо переделать нормально
-                                <select @bind=@_selectedGroupId @bind:after="@(() => OnGroupChange())">
-                                    @foreach (Group group in allGroups) {
-                                        <option value="@group.Id">@group.Name</option>
-                                    }
-                                </select>
-                            }
-                            else {
-                                @if (_workloads.Count > 0) {
-                                    <p class="section_name">@_workloads[_curStepNumber].Discipline.Name</p>
-                                    <div class="attendance_checkbox">
-                                        <div class="checkbox"></div>
-                                        <p>Я не ходил(-а) на этот предмет</p>
-                                    </div>
-                                    <div class="answer_survey_questions">
-                                        @foreach (var question in filteredQuestions) {
-                                            <AnswerSurveyQuestion Question=question/>
-                                        }
-                                    </div>
+    <div class="main-content">
+        <div class="answer-survey-content">
+            <div class="cur-section-wrapper">
+                    @if (_survey!.IsOpen) {
+                        @if (_curStepNumber == -1) {
+                            <p class="section-name">Choose group</p>
+                            // здесь надо переделать нормально
+                            <select @bind=@_selectedGroupId @bind:after="@(() => OnGroupChange())">
+                                @foreach (Group group in allGroups) {
+                                    <option value="@group.Id">@group.Name</option>
                                 }
-                                else {
-                                    <SurveyAnswerError ErrorText="По вашей группе нет данных, обратитесь к администратору" />
-                                }
-                            }
+                            </select>
                         }
                         else {
-                            <SurveyAnswerError ErrorText="Мы сейчас не принимаем ответы на этот опрос :(" />
+                            @if (_workloads.Count > 0) {
+                                <p class="section-name">@_workloads[_curStepNumber].Discipline.Name</p>
+                                <div class="attendance-checkbox">
+                                    <div class="checkbox"></div>
+                                    <p>Я не ходил(-а) на этот предмет</p>
+                                </div>
+                                <div class="answer-survey-questions">
+                                    @foreach (var question in filteredQuestions) {
+                                        <AnswerSurveyQuestion Question=question/>
+                                    }
+                                </div>
+                            }
+                            else {
+                                <SurveyAnswerError ErrorText="По вашей группе нет данных, обратитесь к администратору" />
+                            }
                         }
-                    }            
-                    <div class="bottom_navigation">
-                        <button @onclick=@(()=>ChangeDiscipline(_curStepNumber - 1))>Назад</button>
-                        <button @onclick=@(()=>ChangeDiscipline(_curStepNumber + 1))>Вперёд</button>
-                    </div>
-                </div>
-            </div>
-            <div class="survey_navigation">
-                <div class="@((_curStepNumber == -1) ? "active_item" : "")">Вводная часть</div>
-                <div class="@((_curStepNumber > -1) ? "active_item" : "")">Основная часть</div>
-                @if (_workloads.Count > 0) {
-                    @for (var i = 0; i < _workloads.Count; i++) {
-                        <div class="@((i == _curStepNumber) ? "active_item" : "")">@_workloads[i].Discipline.Name</div>
                     }
-                }
+                    else {
+                        <SurveyAnswerError ErrorText="Мы сейчас не принимаем ответы на этот опрос :(" />
+                    }
+                }            
+                <div class="bottom-navigation">
+                    <button @onclick=@(()=>ChangeDiscipline(_curStepNumber - 1))>Назад</button>
+                    <button @onclick=@(()=>ChangeDiscipline(_curStepNumber + 1))>Вперёд</button>
+                </div>
             </div>
         </div>
     </div>

@@ -9,7 +9,7 @@
   <div class="white-background-content">
     <TabsBar Tabs=Tabs OnTabChosen=OnTabChosen />
 
-    <div class="tab_content">
+    <div class="tab-content">
       @if(Survey.Name != string.Empty) {
         <a href="/surveys/@(SurveyId)/edit">Edit</a> @*подумать, сделать редактирование полностью всей формы на отдельном роуте или не делить редактирование и просмотр?*@
         @(_chosenTab switch {
