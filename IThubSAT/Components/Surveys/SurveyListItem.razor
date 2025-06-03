@@ -4,54 +4,55 @@
 @inject SurveyService SurveyService
 
 <div class="survey-list-item">
-  <div class="survey-info">
-    <p class="survey-name"><a href="/surveys/@(Survey.Id)">@(Survey.Name)</a></p>
-    <p class="survey-modified">
-      <span>Последнее изменение:
-      @if (Survey.ModifiedAt.Length > 0) {
-        @Survey.ModifiedAt
-      }
-      else {
-        @Survey.CreatedAt
-      }
-      </span>
-    </p>
-  </div>
-  <div class="survey-actions">
-    @if (Survey.IsOpen) {
-      <button ><img src="icons/Link.svg"/></button> // получить ссылку на опрос (открыть попап или показать тостер и скопировать автоматически)
-      <button @onclick=@OpenStopPopUp><img src="icons/Pause.svg"/></button>
-    }
-    else {
-      <button @onclick=@OpenPopUp><img src="icons/Export.svg"/></button>
-    }
-    <a href="/surveys/@(Survey.Id)/edit"><img src="icons/Edit.svg" /></a>
-    <button><img src="icons/Menu.svg"/></button>
-  </div>
+    <div class="survey-info">
+        <p class="survey-name"><a href="/surveys/@(Survey.Id)">@(Survey.Name)</a></p>
+        <p class="survey-modified">
+            <span>Последнее изменение:
+                @if (Survey.ModifiedAt.Length > 0) {
+                    @Survey.ModifiedAt
+                }
+                else {
+                    @Survey.CreatedAt
+                }
+            </span>
+        </p>
+    </div>
+    <div class="survey-actions">
+        @if (Survey.IsOpen) {
+            <button ><img src="icons/Link.svg"/></button> // получить ссылку на опрос (открыть попап или показать тостер и скопировать автоматически)
+            <button @onclick=@OpenStopPopUp><img src="icons/Pause.svg"/></button>
+        }
+        else {
+            <button @onclick=@OpenPopUp><img src="icons/Export.svg"/></button>
+        }
+        <a href="/surveys/@(Survey.Id)/edit"><img src="icons/Edit.svg" /></a>
+        <button><img src="icons/Menu.svg"/></button>
+    </div>
 </div>
 
+@* сделать поп-ап контроллер *@
 <PopUp IsActive=@PopUpState Title="Остановить форму" Content="Остановить сбор ответов?" OnCloseButtonClick=ClosePopUp>
-  <Buttons>
-    <button @onclick=@ClosePopUp>Отменить</button>
-    <button @onclick=@StopSurvey>Остановить</button>
-  </Buttons>
+    <Buttons>
+        <button @onclick=@ClosePopUp>Отменить</button>
+        <button @onclick=@StopSurvey>Остановить</button>
+    </Buttons>
 </PopUp>
 
 @code {
-  [Parameter] public Survey Survey { get; set; } = null!;
-  [Parameter] public EventCallback StopSurvey { get; set; }
+    [Parameter] public Survey Survey { get; set; } = null!;
+    [Parameter] public EventCallback StopSurvey { get; set; }
 
-  public bool PopUpState { get; set; } = false;
+    public bool PopUpState { get; set; } = false;
 
-  public void OpenStopPopUp() {
-    PopUpState = true;
-  }
+    public void OpenStopPopUp() {
+        PopUpState = true;
+    }
 
-  public void OpenPopUp() {
-    return;
-  }
+    public void OpenPopUp() {
+        return;
+    }
 
-  public void ClosePopUp() {
-    PopUpState = false;
-  }
+    public void ClosePopUp() {
+        PopUpState = false;
+    }
 } 

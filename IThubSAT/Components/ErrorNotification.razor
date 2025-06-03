@@ -1,8 +1,10 @@
-    <!--ERRORNOTIFICATION-->
-    <template id="ErrorNotification">
-      <div class="notification is-warning">
-        <button class="delete ${HideClass}" onclick="${Hide}"></button>
-        ${Text}
-      </div>
-    </template>
-    <!--ERRORNOTIFICATION-->
+@if (!string.IsNullOrEmpty(ErrorText)) {
+    <div class="notification is-warning">
+        <button class="delete" @onclick=""></button>
+        @ErrorText
+    </div>
+}
+
+@code {
+    [Parameter] public string ErrorText { get; set; } = string.Empty;
+}

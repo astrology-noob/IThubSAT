@@ -6,5 +6,6 @@ public enum Tab
     All,
     Questions,
     Workload,
-    Settings
+    Settings,
+    Preview
 }

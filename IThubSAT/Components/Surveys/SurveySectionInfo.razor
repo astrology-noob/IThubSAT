@@ -1,29 +1,30 @@
 @using IThubSAT.Data.Models
 
 <div class="section">
-  <div class="section-header">
-    <div class="section-info">
-      <p class="section-name">@SectionName</p>
-      <p class="=section-desc">@SectionDescription</p>
+    <div class="section-header">
+        <div class="section-info">
+            <p class="section-name">@SectionName</p>
+                @* SectionDescription отображать в виде мелкого текста с иконкой вопросит. знака *@
+            <p class="section-desc">@SectionDescription</p>
+        </div>
+
+        @if (Questions != null) {
+            <button class="collapse-button"><img src="icons/Collapse.svg"/></button>
+        }
     </div>
 
     @if (Questions != null) {
-      <button class="collapse-button"><img src="icons/Collapse.svg"/></button>
+        <div class="section-collapse">
+            @foreach (var question in Questions) {
+                <SurveyQuestion Question=question/>
+            }
+        </div>
     }
-  </div>
-
-  @if (Questions != null) {
-    <div class="section-collapse">
-      @foreach (var question in Questions) {
-        <SurveyQuestion Question=question/>
-      }
     </div>
-  }
-</div>
 
 
 @code {
-  [Parameter] public IEnumerable<Question>? Questions { get; set; }
-  [Parameter] public string SectionName { get; set; } = string.Empty;
-  [Parameter] public string SectionDescription { get; set; } = string.Empty;
+    [Parameter] public IEnumerable<Question>? Questions { get; set; }
+    [Parameter] public string SectionName { get; set; } = string.Empty;
+    [Parameter] public string SectionDescription { get; set; } = string.Empty;
 }

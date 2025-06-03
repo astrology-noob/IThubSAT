@@ -5,15 +5,15 @@
 
 @* Сделать отдельный компонент tool bar? *@
 <div class="tool-bar">
-  <div class="dropdown-bars">
-    <Dropdown Placeholder="Кафедра" />
-    <Dropdown Placeholder="Группа/Подгруппа" />
-    <Dropdown Placeholder="Дисциплина" />
-    <Dropdown Placeholder="Преподаватель" />
-  </div>
+    <div class="dropdown-bars">
+        <Dropdown Placeholder="Кафедра" />
+        <Dropdown Placeholder="Группа/Подгруппа" />
+        <Dropdown Placeholder="Дисциплина" />
+        <Dropdown Placeholder="Преподаватель" />
+    </div>
 
-  <button class="primary-button">Импорт</button>
-  <button class="primary-button">Экспорт</button>
+    <button class="primary-button">Импорт</button>
+    <button class="primary-button">Экспорт</button>
 </div>
 
 @* Сделать отдельные компоненты - строка таблицы и ячейка таблицы? *@
@@ -50,11 +50,12 @@
 </div>
 
 @code {
-  [Parameter] public Survey Survey { get; set; } = null!;
-  private List<Workload> _workload { get; set; } = new();
-  protected async override Task OnInitializedAsync()
-  {
-    _workload = await SurveyService.GetWorkloadBySurveyId(Survey.Id);
-    await base.OnInitializedAsync();
-  }
+    [Parameter] public Survey Survey { get; set; } = null!;
+    private List<Workload> _workload { get; set; } = new();
+    
+    protected async override Task OnInitializedAsync()
+    {
+        _workload = await SurveyService.GetWorkloadBySurveyId(Survey.Id);
+        await base.OnInitializedAsync();
+    }
 }
