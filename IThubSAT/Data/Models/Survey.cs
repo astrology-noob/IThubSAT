@@ -5,6 +5,9 @@ public class Survey
 {   
     [Key]
     public int Id { get; set; }
+
+    [Required]  
+    [StringLength(50, ErrorMessage = "Максимум 50 символов.")]
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string IntroductionText { get; set; } = string.Empty;

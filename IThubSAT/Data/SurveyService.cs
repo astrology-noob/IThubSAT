@@ -33,15 +33,15 @@ public class SurveyService
                                     .ThenInclude(q => q.DisciplineType)
                                 .Where(s => s.Id == SurveyId)
                                 .FirstOrDefaultAsync();
-        // return survey;
     }
 
-    public async Task<Survey> CreateSurveyAsync(Survey survey)
+    public async Task<int> AddSurveyAsync(Survey survey)
     {
+        survey.CreatedBy = GetSingleUser();
         _dbContext.Surveys.Add(survey);
         await _dbContext.SaveChangesAsync();
 
-        return survey;
+        return survey.Id;
     }
 
     public async Task<Survey> DeleteSurveyAsync(Survey survey)

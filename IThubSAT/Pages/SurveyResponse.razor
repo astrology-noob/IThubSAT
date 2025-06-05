@@ -5,7 +5,6 @@
 @inject SurveyService SurveyService
 
 @if (_survey is not null) {
-    <TopBar PageName="@(_survey.Name ?? string.Empty)" Username="User"/>
     <div class="main-content">
         <div class="answer-survey-content">
             <div class="cur-section-wrapper">
@@ -28,17 +27,17 @@
                                 </div>
                                 <div class="answer-survey-questions">
                                     @foreach (var question in filteredQuestions) {
-                                        <AnswerSurveyQuestion Question=question/>
+                                        <SurveyResponseQuestion Question=question/>
                                     }
                                 </div>
                             }
                             else {
-                                <SurveyAnswerError ErrorText="По вашей группе нет данных, обратитесь к администратору" />
+                                <SurveyResponseError ErrorText="По вашей группе нет данных, обратитесь к администратору" />
                             }
                         }
                     }
                     else {
-                        <SurveyAnswerError ErrorText="Мы сейчас не принимаем ответы на этот опрос :(" />
+                        <SurveyResponseError ErrorText="Мы сейчас не принимаем ответы на этот опрос :(" />
                     }
                 }            
                 <div class="bottom-navigation">
@@ -50,7 +49,7 @@
     </div>
 }
 else {
-    <SurveyAnswerError ErrorText="Такого опроса не нашли :(" /> 
+    <SurveyResponseError ErrorText="Такого опроса не нашли :(" /> 
     @* отправлять из сервиса ошибку именно? *@
 }
 

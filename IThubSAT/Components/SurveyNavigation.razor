@@ -1,6 +1,6 @@
 @* до версии 2.0 оставляю *@
 
-<div class="survey-navigation">
+@* <div class="survey-navigation">
     <div class="@((_curStepNumber == -1) ? "active-item" : "")">Вводная часть</div>
     <div class="@((_curStepNumber > -1) ? "active-item" : "")">Основная часть</div>
     @if (_workloads.Count > 0) {
@@ -8,4 +8,4 @@
             <div class="@((i == _curStepNumber) ? "active-item" : "")">@_workloads[i].Discipline.Name</div>
         }
     }
-</div>
+</div> *@
