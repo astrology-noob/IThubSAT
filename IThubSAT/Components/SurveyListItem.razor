@@ -20,7 +20,7 @@
     <div class="survey-actions">
         @if (Survey.IsOpen) {
             <button ><img src="icons/Link.svg"/></button> // получить ссылку на опрос (открыть попап или показать тостер и скопировать автоматически)
-            <button @onclick=@OpenStopPopUp><img src="icons/Pause.svg"/></button>
+            <button @onclick=@(()=>popUp.Show())><img src="icons/Pause.svg" /></button>
         }
         else {
             <button @onclick=@OpenPopUp><img src="icons/Export.svg"/></button>
@@ -31,7 +31,7 @@
 </div>
 
 @* сделать поп-ап контроллер *@
-<PopUp IsActive=@PopUpState Title="Остановить форму" Content="Остановить сбор ответов?" OnCloseButtonClick=ClosePopUp>
+<PopUp IsActive=@PopUpState Title="Остановить опрос" Content="Остановить сбор ответов?" OnCloseButtonClick=ClosePopUp>
     <Buttons>
         <button @onclick=@ClosePopUp>Отменить</button>
         <button @onclick=@StopSurvey>Остановить</button>
@@ -42,17 +42,5 @@
     [Parameter] public Survey Survey { get; set; } = null!;
     [Parameter] public EventCallback StopSurvey { get; set; }
 
-    public bool PopUpState { get; set; } = false;
-
-    public void OpenStopPopUp() {
-        PopUpState = true;
-    }
-
-    public void OpenPopUp() {
-        return;
-    }
-
-    public void ClosePopUp() {
-        PopUpState = false;
-    }
+    [Inject] public PopUp popUp { get; set; }
 } 

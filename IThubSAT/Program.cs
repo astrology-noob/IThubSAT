@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using IThubSAT.Data;
 using Microsoft.EntityFrameworkCore;
 
