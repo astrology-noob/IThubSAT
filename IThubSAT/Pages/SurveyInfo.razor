@@ -1,5 +1,6 @@
 @page "/surveys/{SurveyId:int}"
 @using IThubSAT.Components
+@using IThubSAT.Components.Tabs
 @using IThubSAT.Data
 @using IThubSAT.Data.Models
 @inject SurveyService SurveyService
@@ -15,7 +16,7 @@
                 @(_chosenTab switch {
                     Tab.Questions => (@<SurveySections Survey=Survey/>),
                     Tab.Workload => (@<WorkloadTable Survey=Survey/>),
-                    Tab.Preview => (@<SurveySettings />),
+                    Tab.Preview => (@<SurveyPreview />),
                     _ => (@<p>"Такой вкладки нет здесь"</p>)
                 })
             }
@@ -32,10 +33,7 @@
     public List<Tab> Tabs = new() { Tab.Questions, Tab.Workload, Tab.Settings };
     private Tab _chosenTab;
 
-    public void OnTabChosen (Tab chosenTab) {
-        _chosenTab = chosenTab;
-        @* Console.WriteLine(chosenTab); *@
-    }
+    public void OnTabChosen(Tab chosenTab) => _chosenTab = chosenTab;
 
     protected Survey Survey = new Survey();
     protected async override Task OnInitializedAsync()

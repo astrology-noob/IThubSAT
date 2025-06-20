@@ -1,0 +1,88 @@
+@using IThubSAT.Data.Models
+@using IThubSAT.Data
+@using IThubSAT.Components
+@using IThubSAT.Data.ViewModels
+@inject SurveyService SurveyService
+@inject WorkloadService WorkloadService
+
+@* Сделать отдельный компонент tool bar? *@
+<div class="tool-bar">
+    <div class="dropdown-bars">
+        <Dropdown Placeholder="Кафедра" ChosenOption="@workloadListViewModel.SelectedFacultyId" List="@workloadListViewModel.Faculties" /> @*(сюда может только int+строки передавать? Всё равно же по айдишнику буду понимать что там выбрано)*@
+        <Dropdown Placeholder="Группа/Подгруппа" ChosenOption="@workloadListViewModel.Groups" List="@workloadListViewModel.Groups" /> @*насчёт подгрупп хз что делать, потому что у групп и групп английского могут быть одинаковые айдишники. наверное лучше разные фильтры сделать*@
+        <Dropdown Placeholder="Дисциплина" ChosenOption="@workloadListViewModel.SelectedDisciplineId" List="@workloadListViewModel.Disciplines" />
+        <Dropdown Placeholder="Преподаватель" ChosenOption="@workloadListViewModel.SelectedTeacherId" List="@workloadListViewModel.Teachers" />
+    </div>
+
+    <button class="primary-button" href="Workload/DownloadTemplate">Скачать шаблон для импорта</button>
+    
+    <button class="primary-button" href="/surveys/@(Survey.Id)/import">Импорт</button>
+    <button class="primary-button">Экспорт</button>
+</div>
+
+@* Сделать отдельные компоненты именно на табы *@
+@* Сделать отдельные компоненты - строка таблицы и ячейка таблицы? *@
+<div class="table-wrapper">
+    <div class="table is-fullwidth">
+        <div class="table-row">
+            <div>Кафедра</div>
+            <div>Курс</div>
+            <div>Группа</div>
+            <div>Дисциплина</div>
+            <div>Преподаватель</div>
+            <div>Часы в неделю</div>
+            <div>Часы всего</div>
+        </div>
+        @if (Workloads.Count() > 0)
+            @foreach (var workloadRow in Workloads) {
+                <div class="table-row">
+                    <div>@(workloadRow.Group?.Faculty.Name ?? string.Empty)</div>
+                    <div>@workloadRow.Group?.StudyYear ?? string.Empty</div>
+                    <div>@workloadRow.Group?.Name ?? string.Empty</div>
+                    <div>@workloadRow.Discipline.Name</div>
+                    <div>@workloadRow.Teacher.FirstName</div>
+                    <div>@workloadRow.WeeklyHours</div>
+                    <div>@workloadRow.TotalHours</div>
+                </div>
+            }
+        }
+        else {
+        <div class="table-row">
+            <div>Пока нет вообще никакой нагрузки</div>
+        </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public Survey Survey { get; set; } = null!;
+    // private List<Workload> _workload { get; set; } = new();
+    public IEnumerable<Workload> Workloads { get; set; }
+
+    // какие у меня фильтры - преподаватель, кафедра, уч. год (учебный год у меня в рамках групп Т_Т), группа
+    public int? SelectedFacultyId { get; set; }
+    public int? SelectedGroupId { get; set; }
+    public int? SelectedTeacherId { get; set; }
+    public int? SelectedDisciplineId { get; set; }
+
+    // Dropdown lists for filter options
+    public IEnumerable<Faculty> Faculties { get; set; }
+    public IEnumerable<Group> Groups { get; set; }
+    public IEnumerable<Teacher> Teachers { get; set; }
+    public IEnumerable<Discipline> Disciplines { get; set; }
+
+    // Pagination properties
+    public int CurrentPage { get; set; }
+    public int TotalPages { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        Workloads = await SurveyService.GetWorkloadBySurveyId(Survey.Id);
+
+        Groups = await SurveyService.GetGroupsBySurveyId(Survey.Id);
+        Teachers = await SurveyService.GetTeachersBySurveyId(Survey.Id);
+        Faculties = await SurveyService.GetFacultiesBySurveyId(Survey.Id);
+
+        await base.OnInitializedAsync();
+    }
+}

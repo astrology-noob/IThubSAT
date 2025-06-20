@@ -13,7 +13,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddScoped<SurveyService>(sp =>
+builder.Services.AddScoped<XlsxProcessingService>(sp =>
+{
+    var dbContext = sp.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
+    return new (dbContext);
+});
+builder.Services.AddScoped(sp =>
 {
     var dbContext = sp.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     return new SurveyService(dbContext);
@@ -32,6 +37,10 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+
+app.MapGet("Workload/DownloadTemplate", (XlsxProcessingService service) => service.DownloadTemplate());
+// для этого зачем вообще путь отдельный?
+//app.MapGet("Workload/Import", (ImportService service) => service.Import());
 
 app.UseRouting();
 
