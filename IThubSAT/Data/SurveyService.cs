@@ -16,9 +16,7 @@ public class SurveyService
     public static async Task<List<Survey>> GetSurveys() => await _dbContext.Surveys.ToListAsync();
 
     public static async Task<Survey?> GetSurveyByIdAsync(int SurveyId) =>
-        await _dbContext.Surveys.Include(s => s.Questions).ThenInclude(q => q.QuestionType)
-                                .Include(s => s.Questions).ThenInclude(q => q.DisciplineType)
-                                .Where(s => s.Id == SurveyId).FirstOrDefaultAsync();
+        await _dbContext.Surveys.Include(s => s.Questions).Where(s => s.Id == SurveyId).FirstOrDefaultAsync();
 
     public static async Task<int> AddSurveyAsync(Survey survey)
     {
@@ -43,9 +41,7 @@ public class SurveyService
                                     .Include(s => s.Workloads).ThenInclude(w => w.Discipline)
                                     .Where(s => s.Id == surveyId).FirstOrDefaultAsync())?.Workloads ?? [];
 
-    public static async Task<List<Question>> GetQuestionsBySurveyId(int surveyId) =>
-        await _dbContext.Questions.Include(q => q.QuestionType).Include(q => q.DisciplineType)
-                                    .Where(q => q.SurveyId == surveyId).ToListAsync();
+    public static async Task<List<Question>> GetQuestionsBySurveyId(int surveyId) => await _dbContext.Questions.Where(q => q.SurveyId == surveyId).ToListAsync();
 
     // метод для проверки дублирующейся нагрузки (если уже есть набор дисциплина+(группа/подгруппа/клуб)+преподаватель)
     public static async Task<Workload?> GetSpecificWorkload(Group group, Discipline discipline, Teacher teacher) =>

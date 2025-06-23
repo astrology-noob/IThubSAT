@@ -8,7 +8,7 @@
         }
     </p>
     
-    @if (Question.QuestionType.Name == "Шкала") {
+    @if (Question.QuestionType == QuestionType.Scale) {
         <div class="=scale-question">
             <div class="=scale-min-max">
                 "Не знаю, я вообще не ходил(-а) на этот предмет"
@@ -27,30 +27,6 @@
             </div>
         </div>
     }
-
-    @* @(Question.QuestionType.Name switch {
-        "Шкала" => (
-            @<div class="=scale-question">
-                <div class="=scale-min-max">
-                    "Не знаю, я вообще не ходил(-а) на этот предмет"
-                </div>
-                <div class="scale-buttons">
-                    @for (int i = 0; i < 6; i++) {
-                        <div class="scale-button">
-                            <div class="scale-radio-button"></div>
-                            <p>@i</p>
-                        </div>
-                    }
-                </div>
-                <div class="=scale-min-max">
-                    "Определенно все интересно на занятии" 
-                    @* сукаа, а как вот это вот хранить...
-                </div>
-            </div>
-        ),
-        - => "Чё за хуйня"
-    }) *@
-
 </div>
 
 @code {

@@ -1,17 +1,15 @@
 @using IThubSAT.Data.Models
 @using IThubSAT.Data
 @using IThubSAT.Components
-@using IThubSAT.Data.ViewModels
 @inject SurveyService SurveyService
-@inject WorkloadService WorkloadService
 
 @* Сделать отдельный компонент tool bar? *@
 <div class="tool-bar">
     <div class="dropdown-bars">
-        <Dropdown Placeholder="Кафедра" ChosenOption="@workloadListViewModel.SelectedFacultyId" List="@workloadListViewModel.Faculties" /> @*(сюда может только int+строки передавать? Всё равно же по айдишнику буду понимать что там выбрано)*@
-        <Dropdown Placeholder="Группа/Подгруппа" ChosenOption="@workloadListViewModel.Groups" List="@workloadListViewModel.Groups" /> @*насчёт подгрупп хз что делать, потому что у групп и групп английского могут быть одинаковые айдишники. наверное лучше разные фильтры сделать*@
-        <Dropdown Placeholder="Дисциплина" ChosenOption="@workloadListViewModel.SelectedDisciplineId" List="@workloadListViewModel.Disciplines" />
-        <Dropdown Placeholder="Преподаватель" ChosenOption="@workloadListViewModel.SelectedTeacherId" List="@workloadListViewModel.Teachers" />
+        <Dropdown Placeholder="Кафедра" ChosenOption="@SelectedFacultyId" List="@Faculties" /> @*(сюда может только int+строки передавать? Всё равно же по айдишнику буду понимать что там выбрано)*@
+        <Dropdown Placeholder="Группа/Подгруппа" ChosenOption="@Groups" List="@Groups" /> @*насчёт подгрупп хз что делать, потому что у групп и групп английского могут быть одинаковые айдишники. наверное лучше разные фильтры сделать*@
+        <Dropdown Placeholder="Дисциплина" ChosenOption="@SelectedDisciplineId" List="@Disciplines" />
+        <Dropdown Placeholder="Преподаватель" ChosenOption="@SelectedTeacherId" List="@Teachers" />
     </div>
 
     <button class="primary-button" href="Workload/DownloadTemplate">Скачать шаблон для импорта</button>

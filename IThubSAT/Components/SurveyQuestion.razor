@@ -1,8 +1,8 @@
 @using IThubSAT.Data.Models
 
 @* ЭТО ИМЕННО ВОПРОС В ПРОСМОТРЕ ОПРОСА *@
-@(Question.QuestionType.Name switch {
-    "Шкала" => (@<div class="survey-question-info">@Question.Text</div>),
+@(Question.QuestionType switch {
+    QuestionType.Scale => (@<div class="survey-question-info">@Question.Text</div>),
     _ => (@<div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>)
 })
 

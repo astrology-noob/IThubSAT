@@ -16,7 +16,6 @@ public class AppDbContext : DbContext
     public DbSet<EnglishLevel> EnglishLevels { get; set; } = null!;
     public DbSet<Faculty> Faculties { get; set; } = null!;
     public DbSet<Group> Groups { get; set; } = null!;
-    public DbSet<QuestionType> QuestionTypes { get; set; } = null!;
     public DbSet<Question> Questions { get; set; } = null!;
     public DbSet<Teacher> Teachers { get; set; } = null!;
     public DbSet<UserType> UserTypes { get; set; } = null!;
