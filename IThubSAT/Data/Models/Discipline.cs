@@ -6,6 +6,6 @@ public class Discipline
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public int DisciplineTypeId { get; set; }
-    public DisciplineType DisciplineType { get; set; } = null!;
+    public DisciplineType DisciplineType { get; set; }
     public bool IsOptional { get; set; }
 }

@@ -25,8 +25,14 @@
     </div>
 }
 
-<div class="import-summary">
-    @*сюда только ошибки выводить*@
+<div class="import-summary" style="width: 500px">
+    @foreach (var error in _importErrors)
+    {
+        <div style="height: 50px; display: flex; align-items: center; justify-content: space-between">
+            <div style="font-size: large; color: red">@error.RowNumber</div>
+            <div>@error.Message</div>
+        </div>
+    }
 </div>
 
 @code {
@@ -34,12 +40,11 @@
     // The uploaded Excel file (.xlsx)
     public IBrowserFile? FileUpload { get; set; }
     // Message for overall import status
-    public string Message { get; set; } = string.Empty;
     private int _totalImportedRows;
     private string _importMessage = string.Empty;
-    private List<ImportError>? _importErrors;
+    private List<ImportError> _importErrors = new();
 
-    private void LoadFiles(InputFileChangeEventArgs e)
+    private async Task LoadFiles(InputFileChangeEventArgs e)
     {
         FileUpload = e.File;
 
@@ -48,9 +53,6 @@
             _importMessage = "Please select an Excel file to upload.";
             return;
         }
-
-        // importResults только для ошибок - в ошибках только номер строки и сообщение, в чём проблема
-        _importErrors = [];
 
         using (var stream = FileUpload.OpenReadStream())
         {
@@ -66,70 +68,119 @@
                 // Loop from row 2 (assuming row 1 contains headers)
                 for (int row = 2; row <= rowCount; row++)
                 {
-                    string faculty = worksheet.Cells[row, 1].Text.Trim();
-                    string studyYearText = worksheet.Cells[row, 2].Text.Trim();
-                    string group = worksheet.Cells[row, 3].Text.Trim();
-                    string englishGroup = worksheet.Cells[row, 4].Text.Trim();
-                    string discipline = worksheet.Cells[row, 5].Text.Trim();
-                    string teacher = worksheet.Cells[row, 6].Text.Trim();
-                    string hoursInSemester = worksheet.Cells[row, 7].Text.Trim();
-                    string hoursInWeek = worksheet.Cells[row, 8].Text.Trim();
-                    string englishLevel = worksheet.Cells[row, 9].Text.Trim();
-                    string comment = worksheet.Cells[row, 10].Text.Trim();
-                    string studentsInGroupText = worksheet.Cells[row, 11].Text.Trim();
+                    string faculty              = worksheet.Cells[row, 1].Text.Trim();
+                    string studyYearText        = worksheet.Cells[row, 2].Text.Trim();
+                    string groupName            = worksheet.Cells[row, 3].Text.Trim();
+                    string englishGroupName     = worksheet.Cells[row, 4].Text.Trim();
+                    string sportClubName        = worksheet.Cells[row, 5].Text.Trim();
+                    string disciplineName       = worksheet.Cells[row, 6].Text.Trim();
+                    string teacherName          = worksheet.Cells[row, 7].Text.Trim();
+                    string hoursInSemester      = worksheet.Cells[row, 8].Text.Trim();
+                    string hoursInWeek          = worksheet.Cells[row, 9].Text.Trim();
+                    string englishLevelName     = worksheet.Cells[row, 10].Text.Trim();
+                    string comment              = worksheet.Cells[row, 11].Text.Trim();
+                    string studentsInGroupText  = worksheet.Cells[row, 12].Text.Trim();
 
                     // Skip rows with an empty discipline name.
-                    if (string.IsNullOrWhiteSpace(discipline) || string.IsNullOrWhiteSpace(teacher))
+                    if (string.IsNullOrWhiteSpace(disciplineName) || string.IsNullOrWhiteSpace(teacherName))
                         continue;
 
                     var importError = new ImportError() { RowNumber = row };
+
+                    // наверное даже все эти вары можно заранее задать ещё до перечисления, только их нужно будет обнулять перед каждой строкой
 
                     try
                     {
                         int studyYear = int.Parse(studyYearText);
                         int studentsInGroup = int.Parse(studentsInGroupText);
 
-                        // Retrieve or create Category.
-                        var groupObj = SurveyService.GetGroupByName(group);
-                        if (category == null)
+                        // а если это спортклуб, у меня же не должно быть группы учебной. может сделать чекбокс?
+                        var group = await SurveyService.GetGroupByName(groupName);
+                        if (group == null)
                         {
-                            category = new Category { Name = discipline, Description = "" };
-                            _dbContext.Categories.Add(category);
-                            // Do not save here; let the transaction handle it.
+                            group = new() { Faculty = new() { Name = faculty }, Name = groupName, StudyYear = studyYear, StudentsInGroup = studentsInGroup };
+                            await SurveyService.AddNewGroup(group);
                         }
-                        // Retrieve or create Supplier.
-                        var supplier = await _dbContext.Suppliers.FirstOrDefaultAsync(s => s.Name == teacher);
-                        if (supplier == null)
-                        {
-                            supplier = new Supplier
-                            {
-                                Name = teacher,
-                                ContactEmail = hoursInSemester,
-                                PhoneNumber = hoursInWeek
-                            };
-                            _dbContext.Suppliers.Add(supplier);
-                        }
-                        var teacher_fio = teacher.Split(' ');
 
-                        // Generate the SKU dynamically.
-                        string generatedSKU = GenerateSKU(discipline, englishLevel, faculty, supplier.Name);
-                        // Check if a product with the generated SKU already exists.
-                        var workload = await _dbContext.Workloads.FirstOrDefaultAsync(p => p.SKU == generatedSKU);
+                        var disciplineType = DisciplineType.General;
+
+
+                        EnglishLevel? englishLevel = null;
+                        EnglishGroup? englishGroup = null;
+
+                        if (!string.IsNullOrWhiteSpace(englishLevelName) && !string.IsNullOrWhiteSpace(englishGroupName))
+                        {
+                            disciplineType = DisciplineType.English;
+
+                            englishLevel = await SurveyService.GetEnglishLevelByName(englishLevelName);
+                            if (englishLevel == null)
+                            {
+                                englishLevel = new() { Name = englishLevelName };
+                                await SurveyService.AddNewEnglishLevel(englishLevel);
+                            }
+
+                            englishGroup = await SurveyService.GetEnglishGroupByName(englishGroupName);
+                            if (englishGroup == null)
+                            {
+                                englishGroup = new() { Name = englishGroupName, EnglishLevel = englishLevel };
+                                await SurveyService.AddNewEnglishGroup(englishGroup);
+                            }
+                        }
+
+                        var sportClub = await SurveyService.GetsportClubByName(sportClubName);
+                        if (sportClub == null)
+                        {
+                            sportClub = new() { Name = sportClubName };
+                            await SurveyService.AddNewSportClub(sportClub);
+
+                            if (disciplineType == DisciplineType.English)
+                            {
+                                // если до этого дисциплину обозначили как английский - ошибка, шаблон заполнен неправильно
+                                AddImportError(importError, "Дисциплина одновременно является иностранным языком и спортклубом");
+                                continue;
+                            }
+
+                            disciplineType = DisciplineType.Sport;
+                        }
+
+                        var discipline = await SurveyService.GetDisciplineByName(disciplineName);
+                        if (discipline == null)
+                        {
+                            // получать чекбокс, является ли факультативом
+                            discipline = new() { Name = disciplineName, IsOptional = false, DisciplineType = disciplineType };
+                            await SurveyService.AddNewDiscipline(discipline);
+                        }
+
+                        var teacherFio = teacherName.Split(' ');
+
+                        var teacher = await SurveyService.GetTeacherByFio(teacherFio);
+                        if (teacher == null)
+                        {
+                            teacher = new() { LastName = teacherFio[0], FirstName = teacherFio[1], PaternalName = teacherFio[2] };
+                            await SurveyService.AddNewTeacher(teacher);
+                        }
+
+                        Workload? workload = disciplineType switch
+                        {
+                            DisciplineType.General => await SurveyService.GetSpecificWorkload(group, discipline, teacher),
+                            DisciplineType.English => await SurveyService.GetSpecificWorkload(group, englishLevel!, discipline, teacher),
+                            DisciplineType.Sport => await SurveyService.GetSpecificWorkload(sportClub, discipline, teacher),
+                            _ => throw new ArgumentOutOfRangeException(nameof(disciplineType), $"Not expected direction value: {disciplineType}"),
+                        };
 
                         if (workload == null)
                         {
-                            // Create a new product.
                             workload = new Workload
                             {
                                 SurveyId = surveyId,
-                                Group = new() { Faculty = new() { Name = faculty }, Name = group, StudyYear = studyYear, StudentsInGroup = studentsInGroup },
-                                // disciplinetype нужно брать на основе наличия подгрупп
-                                Discipline = new() { Name = discipline, IsOptional = false, DisciplineType = new()},
-                                Teacher = new() { LastName = teacher_fio[0], FirstName = teacher_fio[1], PaternalName = teacher_fio[2] },
-                                EnglishGroup = new() { Name = englishGroup, EnglishLevel = new() { Name = englishLevel } },
-                                SportClub = new() { Name = group }, // если дисциплина клубная физкультура, то спорт клуб, если нет, то группа
+                                Group = group,
+                                Discipline = discipline,
+                                Teacher = teacher,
+                                EnglishGroup = englishGroup,
+                                SportClub = sportClub,
                                 WeeklyHours = int.Parse(hoursInWeek),
                                 TotalHours = int.Parse(hoursInSemester),
+                                // ещё один столбец
                                 TeacherIsCurrent = false,
                                 Comment = comment
                             };
@@ -138,67 +189,74 @@
                             var validationResults = new List<ValidationResult>();
                             if (!Validator.TryValidateObject(workload, validationContext, validationResults, true))
                             {
-                                importError.ErrorMessage = string.Join("; ", validationResults.Select(v => v.ErrorMessage));
-                                _importErrors.Add(importError);
+                                AddImportError(importError, string.Join("; ", validationResults.Select(v => v.ErrorMessage)));
                                 continue;
                             }
-                            _dbContext.Workloads.Add(workload);
+
+                            await SurveyService.AddNewWorkload(workload);
                         }
                         else
                         {
-                            // Update existing product.
-                            product.Description = studyYear;
-                            product.Price = price;
-                            product.Quantity = quantity;
-                            product.Brand = englishLevel;
-                            product.DiscountPercentage = discount;
-                            product.IsActive = isActive;
-                            product.Category = category;
-                            product.Supplier = supplier;
-                            var validationContext = new ValidationContext(product, null, null);
+                            workload.SurveyId = surveyId;
+                            workload.Group = group;
+                            workload.Discipline = discipline;
+                            workload.Teacher = teacher;
+                            workload.EnglishGroup = englishGroup;
+                            workload.SportClub = sportClub;
+                            workload.WeeklyHours = int.Parse(hoursInWeek);
+                            workload.TotalHours = int.Parse(hoursInSemester);
+                            // ещё один столбец
+                            workload.TeacherIsCurrent = false;
+                            workload.Comment = comment;
+
+                            var validationContext = new ValidationContext(workload, null, null);
                             var validationResults = new List<ValidationResult>();
-                            if (!Validator.TryValidateObject(product, validationContext, validationResults, true))
+                            if (!Validator.TryValidateObject(workload, validationContext, validationResults, true))
                             {
-                                importError.ErrorMessage = string.Join("; ", validationResults.Select(v => v.ErrorMessage));
-                                _importErrors.Add(importError);
+                                AddImportError(importError, string.Join("; ", validationResults.Select(v => v.ErrorMessage)));
                                 continue;
                             }
-                            _dbContext.Products.Update(product);
+
+                            SurveyService.UpdateWorkload(workload);
                         }
-                        
+
                         _totalImportedRows++;
                     }
                     catch (Exception ex)
                     {
-                        importError.ErrorMessage = $"Exception: {ex.Message}";
-                        _importErrors.Add(importError);
+                        AddImportError(importError, $"Ошибка: {ex.Message}");
                     }
                 } // end for loop
             }
         }
-        // Перенести в surveyservice
-        using (var transaction = await _dbContext.Database.BeginTransactionAsync())
-        {
-            try
-            {
-                await _dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                await transaction.RollbackAsync();
-                ModelState.AddModelError("", "An error occurred while saving changes: " + ex.Message);
-                // Optionally, log the error.
-            }
-        }
 
-        _importMessage = $"Import process completed. {_totalImportedRows} products processed successfully.";
+        string saveStatus = await SurveyService.PerformTransaction();
+        _importMessage = saveStatus == string.Empty ? $"Import process completed. {_totalImportedRows} products processed successfully." : saveStatus;
         return;
+    }
+
+    // придумать как сделать
+    // private void Validate(Workload workload)
+    // {
+    //     var validationContext = new ValidationContext(workload, null, null);
+    //     var validationResults = new List<ValidationResult>();
+    //     if (!Validator.TryValidateObject(workload, validationContext, validationResults, true))
+    //     {
+    //         importError.ErrorMessage = string.Join("; ", validationResults.Select(v => v.ErrorMessage));
+    //         _importErrors.Add(importError);
+    //         continue;
+    //     }
+    // }
+
+    private void AddImportError(ImportError importError, string errorMessage)
+    {
+        importError.Message = errorMessage;
+        _importErrors.Add(importError);
     }
 
     private class ImportError
     {
         public int RowNumber;
-        public string ErrorMessage = string.Empty;
+        public string Message = string.Empty;
     }
 }

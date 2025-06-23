@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class SurveyService
 {
-    private static AppDbContext _dbContext;
+    private static AppDbContext _dbContext = null!;
 
     public SurveyService(AppDbContext db) { _dbContext = db; }
 
@@ -47,8 +47,18 @@ public class SurveyService
         await _dbContext.Questions.Include(q => q.QuestionType).Include(q => q.DisciplineType)
                                     .Where(q => q.SurveyId == surveyId).ToListAsync();
 
-    // нужен метод для проверки дублирующейся нагрузки (если уже есть набор дисциплина+группа+преподаватель)
+    // метод для проверки дублирующейся нагрузки (если уже есть набор дисциплина+(группа/подгруппа/клуб)+преподаватель)
+    public static async Task<Workload?> GetSpecificWorkload(Group group, Discipline discipline, Teacher teacher) =>
+        await _dbContext.Workloads.FirstOrDefaultAsync(x => x.Group == group && x.Discipline == discipline && x.Teacher == teacher);
+    // у английского отдельный прикол - а, нет, будем считать что подгруппа это идентификатор и по нему искать.
+    // нет, это всё-таки проблема. если уровень и уч. группа и препод одинаковые, то отличить подгруппы друг от друга нельзя, а соответственно и определить какую из них выбрал студент.
+    // дубляжа по уч. группе, преподу и уровню быть не должно
+    public static async Task<Workload?> GetSpecificWorkload(Group group, EnglishLevel englishLevel, Discipline discipline, Teacher teacher) =>
+        await _dbContext.Workloads.FirstOrDefaultAsync(x => x.Group == group && x.EnglishGroup!.EnglishLevel == englishLevel && x.Discipline == discipline && x.Teacher == teacher);
+    public static async Task<Workload?> GetSpecificWorkload(SportClub sportClub, Discipline discipline, Teacher teacher) =>
+        await _dbContext.Workloads.FirstOrDefaultAsync(x => x.SportClub == sportClub && x.Discipline == discipline && x.Teacher == teacher);
 
+    // это для фильтров
     // здесь может каким-то образом получать не прям объекты а id + конкретные поля?
     public static async Task<List<Group>> GetGroupsBySurveyId(int surveyId) =>
         await _dbContext.Workloads.Include(w => w.Group).Where(w => w.SurveyId == surveyId)
@@ -65,5 +75,38 @@ public class SurveyService
         await _dbContext.Workloads.Where(w => w.SurveyId == SurveyId && w.GroupId == GroupId).ToListAsync();
     
     public static User GetSingleUser() => _dbContext.Users.FirstOrDefault() ?? new();
-    public static Group GetGroupByName(string name) => _dbContext.Groups.FirstOrDefault(x => x.Name == name) ?? new();
+    public static async Task<Group?> GetGroupByName(string name) => await _dbContext.Groups.FirstOrDefaultAsync(x => x.Name == name);
+    public static async Task<EnglishGroup?> GetEnglishGroupByName(string name) => await _dbContext.EnglishGroups.FirstOrDefaultAsync(x => x.Name == name);
+    public static async Task<SportClub?> GetsportClubByName(string name) => await _dbContext.SportClubs.FirstOrDefaultAsync(x => x.Name == name);
+    public static async Task<EnglishLevel?> GetEnglishLevelByName(string name) => await _dbContext.EnglishLevels.FirstOrDefaultAsync(x => x.Name == name);
+    public static async Task<Discipline?> GetDisciplineByName(string name) => await _dbContext.Disciplines.FirstOrDefaultAsync(x => x.Name == name);
+    public static async Task<Teacher?> GetTeacherByFio(string[] fio) => await _dbContext.Teachers.FirstOrDefaultAsync(x => x.LastName == fio[0] && x.FirstName == fio[1] && x.PaternalName == fio[2]);
+
+    public static async Task AddNewGroup(Group group) => await _dbContext.Groups.AddAsync(group);
+    public static async Task AddNewEnglishGroup(EnglishGroup englishGroup) => await _dbContext.EnglishGroups.AddAsync(englishGroup);
+    public static async Task AddNewSportClub(SportClub sportClub) => await _dbContext.SportClubs.AddAsync(sportClub);
+    public static async Task AddNewEnglishLevel(EnglishLevel englishLevel) => await _dbContext.EnglishLevels.AddAsync(englishLevel);
+    public static async Task AddNewDiscipline(Discipline discipline) => await _dbContext.Disciplines.AddAsync(discipline);
+    public static async Task AddNewTeacher(Teacher teacher) => await _dbContext.Teachers.AddAsync(teacher);
+    public static async Task AddNewWorkload(Workload workload) => await _dbContext.Workloads.AddAsync(workload);
+
+    public static void UpdateWorkload(Workload workload) => _dbContext.Workloads.Update(workload);
+
+    public static async Task<string> PerformTransaction()
+    {
+        using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+        {
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return $"An error occurred while saving changes: {ex.Message}";
+            }
+        }
+    }
 }

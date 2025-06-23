@@ -12,7 +12,6 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Survey> Surveys { get; set; } = null!;
-    public DbSet<DisciplineType> DisciplineTypes { get; set; } = null!;
     public DbSet<Discipline> Disciplines { get; set; } = null!;
     public DbSet<EnglishLevel> EnglishLevels { get; set; } = null!;
     public DbSet<Faculty> Faculties { get; set; } = null!;
@@ -28,4 +27,14 @@ public class AppDbContext : DbContext
     public DbSet<SportClub> SportClubs { get; set; } = null!;
     public DbSet<EnglishGroup> EnglishGroups { get; set; } = null!;
     public DbSet<UserRespondedToSurvey> UsersRespondedToSurveys { get; set; } = null!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder
+            .Entity<Discipline>()
+            .Property(x => x.DisciplineType)
+            .HasConversion<int>();
+
+        base.OnModelCreating(modelBuilder);
+    }
 }
