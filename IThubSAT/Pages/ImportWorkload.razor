@@ -91,7 +91,7 @@
                 var importError = new ImportError() { RowNumber = row };
 
                 // наверное даже все эти вары можно заранее задать ещё до перечисления, только их нужно будет обнулять перед каждой строкой
-
+                // ошибки нужно выводить в нормальном виде для пользователя
                 try
                 {
                     int studyYear = studyYearText == string.Empty ? 0 : int.Parse(studyYearText);
@@ -215,14 +215,8 @@
                             TeacherIsCurrent = false,
                             Comment = comment
                         };
-                        // Validate the new product.
-                        var validationContext = new ValidationContext(workload, null, null);
-                        var validationResults = new List<ValidationResult>();
-                        if (!Validator.TryValidateObject(workload, validationContext, validationResults, true))
-                        {
-                            AddImportError(importError, string.Join("; ", validationResults.Select(v => v.ErrorMessage)));
-                            continue;
-                        }
+                        
+                        if (!Validate(workload, importError)) { continue; }
 
                         await SurveyService.AddNewWorkload(workload);
                         await SurveyService.SaveChanges();
@@ -241,13 +235,7 @@
                         workload.TeacherIsCurrent = false;
                         workload.Comment = comment;
 
-                        var validationContext = new ValidationContext(workload, null, null);
-                        var validationResults = new List<ValidationResult>();
-                        if (!Validator.TryValidateObject(workload, validationContext, validationResults, true))
-                        {
-                            AddImportError(importError, string.Join("; ", validationResults.Select(v => v.ErrorMessage)));
-                            continue;
-                        }
+                        if (!Validate(workload, importError)) { continue; }
 
                         SurveyService.UpdateWorkload(workload);
                     }
@@ -258,26 +246,24 @@
                 {
                     AddImportError(importError, $"Ошибка: {ex.Message}");
                 }
-            } // end for loop
+            }
         }
 
-        // string saveStatus = await SurveyService.PerformTransaction();
         _importMessage = $"Import process completed. {_totalImportedRows} products processed successfully.";
         return;
     }
 
-    // придумать как сделать
-    // private void Validate(Workload workload)
-    // {
-    //     var validationContext = new ValidationContext(workload, null, null);
-    //     var validationResults = new List<ValidationResult>();
-    //     if (!Validator.TryValidateObject(workload, validationContext, validationResults, true))
-    //     {
-    //         importError.ErrorMessage = string.Join("; ", validationResults.Select(v => v.ErrorMessage));
-    //         _importErrors.Add(importError);
-    //         continue;
-    //     }
-    // }
+    private bool Validate(Workload workload, ImportError importError)
+    {
+        var validationContext = new ValidationContext(workload, null, null);
+        var validationResults = new List<ValidationResult>();
+        if (!Validator.TryValidateObject(workload, validationContext, validationResults, true))
+        {
+            AddImportError(importError, string.Join("; ", validationResults.Select(v => v.ErrorMessage)));
+            return false;
+        }
+        return true;
+    }
 
     private void AddImportError(ImportError importError, string errorMessage)
     {

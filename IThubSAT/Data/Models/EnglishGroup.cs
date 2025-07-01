@@ -1,5 +1,7 @@
 namespace IThubSAT.Data.Models;
 using System.ComponentModel.DataAnnotations;
+
+// связать с группами обычными? или оставить связь через workload?
 public class EnglishGroup
 {   
     [Key]

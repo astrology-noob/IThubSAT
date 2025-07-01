@@ -1,0 +1,44 @@
+﻿@using IThubSAT.Data.Models;
+
+<div class="table-row">
+    <div>
+        @(Workload.Group?.Faculty.Name ?? string.Empty)
+    </div>
+    
+    <div>
+        @(Workload.Group?.StudyYear.ToString() ?? string.Empty)
+    </div>
+    
+    <div>
+        @(Workload.Group?.Name ?? string.Empty)
+    </div>
+    
+    <div>
+        @(Workload.EnglishGroup?.Name ?? string.Empty)
+    </div>
+    
+    <div>
+        @(Workload.SportClub?.Name ?? string.Empty)
+    </div>
+    
+    <div>
+        @Workload.Discipline.Name
+    </div>
+    
+    <div>
+        @Workload.Teacher.FullName
+    </div>
+    
+    <div>
+        @Workload.WeeklyHours
+    </div>
+    
+    <div>
+        @Workload.TotalHours
+    </div>
+</div>
+@code {
+    [Parameter] public Workload Workload { get; set; }
+
+
+}

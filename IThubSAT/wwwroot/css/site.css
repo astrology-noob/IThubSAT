@@ -301,6 +301,7 @@ main > .content {
 .tab-content {
     width: 100%;
     flex: 1;
+    flex: 750px;
 }
 
 .sections {
@@ -352,9 +353,17 @@ main > .content {
         padding: 15px 20px;
     }
 
-.table-wrapper {
-    overflow-y: scroll;
+.table-row {
+    width: 100%;
+    display: flex;
+    flex: 1;
 }
+
+    .table-row div {
+        display: flex;
+        align-items: center;
+        flex: 1;
+    }
 
 .add-workload-row {
     width: 100%;

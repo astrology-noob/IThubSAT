@@ -14,8 +14,8 @@
             @if(Survey.Name != string.Empty) {
                 @(_chosenTab switch {
                     Tab.Questions => (@<SurveySections Survey=Survey/>),
-                    Tab.Workload => (@<WorkloadTable Survey=Survey/>),
-                    Tab.Preview => (@<SurveyPreview />),
+                    Tab.Workload => (@<WorkloadTable Survey=Survey Workloads=Workloads />),
+                    Tab.Preview => (@<SurveyPreview Workloads=Workloads />),
                     _ => (@<p>"Такой вкладки нет здесь"</p>)
                 })
             }
@@ -34,11 +34,17 @@
 
     public void OnTabChosen(Tab chosenTab) => _chosenTab = chosenTab;
 
+    // может и здесь получать workload?
+
     protected Survey Survey = new Survey();
+    protected List<Workload> Workloads { get; set; } = new();
+
+
     protected async override Task OnInitializedAsync()
     {
         OnTabChosen(Tabs[0]);
         Survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? Survey;
+        Workloads = await SurveyService.GetWorkloadBySurveyId(Survey.Id);
         await base.OnInitializedAsync();
     }
 }
