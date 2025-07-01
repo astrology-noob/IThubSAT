@@ -1,14 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using IThubSAT.Data.Models;
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        
+        Database.EnsureCreated();
     }
 
     public DbSet<Survey> Surveys { get; set; } = null!;
@@ -32,6 +28,11 @@ public class AppDbContext : DbContext
         modelBuilder
             .Entity<Discipline>()
             .Property(x => x.DisciplineType)
+            .HasConversion<int>();
+
+        modelBuilder
+            .Entity<Question>()
+            .Property(x => x.QuestionType)
             .HasConversion<int>();
 
         base.OnModelCreating(modelBuilder);

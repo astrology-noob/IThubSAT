@@ -11,13 +11,6 @@ namespace IThubSAT.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "DisciplineTypeId",
-                table: "Questions",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
                 name: "SectionTypeId",
                 table: "Questions",
                 type: "INTEGER",
@@ -45,11 +38,6 @@ namespace IThubSAT.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Questions_DisciplineTypeId",
-                table: "Questions",
-                column: "DisciplineTypeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Questions_SectionTypeId",
                 table: "Questions",
                 column: "SectionTypeId");
@@ -58,14 +46,6 @@ namespace IThubSAT.Migrations
                 name: "IX_Questions_SurveyId",
                 table: "Questions",
                 column: "SurveyId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Questions_DisciplineTypes_DisciplineTypeId",
-                table: "Questions",
-                column: "DisciplineTypeId",
-                principalTable: "DisciplineTypes",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Questions_SectionTypes_SectionTypeId",
@@ -88,10 +68,6 @@ namespace IThubSAT.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Questions_DisciplineTypes_DisciplineTypeId",
-                table: "Questions");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_Questions_SectionTypes_SectionTypeId",
                 table: "Questions");
 
@@ -103,19 +79,11 @@ namespace IThubSAT.Migrations
                 name: "SectionTypes");
 
             migrationBuilder.DropIndex(
-                name: "IX_Questions_DisciplineTypeId",
-                table: "Questions");
-
-            migrationBuilder.DropIndex(
                 name: "IX_Questions_SectionTypeId",
                 table: "Questions");
 
             migrationBuilder.DropIndex(
                 name: "IX_Questions_SurveyId",
-                table: "Questions");
-
-            migrationBuilder.DropColumn(
-                name: "DisciplineTypeId",
                 table: "Questions");
 
             migrationBuilder.DropColumn(

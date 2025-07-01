@@ -20,7 +20,7 @@
     <div class="survey-actions">
         @if (Survey.IsOpen) {
             <button ><img src="icons/Link.svg"/></button> // получить ссылку на опрос (открыть попап или показать тостер и скопировать автоматически)
-            <button @onclick=@(()=>popUp.Show())><img src="icons/Pause.svg" /></button>
+            <button @onclick=@OpenPopUp><img src="icons/Pause.svg" /></button>
         }
         else {
             <button @onclick=@OpenPopUp><img src="icons/Export.svg"/></button>
@@ -42,5 +42,10 @@
     [Parameter] public Survey Survey { get; set; } = null!;
     [Parameter] public EventCallback StopSurvey { get; set; }
 
-    [Inject] public PopUp popUp { get; set; }
+    // [Inject] public PopUp popUp { get; set; }
+
+    public bool PopUpState;
+
+    private void ClosePopUp() => PopUpState = false;
+    private void OpenPopUp() => PopUpState = true;
 } 

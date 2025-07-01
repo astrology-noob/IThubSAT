@@ -1,5 +1,6 @@
 @using IThubSAT.Data.Models
-@inject IThubSAT.Data.SurveyService SurveyService
+@using IThubSAT.Data
+@inject SurveyService SurveyService
 
 <div>
     @if (ShowDialog)  
@@ -29,11 +30,11 @@
                             </div>
                             <button type="submit" class="btn btn-primary">Сохранить</button>
                             <a class="btn btn-outline-primary" @onclick="@Close">Закрыть</a>
-                        </EditForm>  
-                    </div>  
-                </div>  
-            </div>  
-        </div>  
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div> 
     }  
 </div>
 

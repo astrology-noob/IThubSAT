@@ -52,7 +52,7 @@ namespace IThubSAT.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DisciplineTypeId")
+                    b.Property<int>("DisciplineType")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsOptional")
@@ -64,24 +64,7 @@ namespace IThubSAT.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DisciplineTypeId");
-
                     b.ToTable("Disciplines");
-                });
-
-            modelBuilder.Entity("IThubSAT.Data.Models.DisciplineType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DisciplineTypes");
                 });
 
             modelBuilder.Entity("IThubSAT.Data.Models.EnglishGroup", b =>
@@ -147,6 +130,9 @@ namespace IThubSAT.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("StudentsInGroup")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("StudyYear")
                         .HasColumnType("INTEGER");
 
@@ -163,13 +149,13 @@ namespace IThubSAT.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DisciplineTypeId")
+                    b.Property<int>("DisciplineType")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsRequired")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("QuestionTypeId")
+                    b.Property<int>("QuestionType")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("QuestionTypeInfo")
@@ -185,32 +171,9 @@ namespace IThubSAT.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DisciplineTypeId");
-
-                    b.HasIndex("QuestionTypeId");
-
                     b.HasIndex("SurveyId");
 
                     b.ToTable("Questions");
-                });
-
-            modelBuilder.Entity("IThubSAT.Data.Models.QuestionType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TypeInfoMask")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("QuestionTypes");
                 });
 
             modelBuilder.Entity("IThubSAT.Data.Models.SportClub", b =>
@@ -266,6 +229,7 @@ namespace IThubSAT.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("StartDate")
@@ -467,17 +431,6 @@ namespace IThubSAT.Migrations
                     b.Navigation("Workload");
                 });
 
-            modelBuilder.Entity("IThubSAT.Data.Models.Discipline", b =>
-                {
-                    b.HasOne("IThubSAT.Data.Models.DisciplineType", "DisciplineType")
-                        .WithMany()
-                        .HasForeignKey("DisciplineTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DisciplineType");
-                });
-
             modelBuilder.Entity("IThubSAT.Data.Models.EnglishGroup", b =>
                 {
                     b.HasOne("IThubSAT.Data.Models.EnglishLevel", "EnglishLevel")
@@ -502,27 +455,11 @@ namespace IThubSAT.Migrations
 
             modelBuilder.Entity("IThubSAT.Data.Models.Question", b =>
                 {
-                    b.HasOne("IThubSAT.Data.Models.DisciplineType", "DisciplineType")
-                        .WithMany()
-                        .HasForeignKey("DisciplineTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("IThubSAT.Data.Models.QuestionType", "QuestionType")
-                        .WithMany()
-                        .HasForeignKey("QuestionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("IThubSAT.Data.Models.Survey", "Survey")
                         .WithMany("Questions")
                         .HasForeignKey("SurveyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("DisciplineType");
-
-                    b.Navigation("QuestionType");
 
                     b.Navigation("Survey");
                 });

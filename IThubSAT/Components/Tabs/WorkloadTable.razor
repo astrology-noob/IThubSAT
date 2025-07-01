@@ -3,71 +3,110 @@
 @using IThubSAT.Components
 @inject SurveyService SurveyService
 
-@* Сделать отдельный компонент tool bar? *@
+@* просто на фильтрацию хз как сделать чтобы updatefilters не писать для каждого выбранного параметра отдельный *@
+@* не забыть фильтровать сами наборы данных - или оставить на 2 версию? *@
 <div class="tool-bar">
     <div class="dropdown-bars">
-        <Dropdown Placeholder="Кафедра" ChosenOption="@SelectedFacultyId" List="@Faculties" /> @*(сюда может только int+строки передавать? Всё равно же по айдишнику буду понимать что там выбрано)*@
-        <Dropdown Placeholder="Группа/Подгруппа" ChosenOption="@Groups" List="@Groups" /> @*насчёт подгрупп хз что делать, потому что у групп и групп английского могут быть одинаковые айдишники. наверное лучше разные фильтры сделать*@
-        <Dropdown Placeholder="Дисциплина" ChosenOption="@SelectedDisciplineId" List="@Disciplines" />
-        <Dropdown Placeholder="Преподаватель" ChosenOption="@SelectedTeacherId" List="@Teachers" />
+        <Dropdown Placeholder="Кафедра" FilterItems=Faculties OnChoose=UpdateFilters TabIndex=0 />
+        <Dropdown Placeholder="Группа" FilterItems=Groups OnChoose=UpdateFilters TabIndex=1 />
+        <Dropdown Placeholder="Подгруппа" FilterItems=EnglishGroups OnChoose=UpdateFilters TabIndex=2 />
+        <Dropdown Placeholder="Клуб" FilterItems=SportClubs OnChoose=UpdateFilters TabIndex=3 />
+        <Dropdown Placeholder="Дисциплина" FilterItems=Disciplines OnChoose=UpdateFilters TabIndex=4 />
+        <Dropdown Placeholder="Преподаватель" FilterItems=Teachers OnChoose=UpdateFilters TabIndex=5 />
+        <Dropdown Placeholder="Учебный год" FilterItems=StudyYears OnChoose=UpdateFilters TabIndex=6 />
     </div>
 
     <button class="primary-button" href="Workload/DownloadTemplate">Скачать шаблон для импорта</button>
     
-    <button class="primary-button" href="/surveys/@(Survey.Id)/import">Импорт</button>
+    <a class="primary-button" href="/surveys/@(Survey.Id)/import">Импорт</a>
     <button class="primary-button">Экспорт</button>
 </div>
 
-@* Сделать отдельные компоненты именно на табы *@
-@* Сделать отдельные компоненты - строка таблицы и ячейка таблицы? *@
+@* Сделать отдельные компоненты - строка таблицы и ячейка таблицы? ну учитывая что на ячейку у меня будет взаимодействие то надо, но как решить, какие данные куда подгружать? *@
+@* вообще мне там ещё нужно будет высвечивать по нажатию дропдаун, который у меня уже написан *@
 <div class="table-wrapper">
-    <div class="table is-fullwidth">
-        <div class="table-row">
-            <div>Кафедра</div>
-            <div>Курс</div>
-            <div>Группа</div>
-            <div>Дисциплина</div>
-            <div>Преподаватель</div>
-            <div>Часы в неделю</div>
-            <div>Часы всего</div>
-        </div>
-        @if (Workloads.Count() > 0)
-            @foreach (var workloadRow in Workloads) {
+    <div class="table-row table-header">
+        <div>Кафедра</div>
+        <div>Курс</div>
+        <div>Группа</div>
+        <div>Подгруппа</div>
+        <div>Спортклуб</div>
+        <div>Дисциплина</div>
+        <div>Преподаватель</div>
+        <div>Часы в неделю</div>
+        <div>Часы всего</div>
+    </div>
+    <div class="table-scrollable">
+        @if (FilteredWorkloads.Count() > 0) {
+            @foreach (var workloadRow in FilteredWorkloads) {
                 <div class="table-row">
                     <div>@(workloadRow.Group?.Faculty.Name ?? string.Empty)</div>
-                    <div>@workloadRow.Group?.StudyYear ?? string.Empty</div>
-                    <div>@workloadRow.Group?.Name ?? string.Empty</div>
+                    <div>@(workloadRow.Group?.StudyYear.ToString() ?? string.Empty)</div>
+                    <div>@(workloadRow.Group?.Name ?? string.Empty)</div>
+                    <div>@(workloadRow.EnglishGroup?.Name ?? string.Empty)</div>
+                    <div>@(workloadRow.SportClub?.Name ?? string.Empty)</div>
                     <div>@workloadRow.Discipline.Name</div>
-                    <div>@workloadRow.Teacher.FirstName</div>
+                    <div>@workloadRow.Teacher.FullName</div>
                     <div>@workloadRow.WeeklyHours</div>
                     <div>@workloadRow.TotalHours</div>
                 </div>
             }
         }
         else {
-        <div class="table-row">
-            <div>Пока нет вообще никакой нагрузки</div>
-        </div>
+            <div class="table-row">
+                <div>Пока нет вообще никакой нагрузки</div>
+                <button class="primary-button">Добавить</button>
+            </div>
         }
     </div>
 </div>
 
+<style>
+    .table-wrapper {
+        width: 100%;
+    }
+
+    .table-header {
+        background-color: #EBEEF5;
+        font-weight: bold;
+    }
+
+    .table-scrollable {
+        width: 100%;
+        overflow-y: scroll;
+    }
+
+    .table-row {
+        width: 100%;
+        display: flex;
+        flex: 1;
+    }
+
+    .table-row div {
+        display: flex;
+        align-items: center;
+        /* width: auto; */
+        flex: 1;
+    }
+</style>
+
 @code {
     [Parameter] public Survey Survey { get; set; } = null!;
-    // private List<Workload> _workload { get; set; } = new();
-    public IEnumerable<Workload> Workloads { get; set; }
 
-    // какие у меня фильтры - преподаватель, кафедра, уч. год (учебный год у меня в рамках групп Т_Т), группа
-    public int? SelectedFacultyId { get; set; }
-    public int? SelectedGroupId { get; set; }
-    public int? SelectedTeacherId { get; set; }
-    public int? SelectedDisciplineId { get; set; }
+    private SearchModel _searchModel { get; set; } = new();
+
+    public List<Workload> Workloads { get; set; } = new();
+    public List<Workload> FilteredWorkloads { get; set; } = new();
 
     // Dropdown lists for filter options
-    public IEnumerable<Faculty> Faculties { get; set; }
-    public IEnumerable<Group> Groups { get; set; }
-    public IEnumerable<Teacher> Teachers { get; set; }
-    public IEnumerable<Discipline> Disciplines { get; set; }
+    // бля, а ведь если новая строчка появляется, нужно и списки эти обновлять (если вручную добавился элемент надо вручную и в списки filteritems добавлять. если был массовый импорт, то само подтягивается (потому что всё равно страница обновляется))
+    public List<FilterItem> Faculties { get; set; } = new();
+    public List<FilterItem> Groups { get; set; } = new();
+    public List<FilterItem> EnglishGroups { get; set; } = new();
+    public List<FilterItem> SportClubs { get; set; } = new();
+    public List<FilterItem> Teachers { get; set; } = new();
+    public List<FilterItem> Disciplines { get; set; } = new();
+    public List<FilterItem> StudyYears { get; set; } = new();
 
     // Pagination properties
     public int CurrentPage { get; set; }
@@ -76,11 +115,71 @@
     protected async override Task OnInitializedAsync()
     {
         Workloads = await SurveyService.GetWorkloadBySurveyId(Survey.Id);
+        FilteredWorkloads = Workloads;
 
-        Groups = await SurveyService.GetGroupsBySurveyId(Survey.Id);
-        Teachers = await SurveyService.GetTeachersBySurveyId(Survey.Id);
-        Faculties = await SurveyService.GetFacultiesBySurveyId(Survey.Id);
+        Groups = await SurveyService.GetGroupsFilterItems(Survey.Id) ?? new();
+        Teachers = await SurveyService.GetTeachersFilterItems(Survey.Id) ?? new();
+        Faculties = await SurveyService.GetFacultiesFilterItems(Survey.Id) ?? new();
+        StudyYears = await SurveyService.GetStudyYearsFilterItems(Survey.Id) ?? new();
+        Console.WriteLine(StudyYears.Select(x => x.Id).First());
+        // EnglishGroups = await SurveyService.GetEnglishGroupsFilterItems(Survey.Id) ?? new();
+        // SportClubs = await SurveyService.GetSportClubsFilterItems(Survey.Id) ?? new();
+        Disciplines = await SurveyService.GetDisciplinesFilterItems(Survey.Id) ?? new();
 
         await base.OnInitializedAsync();
+    }
+
+    public void UpdateFilters(FilterItem filterItem)
+    {
+        switch (filterItem.FilterType)
+        {
+            case FilterType.Discipline: _searchModel.DisciplineId = filterItem.Id; break;
+            case FilterType.Teacher: _searchModel.TeacherId = filterItem.Id; break;
+            case FilterType.Faculty: _searchModel.FacultyId = filterItem.Id; break;
+            case FilterType.EnglishGroup: _searchModel.EnglishGroupId = filterItem.Id; break;
+            case FilterType.SportClub: _searchModel.SportClubId = filterItem.Id; break;
+            case FilterType.Group: _searchModel.GroupId = filterItem.Id; break;
+            case FilterType.StudyYear: _searchModel.StudyYear = filterItem.Id; break;
+            default: throw new ArgumentOutOfRangeException();
+        };
+
+        if (_searchModel.IsEmpty())
+            FilteredWorkloads = Workloads;
+        else
+        {
+            var filteredIEnumerable = (IEnumerable<Workload>)Workloads;
+            if (_searchModel.FacultyId != 0)
+                filteredIEnumerable = filteredIEnumerable.Where(x => x.Group!.FacultyId == _searchModel.FacultyId);
+            if (_searchModel.GroupId != 0)
+                filteredIEnumerable = filteredIEnumerable.Where(x => x.GroupId == _searchModel.GroupId);
+            if (_searchModel.EnglishGroupId != 0)
+                filteredIEnumerable = filteredIEnumerable.Where(x => x.EnglishGroupId == _searchModel.EnglishGroupId);
+            if (_searchModel.EnglishLevelId != 0)
+                filteredIEnumerable = filteredIEnumerable.Where(x => x.EnglishGroup!.EnglishLevelId == _searchModel.EnglishLevelId);
+            if (_searchModel.SportClubId != 0)
+                filteredIEnumerable = filteredIEnumerable.Where(x => x.SportClubId == _searchModel.SportClubId);
+            if (_searchModel.TeacherId != 0)
+                filteredIEnumerable = filteredIEnumerable.Where(x => x.TeacherId == _searchModel.TeacherId);
+            if (_searchModel.DisciplineId != 0)
+                filteredIEnumerable = filteredIEnumerable.Where(x => x.DisciplineId == _searchModel.DisciplineId);
+            if (_searchModel.StudyYear != 0)
+                filteredIEnumerable = filteredIEnumerable.Where(x => x.Group!.StudyYear == _searchModel.StudyYear);
+
+            FilteredWorkloads = filteredIEnumerable.ToList();
+        }
+    }
+
+    private class SearchModel
+    {
+        public int FacultyId;
+        public int GroupId;
+        public int EnglishGroupId;
+        public int EnglishLevelId;
+        public int SportClubId;
+        public int TeacherId;
+        public int DisciplineId;
+        public int StudyYear;
+
+        public bool IsEmpty() => FacultyId + GroupId + EnglishGroupId + EnglishLevelId + SportClubId + TeacherId + DisciplineId + StudyYear == 0;
     }
 }

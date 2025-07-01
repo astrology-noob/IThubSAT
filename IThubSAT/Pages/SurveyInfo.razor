@@ -12,7 +12,6 @@
 
         <div class="tab-content">
             @if(Survey.Name != string.Empty) {
-                <a href="/surveys/@(SurveyId)/edit">Edit</a> @*подумать, сделать редактирование полностью всей формы на отдельном роуте или не делить редактирование и просмотр?*@
                 @(_chosenTab switch {
                     Tab.Questions => (@<SurveySections Survey=Survey/>),
                     Tab.Workload => (@<WorkloadTable Survey=Survey/>),
@@ -30,7 +29,7 @@
 @code {
     [Parameter]
     public int SurveyId { get; set; }
-    public List<Tab> Tabs = new() { Tab.Questions, Tab.Workload, Tab.Settings };
+    public List<Tab> Tabs = new() { Tab.Questions, Tab.Workload, Tab.Preview };
     private Tab _chosenTab;
 
     public void OnTabChosen(Tab chosenTab) => _chosenTab = chosenTab;

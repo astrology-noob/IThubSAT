@@ -40,9 +40,9 @@
 
     public AddSurveyPopUp AddSurveyPopUp { get; set; } = null!;
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        _surveys = SurveyService.GetSurveys();
+        _surveys = await SurveyService.GetSurveys();
         OnTabChosen(Tabs[0]);
         base.OnInitialized();
     }

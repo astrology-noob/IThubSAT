@@ -7,4 +7,6 @@ public class Teacher
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string PaternalName { get; set; } = string.Empty;
+
+    public string FullName => string.Join(' ', LastName, FirstName, PaternalName);
 }

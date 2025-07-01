@@ -32,19 +32,6 @@ namespace IThubSAT.Migrations
                 defaultValue: "");
 
             migrationBuilder.CreateTable(
-                name: "DisciplineTypes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DisciplineTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EnglishLevels",
                 columns: table => new
                 {
@@ -68,19 +55,6 @@ namespace IThubSAT.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Faculties", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "QuestionTypes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_QuestionTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -118,18 +92,11 @@ namespace IThubSAT.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    DisciplineTypeId = table.Column<int>(type: "INTEGER", nullable: false),
                     IsOptional = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Disciplines", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Disciplines_DisciplineTypes_DisciplineTypeId",
-                        column: x => x.DisciplineTypeId,
-                        principalTable: "DisciplineTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -160,18 +127,11 @@ namespace IThubSAT.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Text = table.Column<string>(type: "TEXT", nullable: false),
-                    IsRequired = table.Column<bool>(type: "INTEGER", nullable: false),
-                    QuestionTypeId = table.Column<int>(type: "INTEGER", nullable: false)
+                    IsRequired = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Questions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Questions_QuestionTypes_QuestionTypeId",
-                        column: x => x.QuestionTypeId,
-                        principalTable: "QuestionTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,18 +253,11 @@ namespace IThubSAT.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     QuestionId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SurveyId = table.Column<int>(type: "INTEGER", nullable: false),
-                    VisibleForQuestionTypeId = table.Column<int>(type: "INTEGER", nullable: false)
+                    SurveyId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_QuestionsInSurveys", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_QuestionsInSurveys_QuestionTypes_VisibleForQuestionTypeId",
-                        column: x => x.VisibleForQuestionTypeId,
-                        principalTable: "QuestionTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_QuestionsInSurveys_Questions_QuestionId",
                         column: x => x.QuestionId,
@@ -426,11 +379,6 @@ namespace IThubSAT.Migrations
                 column: "WorkloadId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Disciplines_DisciplineTypeId",
-                table: "Disciplines",
-                column: "DisciplineTypeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_EnglishGroups_EnglishLevelId",
                 table: "EnglishGroups",
                 column: "EnglishLevelId");
@@ -446,11 +394,6 @@ namespace IThubSAT.Migrations
                 column: "FacultyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Questions_QuestionTypeId",
-                table: "Questions",
-                column: "QuestionTypeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_QuestionsInSurveys_QuestionId",
                 table: "QuestionsInSurveys",
                 column: "QuestionId");
@@ -459,11 +402,6 @@ namespace IThubSAT.Migrations
                 name: "IX_QuestionsInSurveys_SurveyId",
                 table: "QuestionsInSurveys",
                 column: "SurveyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_QuestionsInSurveys_VisibleForQuestionTypeId",
-                table: "QuestionsInSurveys",
-                column: "VisibleForQuestionTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SurveyEntries_GroupId",
@@ -562,9 +500,6 @@ namespace IThubSAT.Migrations
                 name: "Workloads");
 
             migrationBuilder.DropTable(
-                name: "QuestionTypes");
-
-            migrationBuilder.DropTable(
                 name: "UserTypes");
 
             migrationBuilder.DropTable(
@@ -575,9 +510,6 @@ namespace IThubSAT.Migrations
 
             migrationBuilder.DropTable(
                 name: "Teachers");
-
-            migrationBuilder.DropTable(
-                name: "DisciplineTypes");
 
             migrationBuilder.DropTable(
                 name: "Faculties");

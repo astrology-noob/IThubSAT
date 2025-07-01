@@ -1,12 +1,27 @@
+@using IThubSAT.Data;
+
 <div class="dropdown-menu">
-    <select>
-        @foreach(var option in Options) {
-            <option value="@option">@option</option>
-        }
-    </select>
+    @if(Options.Count == 0)
+    {
+        <span>Ничего нет</span>
+    }
+    @foreach(var option in Options) {
+        <div @onclick=@(() => SetOption.InvokeAsync(option))>@option.Name</div>
+    }
 </div>
 
+<style>
+    .dropdown-menu {
+        display: block;
+        position: absolute;
+        margin-top: 10px;
+        height: 200px;
+        width: inherit;
+        overflow: scroll;
+    }
+</style>
+
 @code {
-    [Parameter] public List<string> Options { get; set; } = new();
-    [Parameter] public EventCallback<string> SetOption { get; set; }
+    [Parameter] public List<FilterItem> Options { get; set; } = new();
+    [Parameter] public EventCallback<FilterItem> SetOption { get; set; }
 }

@@ -10,22 +10,8 @@ namespace IThubSAT.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_QuestionsInSurveys_QuestionTypes_VisibleForQuestionTypeId",
-                table: "QuestionsInSurveys");
-
             migrationBuilder.DropTable(
                 name: "WorkloadsInSurveys");
-
-            migrationBuilder.RenameColumn(
-                name: "VisibleForQuestionTypeId",
-                table: "QuestionsInSurveys",
-                newName: "VisibleForDisciplineTypeId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_QuestionsInSurveys_VisibleForQuestionTypeId",
-                table: "QuestionsInSurveys",
-                newName: "IX_QuestionsInSurveys_VisibleForDisciplineTypeId");
 
             migrationBuilder.CreateTable(
                 name: "SurveyWorkload",
@@ -55,35 +41,13 @@ namespace IThubSAT.Migrations
                 name: "IX_SurveyWorkload_WorkloadsId",
                 table: "SurveyWorkload",
                 column: "WorkloadsId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_QuestionsInSurveys_DisciplineTypes_VisibleForDisciplineTypeId",
-                table: "QuestionsInSurveys",
-                column: "VisibleForDisciplineTypeId",
-                principalTable: "DisciplineTypes",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_QuestionsInSurveys_DisciplineTypes_VisibleForDisciplineTypeId",
-                table: "QuestionsInSurveys");
-
             migrationBuilder.DropTable(
                 name: "SurveyWorkload");
-
-            migrationBuilder.RenameColumn(
-                name: "VisibleForDisciplineTypeId",
-                table: "QuestionsInSurveys",
-                newName: "VisibleForQuestionTypeId");
-
-            migrationBuilder.RenameIndex(
-                name: "IX_QuestionsInSurveys_VisibleForDisciplineTypeId",
-                table: "QuestionsInSurveys",
-                newName: "IX_QuestionsInSurveys_VisibleForQuestionTypeId");
 
             migrationBuilder.CreateTable(
                 name: "WorkloadsInSurveys",
@@ -120,14 +84,6 @@ namespace IThubSAT.Migrations
                 name: "IX_WorkloadsInSurveys_WorkloadId",
                 table: "WorkloadsInSurveys",
                 column: "WorkloadId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_QuestionsInSurveys_QuestionTypes_VisibleForQuestionTypeId",
-                table: "QuestionsInSurveys",
-                column: "VisibleForQuestionTypeId",
-                principalTable: "QuestionTypes",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
     }
 }

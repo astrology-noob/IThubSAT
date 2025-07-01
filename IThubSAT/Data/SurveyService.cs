@@ -4,6 +4,23 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+public class FilterItem
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public FilterType FilterType {  get; set; }
+}
+
+public enum FilterType
+{
+    Discipline,
+    Teacher,
+    Faculty,
+    StudyYear,
+    EnglishGroup,
+    SportClub,
+    Group
+}
 
 public class SurveyService
 {
@@ -49,23 +66,46 @@ public class SurveyService
     // у английского отдельный прикол - а, нет, будем считать что подгруппа это идентификатор и по нему искать.
     // нет, это всё-таки проблема. если уровень и уч. группа и препод одинаковые, то отличить подгруппы друг от друга нельзя, а соответственно и определить какую из них выбрал студент.
     // дубляжа по уч. группе, преподу и уровню быть не должно
-    public static async Task<Workload?> GetSpecificWorkload(Group group, EnglishLevel englishLevel, Discipline discipline, Teacher teacher) =>
-        await _dbContext.Workloads.FirstOrDefaultAsync(x => x.Group == group && x.EnglishGroup!.EnglishLevel == englishLevel && x.Discipline == discipline && x.Teacher == teacher);
+    public static async Task<Workload?> GetSpecificWorkload(EnglishGroup englishGroup, EnglishLevel englishLevel, Discipline discipline, Teacher teacher) =>
+        await _dbContext.Workloads.FirstOrDefaultAsync(x => x.EnglishGroup == englishGroup && x.EnglishGroup!.EnglishLevel == englishLevel && x.Discipline == discipline && x.Teacher == teacher);
     public static async Task<Workload?> GetSpecificWorkload(SportClub sportClub, Discipline discipline, Teacher teacher) =>
         await _dbContext.Workloads.FirstOrDefaultAsync(x => x.SportClub == sportClub && x.Discipline == discipline && x.Teacher == teacher);
 
+    public static async Task<List<Group>> GetGroupsBySurveyId(int surveyId) =>
+    await _dbContext.Workloads.Include(w => w.Group).Where(w => w.SurveyId == surveyId)
+                                .Select(w => w.Group!).Distinct().ToListAsync();
+
     // это для фильтров
     // здесь может каким-то образом получать не прям объекты а id + конкретные поля?
-    public static async Task<List<Group>> GetGroupsBySurveyId(int surveyId) =>
+    #region filters
+    public static async Task<List<FilterItem>?> GetGroupsFilterItems(int surveyId) =>
         await _dbContext.Workloads.Include(w => w.Group).Where(w => w.SurveyId == surveyId)
-                                    .Select(w => w.Group!).Distinct().ToListAsync();
-    public static async Task<List<Teacher>> GetTeachersBySurveyId(int surveyId) =>
-        await _dbContext.Workloads.Include(w => w.Teacher).Where(w => w.SurveyId == surveyId)
-                                    .Select(w => w.Teacher!).Distinct().ToListAsync();
+                                    .Select(w => new FilterItem() { Id = w.Group!.Id, Name = w.Group!.Name, FilterType = FilterType.Group }).Distinct().ToListAsync();
 
-    public static async Task<List<Faculty>> GetFacultiesBySurveyId(int surveyId) =>
+    public static async Task<List<FilterItem>?> GetEnglishGroupsFilterItems(int surveyId) =>
+        await _dbContext.Workloads.Include(w => w.EnglishGroup).Where(w => w.SurveyId == surveyId)
+                                    .Select(w => new FilterItem() { Id = w.EnglishGroup!.Id, Name = w.EnglishGroup!.Name, FilterType = FilterType.EnglishGroup }).Distinct().ToListAsync();
+
+    public static async Task<List<FilterItem>?> GetSportClubsFilterItems(int surveyId) =>
+        await _dbContext.Workloads.Include(w => w.SportClub).Where(w => w.SurveyId == surveyId)
+                                    .Select(w => new FilterItem() { Id = w.SportClub!.Id, Name = w.SportClub!.Name, FilterType = FilterType.SportClub }).Distinct().ToListAsync();
+
+    public static async Task<List<FilterItem>?> GetDisciplinesFilterItems(int surveyId) =>
+        await _dbContext.Workloads.Include(w => w.Discipline).Where(w => w.SurveyId == surveyId)
+                                    .Select(w => new FilterItem() { Id = w.Discipline!.Id, Name = w.Discipline!.Name, FilterType = FilterType.Discipline }).Distinct().ToListAsync();
+
+    public static async Task<List<FilterItem>?> GetTeachersFilterItems(int surveyId) =>
+        await _dbContext.Workloads.Include(w => w.Teacher).Where(w => w.SurveyId == surveyId)
+                                    .Select(w => new FilterItem() { Id = w.Teacher!.Id, Name = w.Teacher!.FullName, FilterType = FilterType.Teacher }).Distinct().ToListAsync();
+
+    public static async Task<List<FilterItem>?> GetFacultiesFilterItems(int surveyId) =>
         await _dbContext.Workloads.Include(w => w.Group!.Faculty).Where(w => w.SurveyId == surveyId)
-                                    .Select(w => w.Group!.Faculty).Distinct().ToListAsync();
+                                    .Select(w => new FilterItem() { Id = w.Group!.FacultyId, Name = w.Group!.Faculty.Name, FilterType = FilterType.Faculty }).Distinct().ToListAsync();
+
+    public static async Task<List<FilterItem>> GetStudyYearsFilterItems(int surveyId) =>
+        await _dbContext.Workloads.Include(w => w.Group!.Faculty).Where(w => w.SurveyId == surveyId)
+                                    .Select(w => new FilterItem() { Id = w.Group!.StudyYear, Name = w.Group!.StudyYear.ToString(), FilterType = FilterType.StudyYear }).Distinct().ToListAsync();
+    #endregion
 
     public static async Task<List<Workload>> GetWorkloadsBySurveyIdAndStudyGroupId(int SurveyId, int GroupId) =>
         await _dbContext.Workloads.Where(w => w.SurveyId == SurveyId && w.GroupId == GroupId).ToListAsync();
@@ -73,9 +113,10 @@ public class SurveyService
     public static User GetSingleUser() => _dbContext.Users.FirstOrDefault() ?? new();
     public static async Task<Group?> GetGroupByName(string name) => await _dbContext.Groups.FirstOrDefaultAsync(x => x.Name == name);
     public static async Task<EnglishGroup?> GetEnglishGroupByName(string name) => await _dbContext.EnglishGroups.FirstOrDefaultAsync(x => x.Name == name);
-    public static async Task<SportClub?> GetsportClubByName(string name) => await _dbContext.SportClubs.FirstOrDefaultAsync(x => x.Name == name);
+    public static async Task<SportClub?> GetSportClubByName(string name) => await _dbContext.SportClubs.FirstOrDefaultAsync(x => x.Name == name);
     public static async Task<EnglishLevel?> GetEnglishLevelByName(string name) => await _dbContext.EnglishLevels.FirstOrDefaultAsync(x => x.Name == name);
     public static async Task<Discipline?> GetDisciplineByName(string name) => await _dbContext.Disciplines.FirstOrDefaultAsync(x => x.Name == name);
+    public static async Task<Faculty?> GetFacultyByName(string name) => await _dbContext.Faculties.FirstOrDefaultAsync(x => x.Name == name);
     public static async Task<Teacher?> GetTeacherByFio(string[] fio) => await _dbContext.Teachers.FirstOrDefaultAsync(x => x.LastName == fio[0] && x.FirstName == fio[1] && x.PaternalName == fio[2]);
 
     public static async Task AddNewGroup(Group group) => await _dbContext.Groups.AddAsync(group);
@@ -84,6 +125,7 @@ public class SurveyService
     public static async Task AddNewEnglishLevel(EnglishLevel englishLevel) => await _dbContext.EnglishLevels.AddAsync(englishLevel);
     public static async Task AddNewDiscipline(Discipline discipline) => await _dbContext.Disciplines.AddAsync(discipline);
     public static async Task AddNewTeacher(Teacher teacher) => await _dbContext.Teachers.AddAsync(teacher);
+    public static async Task AddNewFaculty(Faculty faculty) => await _dbContext.Faculties.AddAsync(faculty);
     public static async Task AddNewWorkload(Workload workload) => await _dbContext.Workloads.AddAsync(workload);
 
     public static void UpdateWorkload(Workload workload) => _dbContext.Workloads.Update(workload);

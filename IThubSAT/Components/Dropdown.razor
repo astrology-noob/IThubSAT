@@ -1,10 +1,60 @@
-<input type="text" class="dropdown" placeholder="@Placeholder" @bind-value=_value />
+@using IThubSAT.Data;
 
-<DropdownMenu />
+<div class="filter-area" tabindex=@TabIndex @onfocusin=@(() => showDropdown = true) @onfocusout="@(() => showDropdown = false)">
+    <div class="filter">
+        @if (ChosenOption.Id == 0)
+        {        
+            <span>@Placeholder</span>
+        }
+        else {
+            <span>@ChosenOption.Name</span>
+            <span @onclick=ClearChoice>x</span>
+        }
+    </div>
+
+    @if (showDropdown)
+    {
+        <DropdownMenu Options="FilterItems" SetOption="SetOption" />
+    }
+</div>
+
+<style>
+    .filter-area {
+        width: 300px;
+    }
+
+    .filter {
+        background-color: #F7F9FC;
+        border-radius: 10px;
+        border: 1px solid #EBEEF5;
+        padding-left: 10px;
+        width: inherit;
+        min-height: 35px;
+    }
+
+    .filter:focus {
+        outline: 1px solid #AB00EA;
+    }
+</style>
 
 @code {
     [Parameter] public string Placeholder { get; set; } = string.Empty;
-    
-    private string _value = string.Empty;
-    
+    [Parameter] public List<FilterItem> FilterItems { get; set; } = new();
+    [Parameter] public EventCallback<FilterItem> OnChoose { get; set; } = new();
+    [Parameter] public int TabIndex { get; set; }
+    public FilterItem ChosenOption { get; set; } = new();
+    private bool showDropdown;
+
+    public void SetOption(FilterItem chosenItem)
+    {
+        ChosenOption = chosenItem;
+        OnChoose.InvokeAsync(chosenItem);
+        StateHasChanged();
+    }
+
+    public void ClearChoice()
+    {
+        ChosenOption = new() { FilterType = FilterItems[0].FilterType };
+        OnChoose.InvokeAsync(ChosenOption);
+    }
 }

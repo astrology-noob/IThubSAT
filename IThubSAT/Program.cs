@@ -35,8 +35,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.MapGet("Workload/DownloadTemplate", (XlsxProcessingService service) => XlsxProcessingService.DownloadTemplate());
-// для этого зачем вообще путь отдельный?
-//app.MapGet("Workload/Import", (ImportService service) => service.Import());
 
 app.UseRouting();
 
