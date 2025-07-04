@@ -8,4 +8,5 @@ public class SurveyEntry
     public int SurveyId { get; set; }
     public Survey Survey { get; set; } = null!;
     public string SubmittedAt { get; set; } = string.Empty;
+    // а может добавить сюда список ответов?
 }

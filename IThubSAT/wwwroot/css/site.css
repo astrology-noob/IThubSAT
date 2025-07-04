@@ -365,11 +365,6 @@ main > .content {
         flex: 1;
     }
 
-.add-workload-row {
-    width: 100%;
-    background: none;
-}
-
 .tabs-bar {
     display: flex;
     flex-wrap: wrap;

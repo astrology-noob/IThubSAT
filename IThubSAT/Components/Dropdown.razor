@@ -20,8 +20,9 @@
     {
         // если в отфильтрованных данных ничего нет, выводить кнопку "создать новый"
         // (создаю filteritem с именем и инвоукаю метод который создаст в род. элементе нужный элемент на основе типа этого filteritem)
+        // а может передавать в childcontent?
         // нужен тогда метод на "создание нового" (хотя это в фильтре не должно работать, только в инпуте в таблице)
-        <DropdownMenu Options="FilterItems" SetOption="SetOption" />
+        <DropdownMenu Options="Items" SetOption="SetOption" />
     }
 </div>
 
@@ -48,18 +49,18 @@
 
 @code {
     [Parameter] public string Placeholder { get; set; } = string.Empty;
-    [Parameter] public List<FilterItem> FilterItems { get; set; } = new();
+    [Parameter] public List<FilterItem> Items { get; set; } = new();
     [Parameter] public EventCallback<FilterItem> OnChoose { get; set; } = new();
     [Parameter] public int TabIndex { get; set; }
 
-    public List<FilterItem> FilteredFilterItems { get; set; } = new();
+    public List<FilterItem> FilteredItems { get; set; } = new();
     private string searchText = string.Empty;
     public FilterItem ChosenOption { get; set; } = new();
     private bool showDropdown;
 
     protected override void OnInitialized()
     {
-        FilteredFilterItems = FilterItems;
+        FilteredItems = Items;
     }
 
     public void SetOption(FilterItem chosenItem)
@@ -71,13 +72,13 @@
 
     public void ClearChoice()
     {
-        ChosenOption = new() { FilterType = FilterItems[0].FilterType };
+        ChosenOption = new() { FilterType = Items[0].FilterType };
         OnChoose.InvokeAsync(ChosenOption);
     }
 
     private void SearchItems()
     {
-        FilteredFilterItems = FilterItems.Where(x => x.Name.Contains(searchText)).ToList();
+        FilteredItems = Items.Where(x => x.Name.Contains(searchText)).ToList();
         StateHasChanged();
     }
 }

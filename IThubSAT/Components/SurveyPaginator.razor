@@ -1,0 +1,23 @@
+﻿<div class="answer-survey-content">
+    @ChildContent
+    <div class="bottom-navigation">
+        <button @onclick=GoBack>Назад</button>
+        <button @onclick=GoForward>Вперёд</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; } = null!;
+    [Parameter] public EventCallback OnGoForward { get; set; }
+    [Parameter] public EventCallback OnGoBack { get; set; }
+
+    private void GoForward()
+    {
+        OnGoForward.InvokeAsync();
+    }
+
+    private void GoBack()
+    {
+        OnGoBack.InvokeAsync();
+    }
+}

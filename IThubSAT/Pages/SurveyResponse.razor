@@ -4,67 +4,70 @@
 @using IThubSAT.Data
 @inject SurveyService SurveyService
 
-@if (_survey is not null) {
-    <div class="main-content">
-        <div class="answer-survey-content">
-            <div class="cur-section-wrapper">
-                    @if (_survey!.IsOpen) {
-                        @if (_curStepNumber == -1) {
-                            <p class="section-name">Choose group</p>
-                            // здесь надо переделать нормально
-                            <select @bind=@_selectedGroupId @bind:after="@(() => OnGroupChange())">
-                                @foreach (Group group in allGroups) {
-                                    <option value="@group.Id">@group.Name</option>
-                                }
-                            </select>
-                        }
-                        else {
-                            @if (_workloads.Count > 0) {
-                                <p class="section-name">@_workloads[_curStepNumber].Discipline.Name</p>
-                                <div class="attendance-checkbox">
-                                    <div class="checkbox"></div>
-                                    <p>Я не ходил(-а) на этот предмет</p>
-                                </div>
-                                <div class="answer-survey-questions">
-                                    @foreach (var question in filteredQuestions) {
-                                        <SurveyResponseQuestion Question=question/>
-                                    }
-                                </div>
+<div class="main-content">
+    @if (string.IsNullOrWhiteSpace(error))
+    {
+        <SurveyPaginator OnGoBack=OnGoBack OnGoForward=OnGoForward>
+            @if (_curStepNumber == -1) {
+                <SurveySection SectionTitle="Выберите группу">
+                    <Dropdown Items="allGroups" OnChoose="SetGroup" TabIndex="1" Placeholder="Группа не выбрана"/>
+                </SurveySection>
+            }
+            else
+            {
+                @if (_workloads.Count > 0)
+                {
+                    <SurveySection SectionTitle="@_workloads[_curStepNumber].Discipline.Name">
+                        <div class="attendance-checkbox">
+                            @*если чекбокс отмечен, баллы по дисциплине должны быть нулевыми (числовые данные)*@
+                            <div class="checkbox"></div>
+                            <p>Я не ходил(-а) на этот предмет</p>
+                        </div>
+                        <div class="answer-survey-questions">
+                            @foreach (var question in filteredQuestions) {
+                                // сюда можно передавать survey entry? короче тот тип данных в котором пара вопрос и ответ. а, или как раз модель Answer
+                                <SurveyResponseQuestion Question=question/>
                             }
-                            else {
-                                <SurveyResponseError ErrorText="По вашей группе нет данных, обратитесь к администратору" />
-                            }
-                        }
-                    }
-                    else {
-                        <SurveyResponseError ErrorText="Мы сейчас не принимаем ответы на этот опрос :(" />
-                    }
-                }            
-                <div class="bottom-navigation">
-                    <button @onclick=@(()=>ChangeDiscipline(_curStepNumber - 1))>Назад</button>
-                    <button @onclick=@(()=>ChangeDiscipline(_curStepNumber + 1))>Вперёд</button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-else {
-    <SurveyResponseError ErrorText="Такого опроса не нашли :(" /> 
-    @* отправлять из сервиса ошибку именно? *@
-}
+                        </div>
+                    </SurveySection>
+                }
+            }
+        </SurveyPaginator>
+    }
+    else
+    {
+        <SurveyResponseError ErrorText=@error />
+    }
+</div>
 
 @code {
     [Parameter] public int SurveyId { get; set; }
     private SurveyEntry _surveyEntry = new();
     private Survey? _survey;
 
-    protected List<Group> allGroups = new();
-    private int _selectedGroupId = -1;
+    protected List<FilterItem> allGroups = new();
+    protected int selectedGroupId;
+    protected List<FilterItem> englishLevels = new();
+    protected int selectedEnglishGroupId;
+    protected List<FilterItem> allSportClubs = new();
+    protected int selectedSportClubId;
+
+    private string error = string.Empty;
 
     private int _curStepNumber = -1;
     private List<Workload> _workloads = new();
     protected List<Question> allQuestions = new();
     protected List<Question> filteredQuestions = new();
+
+    private void OnGoBack() => ChangeDiscipline(--_curStepNumber);
+    private void OnGoForward() => ChangeDiscipline(++_curStepNumber);
+
+    // если просто снять выбор с варианта, метод тоже срабатывает, хотя не должен
+    private async void SetGroup(FilterItem Item) 
+    {
+        selectedGroupId = Item.Id;
+        await GetWorkloads();
+    }
 
     private void ChangeDiscipline(int newIndex)
     {
@@ -85,19 +88,37 @@ else {
         // по крайней мере проверять, не поменялся ли тип дисциплины
     }
 
-    private async void OnGroupChange()
+    // можно ли как-то объединить этот метод и метод для английского языка?
+    private async Task GetWorkloads()
     {
-        Console.WriteLine(_selectedGroupId);
-        _workloads = await SurveyService.GetWorkloadsBySurveyIdAndStudyGroupId(SurveyId, _selectedGroupId) ?? new();
-        Console.WriteLine(_workloads.Count);
+        _workloads = await SurveyService.GetWorkloadsBySurveyIdAndStudyGroupId(SurveyId, selectedGroupId) ?? new();
+        if (selectedGroupId != 0 && _workloads.Count == 0)
+        {   
+            // это должно высвечиваться под дропдауном, чтобы у студента была возможность поменять выбор
+            // + в таком случае должна блокироваться стрелочка вперёд
+            error = "По вашей группе нет данных. Выберите другую группу или обратитесь к администратору";
+            return;
+        }
     }
 
     protected async override Task OnInitializedAsync()
     {
         _survey = await SurveyService.GetSurveyByIdAsync(SurveyId);
+        if (_survey == null)
+        {
+            error = "Такого опроса не нашли :(";
+            return;
+        }
+
+        if (!_survey.IsOpen)
+        {
+            error = "Мы сейчас не принимаем ответы на этот опрос :(";
+            return;
+        }
+
         _surveyEntry.Survey = _survey!;
 
-        allGroups = await SurveyService.GetGroupsBySurveyId(SurveyId);
+        allGroups = await SurveyService.GetGroupsFilterItems(_survey.Id) ?? allGroups;
 
         allQuestions = await SurveyService.GetQuestionsBySurveyId(SurveyId) ?? allQuestions;
 

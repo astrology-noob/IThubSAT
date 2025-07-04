@@ -6,13 +6,13 @@
 @* не забыть фильтровать сами наборы данных - или оставить на 2 версию? *@
 <div class="tool-bar">
     <div class="dropdown-bars">
-        <Dropdown Placeholder="Кафедра" FilterItems=Faculties OnChoose=UpdateData TabIndex=0 />
-        <Dropdown Placeholder="Группа" FilterItems=Groups OnChoose=UpdateData TabIndex=1 />
-        <Dropdown Placeholder="Подгруппа" FilterItems=EnglishGroups OnChoose=UpdateData TabIndex=2 />
-        <Dropdown Placeholder="Клуб" FilterItems=SportClubs OnChoose=UpdateData TabIndex=3 />
-        <Dropdown Placeholder="Дисциплина" FilterItems=Disciplines OnChoose=UpdateData TabIndex=4 />
-        <Dropdown Placeholder="Преподаватель" FilterItems=Teachers OnChoose=UpdateData TabIndex=5 />
-        <Dropdown Placeholder="Учебный год" FilterItems=StudyYears OnChoose=UpdateData TabIndex=6 />
+        <Dropdown Placeholder="Кафедра" Items=Faculties OnChoose=UpdateData TabIndex=0 />
+        <Dropdown Placeholder="Группа" Items=Groups OnChoose=UpdateData TabIndex=1 />
+        <Dropdown Placeholder="Подгруппа" Items=EnglishGroups OnChoose=UpdateData TabIndex=2 />
+        <Dropdown Placeholder="Клуб" Items=SportClubs OnChoose=UpdateData TabIndex=3 />
+        <Dropdown Placeholder="Дисциплина" Items=Disciplines OnChoose=UpdateData TabIndex=4 />
+        <Dropdown Placeholder="Преподаватель" Items=Teachers OnChoose=UpdateData TabIndex=5 />
+        <Dropdown Placeholder="Учебный год" Items=StudyYears OnChoose=UpdateData TabIndex=6 />
     </div>
 
     <button class="primary-button" href="Workload/DownloadTemplate">Скачать шаблон для импорта</button>
@@ -22,8 +22,6 @@
     <button class="primary-button">Добавить нагрузку</button>
 </div>
 
-@* Сделать отдельные компоненты - строка таблицы и ячейка таблицы? ну учитывая что на ячейку у меня будет взаимодействие то надо, но как решить, какие данные куда подгружать? *@
-@* вообще мне там ещё нужно будет высвечивать по нажатию дропдаун, который у меня уже написан *@
 <div class="table-wrapper">
     <div class="table-row table-header">
         <div>Кафедра</div>
@@ -48,9 +46,7 @@
             </div>
         }
     </div>
-    <div class="table-row workload-add-button">
-        
-    </div>
+    <div class="table-row workload-add-button" @onclick=AddWorkload>+</div>
 </div>
 
 <style>
@@ -68,7 +64,13 @@
     .table-scrollable {
         width: 100%;
         overflow-y: scroll;
-        height: calc(100% - 30px);
+        height: calc(100% - 60px);
+    }
+
+    .workload-add-button {
+        height: 30px;
+        background-color: #AB00EA;
+        text-align: center;
     }
 </style>
 
@@ -196,6 +198,11 @@
 
             FilteredWorkloads = filteredIEnumerable.ToList();
         }
+    }
+
+    public void AddWorkload()
+    {
+        Workloads.Add(new());
     }
 
     private class SearchModel

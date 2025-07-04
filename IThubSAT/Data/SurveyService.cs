@@ -108,7 +108,7 @@ public class SurveyService
     #endregion
 
     public static async Task<List<Workload>> GetWorkloadsBySurveyIdAndStudyGroupId(int SurveyId, int GroupId) =>
-        await _dbContext.Workloads.Where(w => w.SurveyId == SurveyId && w.GroupId == GroupId).ToListAsync();
+        await _dbContext.Workloads.Include(w => w.Discipline).Where(w => w.SurveyId == SurveyId && w.GroupId == GroupId).ToListAsync();
     
     public static User GetSingleUser() => _dbContext.Users.FirstOrDefault() ?? new();
     public static async Task<Group?> GetGroupByName(string name) => await _dbContext.Groups.FirstOrDefaultAsync(x => x.Name == name);

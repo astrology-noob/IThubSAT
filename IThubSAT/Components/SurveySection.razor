@@ -1,0 +1,10 @@
+﻿<div class="cur-section-wrapper">
+    <p class="section-name">@SectionTitle</p>
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public string SectionTitle { get; set; } = string.Empty;
+    [Parameter] public RenderFragment ChildContent { get; set; } = null!;
+
+}
