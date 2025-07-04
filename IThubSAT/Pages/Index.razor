@@ -9,24 +9,20 @@
 <TopBar PageName="Главная" Username="User"/>
 <div class="main-content">
     <div class="white-background-content">
-        <TabsBar Tabs=Tabs OnTabChosen=OnTabChosen />
-
-        <div class="tab-content">
-            <div class="surveys-list">
-                @if(_filteredSurveys.Count > 0){
-                    @foreach(var survey in _filteredSurveys)
-                    {
-                        <SurveyListItem Survey=@survey />
-                    }
-                }
-                else {
-                    <p>Здесь ничего нет...</p>
-                }
-            </div>
-            <button class="primary-button" @onclick=@AddSurvey>
-                Создать +
-            </button>
-        </div>
+        <TabsControl>
+            <TabPage Text="Активные">
+                <SurveyList Surveys="_surveys.Where(s => s.IsOpen == true).ToList()" AddSurvey="AddSurvey"/>
+            </TabPage>
+            <TabPage Text="Остановленные">
+                <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.EndDate != string.Empty)).ToList()" AddSurvey="AddSurvey" />
+            </TabPage>
+            <TabPage Text="Черновики">
+                <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.StartDate != string.Empty)).ToList()" AddSurvey="AddSurvey" />
+            </TabPage>
+            <TabPage Text="Все">
+                <SurveyList Surveys="_surveys" />
+            </TabPage>
+        </TabsControl>
     </div>
 </div>
 
@@ -36,28 +32,15 @@
 @code {
     protected List<Survey> _surveys = new List<Survey>();
     private string text = string.Empty;
-    protected List<Survey> _filteredSurveys = new();
 
     public AddSurveyPopUp AddSurveyPopUp { get; set; } = null!;
 
     protected async override Task OnInitializedAsync()
     {
         _surveys = await SurveyService.GetSurveys();
-        OnTabChosen(Tabs[0]);
         base.OnInitialized();
     }
 
-    List<Tab> Tabs = new() { Tab.Active, Tab.Stopped, Tab.Drafts, Tab.All };
-    public void OnTabChosen (Tab chosenTab) {
-        _filteredSurveys = chosenTab switch 
-        {
-            Tab.Active => _surveys.Where(s => s.IsOpen == true).ToList(),
-            Tab.Stopped => _surveys.Where(s => (s.IsOpen == false) & (s.EndDate != string.Empty)).ToList(),
-            Tab.Drafts => _surveys.Where(s => (s.IsOpen == false) & (s.StartDate != string.Empty)).ToList(),
-            Tab.All => _surveys,
-            _ => _surveys
-        };
-    }
     private void AddSurvey()
     {
         AddSurveyPopUp.Show();

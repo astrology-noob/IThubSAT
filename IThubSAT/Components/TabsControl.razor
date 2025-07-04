@@ -1,0 +1,37 @@
+@using IThubSAT.Data
+
+<div class="tabs-bar">
+    @foreach (TabPage tabPage in Pages)
+    {
+        <p class="@((ActivePage == tabPage) ? "tab-is-active" : "")"
+                @onclick=@(() => DoOnTabChosen(tabPage))>
+            @tabPage.Text
+        </p>
+    }
+</div>
+
+<CascadingValue Value="this">
+    <div class="tab-content">
+        @ChildContent
+    </div>
+</CascadingValue>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    public TabPage ActivePage { get; set; }
+    List<TabPage> Pages = new List<TabPage>();
+
+    private void DoOnTabChosen(TabPage tab)
+    {
+        ActivePage = tab;
+        StateHasChanged();
+    }
+
+    internal void AddPage(TabPage tabPage)
+    {
+        Pages.Add(tabPage);
+        if (Pages.Count == 1)
+            ActivePage = tabPage;
+        StateHasChanged();
+    }
+}

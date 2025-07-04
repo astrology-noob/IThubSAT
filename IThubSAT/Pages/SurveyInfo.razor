@@ -8,31 +8,29 @@
 <TopBar HrefBack="/" PageName="@(Survey.Name ?? string.Empty)" Username="User"/>
 <div class="main-content">
     <div class="white-background-content">
-        <TabsBar Tabs=Tabs OnTabChosen=OnTabChosen />
-
-        <div class="tab-content">
-            @if(Survey.Name != string.Empty) {
-                @(_chosenTab switch {
-                    Tab.Questions => (@<SurveySections Survey=Survey/>),
-                    Tab.Workload => (@<WorkloadTable Survey=Survey Workloads=Workloads />),
-                    Tab.Preview => (@<SurveyPreview Workloads=Workloads />),
-                    _ => (@<p>"Такой вкладки нет здесь"</p>)
-                })
-            }
-            else {
-                <div>Survey not found</div>
-            }
-        </div>
+        @if(!string.IsNullOrEmpty(Survey.Name))
+        {
+            <TabsControl>
+                <TabPage Text="Разделы">
+                    <SurveySections Survey=Survey/>
+                </TabPage>
+                <TabPage Text="Нагрузка">
+                    <WorkloadTable Survey=Survey Workloads=Workloads />
+                </TabPage>
+                <TabPage Text="Предпросмотр">
+                    <SurveyPreview Workloads=Workloads />
+                </TabPage>
+            </TabsControl>
+        }
+        else {
+            <div>Survey not found</div>
+        }
     </div>
 </div>
 
 @code {
     [Parameter]
     public int SurveyId { get; set; }
-    public List<Tab> Tabs = new() { Tab.Questions, Tab.Workload, Tab.Preview };
-    private Tab _chosenTab;
-
-    public void OnTabChosen(Tab chosenTab) => _chosenTab = chosenTab;
 
     protected Survey Survey = new Survey();
     protected List<Workload> Workloads { get; set; } = new();
@@ -40,7 +38,6 @@
 
     protected async override Task OnInitializedAsync()
     {
-        OnTabChosen(Tabs[0]);
         Survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? Survey;
         Workloads = await SurveyService.GetWorkloadBySurveyId(Survey.Id);
         await base.OnInitializedAsync();

@@ -1,0 +1,23 @@
+﻿@using IThubSAT.Data.Models;
+
+<div class="surveys-list">
+    @if (Surveys.Count > 0)
+    {
+        @foreach (var survey in Surveys)
+        {
+            <SurveyListItem Survey=@survey />
+        }
+    }
+    else
+    {
+        <p>Здесь ничего нет...</p>
+    }
+</div>
+<button class="primary-button" @onclick=@AddSurvey>
+    Создать +
+</button>
+
+@code {
+    [Parameter] public List<Survey> Surveys { get; set; } = new();
+    [Parameter] public EventCallback AddSurvey { get; set; }
+}
