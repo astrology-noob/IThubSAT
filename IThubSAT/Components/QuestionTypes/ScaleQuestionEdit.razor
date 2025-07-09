@@ -1,0 +1,44 @@
+﻿@using IThubSAT.Data.Models;
+@using IThubSAT.Data.Models.QuestionTypes;
+@using Newtonsoft.Json;
+
+@* <QuestionTypeTag QuestionType=Question.QuestionType BackgroundColor="#efefef" /> *@
+<div class="survey-question-info">@Question.Text</div>
+@if(scaleQuestion != null)
+{
+    <input @bind-value=@scaleQuestion.MinPoints>
+    <input @bind-value=@scaleQuestion.MaxPoints>
+    <input @bind-value=@scaleQuestion.MinPointsText>
+    <input @bind-value=@scaleQuestion.MaxPointsText>
+}
+else
+{
+    <p>@error</p>
+}
+<button @onclick=SaveQuestionInfo>Сохранить</button>
+
+@code {
+    [Parameter] public Question Question { get; set; } = null!;
+    [Parameter] public EventCallback OnSaveQuestion { get; set; }
+    private ScaleQuestionType? scaleQuestion;
+    private string error = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        try
+        {    
+            scaleQuestion = JsonConvert.DeserializeObject<ScaleQuestionType>(Question.QuestionTypeInfo) ?? new();
+        }
+        catch (Exception ex)
+        {
+            error = ex.ToString();
+        }
+        base.OnInitialized();
+    }
+
+    private void SaveQuestionInfo()
+    {
+        Question.QuestionTypeInfo = JsonConvert.SerializeObject(scaleQuestion);
+        OnSaveQuestion.InvokeAsync();
+    }
+}

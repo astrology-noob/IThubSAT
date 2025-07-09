@@ -1,23 +1,23 @@
-namespace IThubSAT.Data.Models;
-
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+
+namespace IThubSAT.Data.Models;
+
 public class Question
 {   
     [Key]
     public int Id { get; set; } 
     public string Text { get; set; } = string.Empty;
     public bool IsRequired { get; set; }
-    public int SurveyId { get; set; }
-    public Survey Survey { get; set; } = null!;
+    public int SectionId { get; set; }
+    public Section Section { get; set; } = null!;
     public QuestionType QuestionType { get; set; }
-    public string QuestionTypeInfo { get; set; } = string.Empty; // а, это поле в котором конкретно инфа содержится, соответствующая маске
-    public DisciplineType DisciplineType { get; set; }
+    // в целом здесь можно json хранить, а обрабатывать в конкретном компоненте с описанной моделькой (+ получать сериализованную строку из этой модельки)
+    public string QuestionTypeInfo { get; set; } = string.Empty;
 }
 
 public enum QuestionType
 {
-    [Description("mask")]
     Scale = 1,
     SingleChoice = 2,
     MultipleChoice = 3,

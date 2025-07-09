@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IThubSAT.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250708141216_AddedSurveySections")]
+    partial class AddedSurveySections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.13");
@@ -162,6 +165,9 @@ namespace IThubSAT.Migrations
                     b.Property<int>("SectionId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("SurveyId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -169,6 +175,8 @@ namespace IThubSAT.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("SectionId");
+
+                    b.HasIndex("SurveyId");
 
                     b.ToTable("Questions");
                 });
@@ -485,7 +493,15 @@ namespace IThubSAT.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("IThubSAT.Data.Models.Survey", "Survey")
+                        .WithMany()
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Section");
+
+                    b.Navigation("Survey");
                 });
 
             modelBuilder.Entity("IThubSAT.Data.Models.Section", b =>

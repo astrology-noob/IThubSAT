@@ -1,4 +1,7 @@
-﻿<div class="cur-section-wrapper">
+﻿@*Блок секции опроса во время прохождения опроса*@
+@*Переименовать с Section на page?*@
+
+<div class="cur-section-wrapper">
     <p class="section-name">@SectionTitle</p>
     @ChildContent
 </div>
@@ -6,5 +9,4 @@
 @code {
     [Parameter] public string SectionTitle { get; set; } = string.Empty;
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
-
 }

@@ -1,0 +1,58 @@
+﻿@using IThubSAT.Data.Models;
+@using IThubSAT.Data.Models.QuestionTypes;
+@using Newtonsoft.Json;
+
+@if (scaleQuestion != null)
+{
+    <p class="question-title">
+        <span class="question-text">@(Question.Text)</span>
+        @if (Question.IsRequired)
+        {
+            <span class="required-mark-span">*</span>
+        }
+    </p>
+
+    <div class="=scale-question">
+        <div class="=scale-min-max">
+            @scaleQuestion.MinPointsText
+        </div>
+        <div class="scale-buttons">
+            @for (int i = scaleQuestion.MinPoints; i <= scaleQuestion.MaxPoints; i++)
+            {
+                <div class="scale-button">
+                    <div class="scale-radio-button"></div>
+                    <p>@i</p>
+                </div>
+            }
+        </div>
+        <div class="=scale-min-max">
+            @scaleQuestion.MaxPointsText
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Question Question { get; set; } = null!;
+    [Parameter] public EventCallback OnAnswerQuestion { get; set; }
+    private ScaleQuestionType? scaleQuestion;
+    private string error = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            scaleQuestion = JsonConvert.DeserializeObject<ScaleQuestionType>(Question.QuestionTypeInfo) ?? new();
+        }
+        catch (Exception ex)
+        {
+            error = ex.ToString();
+        }
+        base.OnInitialized();
+    }
+
+    private void SaveQuestionInfo()
+    {
+        Question.QuestionTypeInfo = JsonConvert.SerializeObject(scaleQuestion);
+        OnAnswerQuestion.InvokeAsync();
+    }
+}

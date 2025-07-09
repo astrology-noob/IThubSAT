@@ -1,33 +1,24 @@
-@using IThubSAT.Data.Models
+@using IThubSAT.Data;
+@using IThubSAT.Data.Models;
+@using IThubSAT.Components.QuestionTypes;
+@inject SurveyService SurveyService;
 
 <div class="answer-survey-question">
-    <p class="question-title">
-        <span class="question-text">@(Question.Text)</span>
-        @if (Question.IsRequired) {
-            <span class="required-mark-span">*</span>
-        }
-    </p>
-    
-    @if (Question.QuestionType == QuestionType.Scale) {
-        <div class="=scale-question">
-            <div class="=scale-min-max">
-                "Не знаю, я вообще не ходил(-а) на этот предмет"
-            </div>
-            <div class="scale-buttons">
-                @for (int i = 0; i < 6; i++) {
-                    <div class="scale-button">
-                        <div class="scale-radio-button"></div>
-                        <p>@i</p>
-                    </div>
-                }
-            </div>
-            <div class="=scale-min-max">
-                "Определенно все интересно на занятии"
-            </div>
-        </div>
+    @if (Question.QuestionType == QuestionType.Scale)
+    {
+        <ScaleQuestionAnswer Question=Question OnAnswerQuestion=SaveQuestion />
+    }
+    else
+    {
+        <div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>
     }
 </div>
 
 @code {
     [Parameter] public Question Question {get; set; } = null!;
+
+    public async Task SaveQuestion()
+    {
+        await SurveyService.SaveChanges();
+    }
 }

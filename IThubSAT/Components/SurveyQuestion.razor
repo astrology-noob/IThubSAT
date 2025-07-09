@@ -1,11 +1,41 @@
-@using IThubSAT.Data.Models
+@* Вопрос в просмотре и редактировании опроса *@
+@using IThubSAT.Data.Models;
+@using IThubSAT.Data;
+@inject SurveyService SurveyService;
+@using IThubSAT.Components.QuestionTypes;
 
-@* ЭТО ИМЕННО ВОПРОС В ПРОСМОТРЕ ОПРОСА *@
-@(Question.QuestionType switch {
-    QuestionType.Scale => (@<div class="survey-question-info">@Question.Text</div>),
-    _ => (@<div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>)
-})
+<QuestionTypeTag QuestionType=Question.QuestionType BackgroundColor="#efefef" />
+<Dropdown Items=QuestionTypes OnChoose=SetQuestionType Placeholder="Тип вопроса" TabIndex="1" />
+
+@if (Question.QuestionType == QuestionType.Scale)
+{
+    <ScaleQuestionEdit Question=Question OnSaveQuestion=SaveQuestion/>
+}
+else
+{
+    <div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>
+}
 
 @code {
+    // при рендере конкретного вопроса десериализовывать модельку из строки
+    // добавить метод который будет вызываться на сохранение данных вопроса полученного из дочернего элемента (который содержит конкретную инфу по вопросу)
+    // в методе модельку с доп. данными сериализовывать в строку и сохранять в нужное поле
     [Parameter] public Question Question { get; set; } = null!;
+
+    private List<FilterItem> QuestionTypes = new()
+    {
+        new() {Id = 1, Name = "Шкала", FilterType = FilterType.QuestionType }
+    };
+
+    private void SetQuestionType(FilterItem filterItem)
+    {
+        Question.QuestionType = (QuestionType)filterItem.Id;
+        SurveyService.SaveChanges().GetAwaiter().OnCompleted(() => StateHasChanged());
+    }
+
+    // вопрос, а дочерний компонент вносит изменения именно в переданный объект или в "копию" этого объекта?
+    public async Task SaveQuestion()
+    {
+        await SurveyService.SaveChanges();
+    }
 }

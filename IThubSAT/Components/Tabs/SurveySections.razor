@@ -1,17 +1,16 @@
 @using IThubSAT.Data.Models
 
 <div class="sections">
-    <SurveySectionInfo SectionName="Вступление" SectionDescription=@Survey.IntroductionText/>
+    <div>Вступление</div>
+    <p>@Survey.IntroductionText</p>
 
-    <SurveySectionInfo SectionName="Основная часть" 
-                        SectionDescription="Здесь создаются вопросы, которые будут отображаться для всех дисциплин, кроме физкультурных клубов"
-                       Questions=@Survey.Questions.Where(q => q.DisciplineType == DisciplineType.General || q.DisciplineType == DisciplineType.English) />
+    @foreach(var section in Survey.Sections)
+    {
+        <SurveySectionInfo Section=section/>
+    }
 
-    <SurveySectionInfo SectionName="Физкультурная часть" 
-                        SectionDescription="Здесь создаются вопросы, которые будут отображаться только для физкультурных клубов"
-                       Questions=@Survey.Questions.Where(q => q.DisciplineType == DisciplineType.Sport) />
-
-    <SurveySectionInfo SectionName="Заключение" SectionDescription=@Survey.ConclusionText/>
+    <div>Заключение</div>
+    <p>@Survey.ConclusionText</p>
 </div>
 
 

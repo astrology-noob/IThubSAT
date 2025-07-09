@@ -8,6 +8,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Survey> Surveys { get; set; } = null!;
+    public DbSet<Section> Sections { get; set; } = null!;
     public DbSet<Discipline> Disciplines { get; set; } = null!;
     public DbSet<EnglishLevel> EnglishLevels { get; set; } = null!;
     public DbSet<Faculty> Faculties { get; set; } = null!;

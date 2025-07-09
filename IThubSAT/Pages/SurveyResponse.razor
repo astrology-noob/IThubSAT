@@ -83,9 +83,9 @@
 
     private void OnDisciplineChange()
     {
-        filteredQuestions = allQuestions.Where(q => q.DisciplineType == _workloads[_curStepNumber].Discipline.DisciplineType).ToList();
-        // получать нужные вопросы (возможно слишком много лишних действий, тк отфильтровывать вопросы понадобится только типа, 2 раза)
-        // по крайней мере проверять, не поменялся ли тип дисциплины
+        // а это
+        // у меня как раз секции, в которых для дисциплин конкретные вопросы и менять вопросы нужно только при смене секции
+        // наверное можно сделать метод типа "взять следующую секцию"
     }
 
     // можно ли как-то объединить этот метод и метод для английского языка?
@@ -120,7 +120,7 @@
 
         allGroups = await SurveyService.GetGroupsFilterItems(_survey.Id) ?? allGroups;
 
-        allQuestions = await SurveyService.GetQuestionsBySurveyId(SurveyId) ?? allQuestions;
+        // allQuestions = await SurveyService.GetQuestionsBySurveyId(SurveyId) ?? allQuestions;
 
         await base.OnInitializedAsync();
     }

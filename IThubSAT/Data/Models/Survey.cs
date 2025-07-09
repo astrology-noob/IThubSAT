@@ -1,4 +1,5 @@
 namespace IThubSAT.Data.Models;
+
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 public class Survey
@@ -19,7 +20,7 @@ public class Survey
     public int CreatedById { get; set; }
     public User CreatedBy { get; set; } = null!;
     public bool IsOpen { get; set; }
-    public List<Question> Questions { get; set; } = [];
+    public List<Section> Sections { get; set; } = [];
     public List<Workload> Workloads { get; } = [];
     public List<UserRespondedToSurvey> UsersRespondedToSurvey { get; } = [];
 }
