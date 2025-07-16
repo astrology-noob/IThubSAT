@@ -8,5 +8,6 @@ public class SurveyEntry
     public int SurveyId { get; set; }
     public Survey Survey { get; set; } = null!;
     public string SubmittedAt { get; set; } = string.Empty;
+    public List<Answer> Answers { get; set; } = new();
     // а может добавить сюда список ответов?
 }

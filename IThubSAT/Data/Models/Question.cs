@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace IThubSAT.Data.Models;
@@ -9,8 +8,8 @@ public class Question
     public int Id { get; set; } 
     public string Text { get; set; } = string.Empty;
     public bool IsRequired { get; set; }
-    public int SectionId { get; set; }
-    public Section Section { get; set; } = null!;
+    public int ChapterId { get; set; }
+    public Chapter Chapter { get; set; } = null!;
     public QuestionType QuestionType { get; set; }
     // в целом здесь можно json хранить, а обрабатывать в конкретном компоненте с описанной моделькой (+ получать сериализованную строку из этой модельки)
     public string QuestionTypeInfo { get; set; } = string.Empty;

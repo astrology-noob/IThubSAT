@@ -19,7 +19,7 @@
         <div class="scale-buttons">
             @for (int i = scaleQuestion.MinPoints; i <= scaleQuestion.MaxPoints; i++)
             {
-                <div class="scale-button">
+                <div class="scale-button" @onclick=@(() => OnAnswerQuestion.InvokeAsync(i.ToString()))>
                     <div class="scale-radio-button"></div>
                     <p>@i</p>
                 </div>
@@ -31,9 +31,43 @@
     </div>
 }
 
+<style>
+    .scale-question {
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .scale-min-max {
+        width: 125px;
+        font-size: 13px;
+    }
+
+    .scale-buttons {
+        display: flex;
+        width: 270px;
+        justify-content: space-between;
+    }
+
+    .scale-button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .scale-radio-button {
+        width: 21px;
+        height: 21px;
+        border: solid 1px #EBEEF5;
+        border-radius: 15px;
+    }
+</style>
+
 @code {
     [Parameter] public Question Question { get; set; } = null!;
-    [Parameter] public EventCallback OnAnswerQuestion { get; set; }
+    [Parameter] public EventCallback<string> OnAnswerQuestion { get; set; }
+
     private ScaleQuestionType? scaleQuestion;
     private string error = string.Empty;
 
@@ -47,12 +81,7 @@
         {
             error = ex.ToString();
         }
-        base.OnInitialized();
-    }
 
-    private void SaveQuestionInfo()
-    {
-        Question.QuestionTypeInfo = JsonConvert.SerializeObject(scaleQuestion);
-        OnAnswerQuestion.InvokeAsync();
+        base.OnInitialized();
     }
 }

@@ -5,6 +5,21 @@
 @* ломает приложение, возможно bind:after надо поменять *@
 <input type="text" class="search-bar" value="@search" @onchange="@ChangeValue"/>
 
+<style>
+    .search-bar {
+        background-color: #F7F9FC;
+        border-radius: 10px;
+        border: 1px solid #EBEEF5;
+        padding-left: 10px;
+        width: 300px;
+        min-height: 35px;
+    }
+
+        .search-bar:focus {
+            outline: 1px solid #AB00EA;
+        }
+</style>
+
 @code {
     string? search = "";
     [Parameter] public string? Search 

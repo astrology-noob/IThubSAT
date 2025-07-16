@@ -34,7 +34,7 @@ public class SurveyService
     public static async Task<List<Survey>> GetSurveys() => await _dbContext.Surveys.ToListAsync();
 
     public static async Task<Survey?> GetSurveyByIdAsync(int SurveyId) =>
-        await _dbContext.Surveys.Include(s => s.Sections).ThenInclude(s => s.Questions).Where(s => s.Id == SurveyId).FirstOrDefaultAsync();
+        await _dbContext.Surveys.Include(s => s.Chapters).ThenInclude(s => s.Questions).Where(s => s.Id == SurveyId).FirstOrDefaultAsync();
 
     public static async Task<int> AddSurveyAsync(Survey survey)
     {

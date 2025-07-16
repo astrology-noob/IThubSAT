@@ -4,9 +4,9 @@ public class Teacher
 {   
     [Key]
     public int Id { get; set; } 
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string PaternalName { get; set; } = string.Empty;
+    public string LastName { get; set; } = "Новый";
+    public string FirstName { get; set; } = "Преподаватель";
+    public string PaternalName { get; set; } = "Преподавателевич";
 
     public string FullName => string.Join(' ', LastName, FirstName, PaternalName);
 }

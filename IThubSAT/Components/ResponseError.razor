@@ -1,0 +1,22 @@
+<div class="centered-page-content-column" style="gap: 20px">
+    <p class="error-big-text">@(ErrorText)</p>
+</div>
+
+<style>
+    .centered-page-content-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .error-big-text {
+        font-size: 32px;
+        font-weight: bold;
+        text-align: center;
+    }
+</style>
+
+@code {
+    [Parameter] public string ErrorText { get; set; } = string.Empty;
+}

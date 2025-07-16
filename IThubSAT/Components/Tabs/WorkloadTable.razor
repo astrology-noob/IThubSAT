@@ -5,7 +5,7 @@
 
 @* не забыть фильтровать сами наборы данных - или оставить на 2 версию? *@
 <div class="tool-bar">
-    <div class="dropdown-bars">
+    <div class="dropdown-bar">
         <Dropdown Placeholder="Кафедра" Items=Faculties OnChoose=UpdateData TabIndex=0 />
         <Dropdown Placeholder="Группа" Items=Groups OnChoose=UpdateData TabIndex=1 />
         <Dropdown Placeholder="Подгруппа" Items=EnglishGroups OnChoose=UpdateData TabIndex=2 />
@@ -15,11 +15,8 @@
         <Dropdown Placeholder="Учебный год" Items=StudyYears OnChoose=UpdateData TabIndex=6 />
     </div>
 
-    <button class="primary-button" href="Workload/DownloadTemplate">Скачать шаблон для импорта</button>
-    
     <a class="primary-button" href="/surveys/@(Survey.Id)/import">Импорт</a>
     <button class="primary-button">Экспорт</button>
-    <button class="primary-button">Добавить нагрузку</button>
 </div>
 
 <div class="table-wrapper">
@@ -34,18 +31,18 @@
         <div>Часы в неделю</div>
         <div>Часы всего</div>
     </div>
-    <div class="table-scrollable">
+    
+    <div class="table-content @(FilteredWorkloads.Count > 0 ? "table-scrollable" : string.Empty)">
         @if (FilteredWorkloads.Count() > 0) {
             @foreach (var workloadRow in FilteredWorkloads) {
                 <WorkloadRow Workload=workloadRow />
             }
         }
         else {
-            <div class="table-row">
-                <div>Пока нет вообще никакой нагрузки</div>
-            </div>
+            <div class="table-row">Пока нет вообще никакой нагрузки</div>
         }
     </div>
+
     <div class="table-row workload-add-button" @onclick=AddWorkload>+</div>
 </div>
 
@@ -61,16 +58,23 @@
         height: 30px;
     }
 
-    .table-scrollable {
+    .table-content {
         width: 100%;
-        overflow-y: scroll;
         height: calc(100% - 60px);
     }
 
+    .table-scrollable {
+        overflow-y: scroll;
+    }
+
     .workload-add-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #FFFFFF;
+        text-decoration: none;
         height: 30px;
         background-color: #AB00EA;
-        text-align: center;
     }
 </style>
 
@@ -83,9 +87,9 @@
     public List<Workload> FilteredWorkloads { get; set; } = new();
 
     // Dropdown lists for filter options
-    // бля, а ведь если новая строчка появляется, нужно и списки эти обновлять 
-    // (если вручную добавился элемент надо вручную и в списки filteritems добавлять. 
-    // если был массовый импорт, то само подтягивается (потому что всё равно страница обновляется))
+    // обновлять списки фильтров при изменении строки
+    // если вручную добавился элемент - похуй, он пустой всё равно
+    // если был массовый импорт, то само подтягивается (потому что всё равно страница обновляется)
     public List<FilterItem> Faculties { get; set; } = new();
     public List<FilterItem> Groups { get; set; } = new();
     public List<FilterItem> EnglishGroups { get; set; } = new();
@@ -200,9 +204,11 @@
         }
     }
 
-    public void AddWorkload()
+    public async Task AddWorkload()
     {
-        Workloads.Add(new());
+        // не создавать новые а получать дефолтные (если они есть)
+        Workloads.Add(new(){Discipline=new(), Teacher=new(), Survey=Survey });
+        await SurveyService.SaveChanges();
     }
 
     private class SearchModel

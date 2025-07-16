@@ -20,7 +20,7 @@ public class Survey
     public int CreatedById { get; set; }
     public User CreatedBy { get; set; } = null!;
     public bool IsOpen { get; set; }
-    public List<Section> Sections { get; set; } = [];
+    public List<Chapter> Chapters { get; set; } = [];
     public List<Workload> Workloads { get; } = [];
     public List<UserRespondedToSurvey> UsersRespondedToSurvey { get; } = [];
 }

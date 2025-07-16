@@ -6,6 +6,41 @@
     </div>
 </div>
 
+<style>
+    .answer-survey-content {
+        display: flex;
+        align-items: start;
+        gap: 30px;
+    }
+
+    .bottom-navigation button {
+        width: calc((100% - 5px)/2);
+        border-radius: 10px;
+        height: 60px;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #ffffff;
+    }
+
+        .bottom-navigation button:first-child {
+            border: solid 1px #EBEEF5;
+            color: #898989;
+        }
+
+        .bottom-navigation button:last-child {
+            border: solid 1px #EBEEF5;
+            color: #000000;
+        }
+
+        .bottom-navigation button:hover {
+            background-color: #EBEEF5;
+        }
+
+        .bottom-navigation button:focus {
+            color: #898989;
+        }
+</style>
+
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; } = null!;
     [Parameter] public EventCallback OnGoForward { get; set; }

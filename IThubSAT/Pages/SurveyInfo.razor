@@ -4,33 +4,29 @@
 @using IThubSAT.Data
 @using IThubSAT.Data.Models
 @inject SurveyService SurveyService
+@inject AppNavigationState AppNavState
+@layout AdminLayout
 
-<TopBar HrefBack="/" PageName="@(Survey.Name ?? string.Empty)" Username="User"/>
-<div class="main-content">
-    <div class="white-background-content">
-        @if(!string.IsNullOrEmpty(Survey.Name))
-        {
-            <TabsControl>
-                <TabPage Text="Разделы">
-                    <SurveySections Survey=Survey/>
-                </TabPage>
-                <TabPage Text="Нагрузка">
-                    <WorkloadTable Survey=Survey Workloads=Workloads />
-                </TabPage>
-                <TabPage Text="Предпросмотр">
-                    <SurveyPreview Workloads=Workloads />
-                </TabPage>
-            </TabsControl>
-        }
-        else {
-            <div>Survey not found</div>
-        }
-    </div>
-</div>
+@if(!string.IsNullOrEmpty(Survey.Name))
+{
+    <TabsControl>
+        <TabPage Text="Главы">
+            <SurveyChapters Survey=Survey/>
+        </TabPage>
+        <TabPage Text="Нагрузка">
+            <WorkloadTable Survey=Survey Workloads=Workloads />
+        </TabPage>
+        <TabPage Text="Предпросмотр">
+            <SurveyPreview Workloads=Workloads />
+        </TabPage>
+    </TabsControl>
+}
+else {
+    <div>Survey not found</div>
+}
 
 @code {
-    [Parameter]
-    public int SurveyId { get; set; }
+    [Parameter] public int SurveyId { get; set; }
 
     protected Survey Survey = new Survey();
     protected List<Workload> Workloads { get; set; } = new();
@@ -40,6 +36,7 @@
     {
         Survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? Survey;
         Workloads = await SurveyService.GetWorkloadBySurveyId(Survey.Id);
+        AppNavState.SetTopBarData(Survey.Name, "/");
         await base.OnInitializedAsync();
     }
 }

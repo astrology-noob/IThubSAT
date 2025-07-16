@@ -1,0 +1,24 @@
+@using IThubSAT.Data.Models
+
+<div class="chapters">
+    <div>Вступление</div>
+    <input @bind-value=@Survey.IntroductionText />
+
+    @foreach(var chapter in Survey.Chapters)
+    {
+        <SurveyChapterInfo Chapters=chapter />
+    }
+
+    <div>Заключение</div>
+    <input @bind-value=@Survey.ConclusionText />
+</div>
+
+<style>
+    .chapters {
+        width: 100%;
+    }
+</style>
+
+@code {
+    [Parameter] public Survey Survey { get; set; } = null!; 
+}

@@ -5,26 +5,23 @@
 @using System.Linq
 @inject SurveyService SurveyService
 @inject NavigationManager Navigation
+@inject AppNavigationState AppNavState
+@layout AdminLayout
 
-<TopBar PageName="Главная" Username="User"/>
-<div class="main-content">
-    <div class="white-background-content">
-        <TabsControl>
-            <TabPage Text="Активные">
-                <SurveyList Surveys="_surveys.Where(s => s.IsOpen == true).ToList()" AddSurvey="AddSurvey"/>
-            </TabPage>
-            <TabPage Text="Остановленные">
-                <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.EndDate != string.Empty)).ToList()" AddSurvey="AddSurvey" />
-            </TabPage>
-            <TabPage Text="Черновики">
-                <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.StartDate != string.Empty)).ToList()" AddSurvey="AddSurvey" />
-            </TabPage>
-            <TabPage Text="Все">
-                <SurveyList Surveys="_surveys" />
-            </TabPage>
-        </TabsControl>
-    </div>
-</div>
+<TabsControl>
+    <TabPage Text="Активные">
+        <SurveyList Surveys="_surveys.Where(s => s.IsOpen == true).ToList()" AddSurvey="AddSurvey" />
+    </TabPage>
+    <TabPage Text="Остановленные">
+        <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.EndDate != string.Empty)).ToList()" AddSurvey="AddSurvey" />
+    </TabPage>
+    <TabPage Text="Черновики">
+        <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.StartDate != string.Empty)).ToList()" AddSurvey="AddSurvey" />
+    </TabPage>
+    <TabPage Text="Все">
+        <SurveyList Surveys="_surveys" />
+    </TabPage>
+</TabsControl>
 
 @*@ref позволяет ссылаться на один и тот же инстанс, а не создавать каждый раз новые модалки??? *@ 
 <AddSurveyPopUp @ref="AddSurveyPopUp" CloseEventCallback=AddSurvey_OnDialogClose></AddSurveyPopUp>
@@ -38,6 +35,7 @@
     protected async override Task OnInitializedAsync()
     {
         _surveys = await SurveyService.GetSurveys();
+        AppNavState.SetTopBarData("Главная");
         base.OnInitialized();
     }
 
@@ -48,7 +46,6 @@
 
     public void AddSurvey_OnDialogClose(int id)
     {
-        Console.WriteLine(id);
         // ничё не делает...
         Navigation.NavigateTo($"/surveys/{id}");
         StateHasChanged();

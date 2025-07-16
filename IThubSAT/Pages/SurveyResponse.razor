@@ -3,42 +3,71 @@
 @using IThubSAT.Data.Models
 @using IThubSAT.Data
 @inject SurveyService SurveyService
+@layout StudentLayout
 
-<div class="main-content">
-    @if (string.IsNullOrWhiteSpace(error))
-    {
-        <SurveyPaginator OnGoBack=OnGoBack OnGoForward=OnGoForward>
-            @if (_curStepNumber == -1) {
-                <SurveySection SectionTitle="Выберите группу">
-                    <Dropdown Items="allGroups" OnChoose="SetGroup" TabIndex="1" Placeholder="Группа не выбрана"/>
-                </SurveySection>
-            }
-            else
+@if (string.IsNullOrWhiteSpace(error))
+{
+    <SurveyPaginator OnGoBack=OnGoBack OnGoForward=OnGoForward>
+        @if (_currentChapterIndex == 0 && selectedGroupId == -1) {
+            <SurveyPage PageTitle="Выберите группу">
+                <Dropdown Items="allGroups" OnChoose="SetGroup" TabIndex="1" Placeholder="Группа не выбрана"/>
+            </SurveyPage>
+        }
+        else
+        {
+            @if (_workloadsByChapters[_currentChapter].Count > 0)
             {
-                @if (_workloads.Count > 0)
-                {
-                    <SurveySection SectionTitle="@_workloads[_curStepNumber].Discipline.Name">
+                <CascadingValue Value="_surveyEntry">
+                    <SurveyPage PageTitle="">
                         <div class="attendance-checkbox">
                             @*если чекбокс отмечен, баллы по дисциплине должны быть нулевыми (числовые данные)*@
                             <div class="checkbox"></div>
                             <p>Я не ходил(-а) на этот предмет</p>
                         </div>
                         <div class="answer-survey-questions">
-                            @foreach (var question in filteredQuestions) {
-                                // сюда можно передавать survey entry? короче тот тип данных в котором пара вопрос и ответ. а, или как раз модель Answer
-                                <SurveyResponseQuestion Question=question/>
-                            }
+                        @foreach (var question in _currentChapter.Questions)
+                        {                                
+                            <SurveyResponseQuestion Question=question />
+                        }
                         </div>
-                    </SurveySection>
-                }
+                    </SurveyPage>
+                </CascadingValue>
             }
-        </SurveyPaginator>
+        }
+    </SurveyPaginator>
+}
+else
+{
+    <ResponseError ErrorText=@error />
+}
+
+<style>
+    .attendance-checkbox {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
     }
-    else
-    {
-        <SurveyResponseError ErrorText=@error />
+
+        .attendance-checkbox p {
+            margin-bottom: 0;
+        }
+
+        .attendance-checkbox .checkbox {
+            border: 1px solid #AB00EA;
+            width: 15px;
+            height: 15px;
+        }
+
+    .answer-survey-questions {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
     }
-</div>
+</style>
 
 @code {
     [Parameter] public int SurveyId { get; set; }
@@ -54,45 +83,93 @@
 
     private string error = string.Empty;
 
-    private int _curStepNumber = -1;
-    private List<Workload> _workloads = new();
-    protected List<Question> allQuestions = new();
-    protected List<Question> filteredQuestions = new();
+    private int _currentChapterIndex;
+    // неудобно просто по индексу постоянно доставать секцию из опроса
+    private Chapter _currentChapter;
+    private int _currentWorkloadIndex;
 
-    private void OnGoBack() => ChangeDiscipline(--_curStepNumber);
-    private void OnGoForward() => ChangeDiscipline(++_curStepNumber);
+    // может здесь вместо самой секции хранить id секции?
+    private Dictionary<Chapter, List<Workload>> _workloadsByChapters = new();
+
+    private void OnGoBack()
+    {
+        // если номер дисциплины становится -1 => попытаться вернуться на секцию назад
+        //   если секция становится -1 => ничего не делать
+        //   если секция может меняться, присвоить индексу дисциплины последний номер в этой секции
+        // если номер дисциплины норм уменьшается, меняется только дисциплина
+        int newWorkloadIndex = --_currentWorkloadIndex;
+        int newChapterIndex = --_currentChapterIndex;
+
+        // а такого же быть вообще не должно, не должно быть возможности кликать по нему в целом
+        if (newWorkloadIndex == -1)
+        {
+            if (newChapterIndex == -1) return;
+            else
+            {
+                _currentChapterIndex = newChapterIndex;
+                _currentChapter = _survey!.Chapters[_currentChapterIndex];
+                // берём секции из объекта опроса
+                _currentWorkloadIndex = _workloadsByChapters[_currentChapter].Count - 1;
+            }
+        }
+        else
+        {
+            _currentWorkloadIndex = newWorkloadIndex;
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnGoForward()
+    {
+        // если номер дисциплины становится == кол-ву workloads в секции => попытаться перейти на секцию вперёд (после валидации текущей секции)
+        //   если номер секции становится == кол-ву секций в разделе => переходим к завершению опроса (ничего не делать)
+        //   если секция может меняться, присвоить индексу дисциплины 0 (если в секции есть в целом дисциплины)
+        // если номер дисциплины норм увеличивается, меняется только дисциплина
+        int newWorkloadIndex = ++_currentWorkloadIndex;
+        int newChapterIndex = ++_currentChapterIndex;
+
+        // а такого же быть вообще не должно, не должно быть возможности кликать по нему в целом
+        if (newWorkloadIndex == _workloadsByChapters[_currentChapter].Count)
+        {
+            if (newChapterIndex == _workloadsByChapters.Keys.Count) return;
+            else
+            {
+                _currentChapterIndex = newChapterIndex;
+                _currentChapter = _survey!.Chapters[_currentChapterIndex];
+                // берём секции из объекта опроса
+                _currentWorkloadIndex = _workloadsByChapters[_currentChapter].Count + 1;
+            }
+        }
+        else
+        {
+            _currentWorkloadIndex = newWorkloadIndex;
+        }
+
+        StateHasChanged();
+
+        // сохранять данные по ответам в бд
+    }
+
 
     // если просто снять выбор с варианта, метод тоже срабатывает, хотя не должен
-    private async void SetGroup(FilterItem Item) 
+    private async void SetGroup(FilterItem item) 
     {
-        selectedGroupId = Item.Id;
-        await GetWorkloads();
+        selectedGroupId = item.Id;
+        await GetWorkloadsByGroupId();
     }
 
-    private void ChangeDiscipline(int newIndex)
+    // получать их по смене секции
+    private async Task GetWorkloadsByGroupId()
     {
-        if (newIndex < -1 || newIndex >= _workloads.Count) {
-            return;
+        // _currentChapter должен быть первым только, это метод только для получения нагрузки по группе (для обычных дисциплин, аааа блять, нет)
+        foreach (var chapter in _survey!.Chapters)
+        {
+            // здесь получать данные только по конкретному типу дисциплины
+            // _workloadsByChapters[chapter] = await Survey
         }
-        else {
-            _curStepNumber = newIndex;
-            OnDisciplineChange();
-            StateHasChanged();
-        }
-    }
-
-    private void OnDisciplineChange()
-    {
-        // а это
-        // у меня как раз секции, в которых для дисциплин конкретные вопросы и менять вопросы нужно только при смене секции
-        // наверное можно сделать метод типа "взять следующую секцию"
-    }
-
-    // можно ли как-то объединить этот метод и метод для английского языка?
-    private async Task GetWorkloads()
-    {
-        _workloads = await SurveyService.GetWorkloadsBySurveyIdAndStudyGroupId(SurveyId, selectedGroupId) ?? new();
-        if (selectedGroupId != 0 && _workloads.Count == 0)
+        _workloadsByChapters[_currentChapter] = await SurveyService.GetWorkloadsBySurveyIdAndStudyGroupId(SurveyId, selectedGroupId) ?? new();
+        if (selectedGroupId != 0 && _workloadsByChapters[_currentChapter].Count == 0)
         {   
             // это должно высвечиваться под дропдауном, чтобы у студента была возможность поменять выбор
             // + в таком случае должна блокироваться стрелочка вперёд
@@ -120,7 +197,15 @@
 
         allGroups = await SurveyService.GetGroupsFilterItems(_survey.Id) ?? allGroups;
 
-        // allQuestions = await SurveyService.GetQuestionsBySurveyId(SurveyId) ?? allQuestions;
+        foreach (var chapter in _survey.Chapters)
+        {
+            _workloadsByChapters.Add(chapter, new());
+        }
+
+        if (_survey.Chapters.Count > 0)
+        {        
+            _currentChapter = _survey.Chapters[0];
+        }
 
         await base.OnInitializedAsync();
     }

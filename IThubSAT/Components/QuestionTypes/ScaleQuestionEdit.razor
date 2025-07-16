@@ -38,6 +38,7 @@ else
 
     private void SaveQuestionInfo()
     {
+        // сначала валидация
         Question.QuestionTypeInfo = JsonConvert.SerializeObject(scaleQuestion);
         OnSaveQuestion.InvokeAsync();
     }

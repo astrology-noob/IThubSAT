@@ -2,7 +2,7 @@
 
 namespace IThubSAT.Data.Models;
 
-public class Section
+public class Chapter
 {
     [Key]
     public int Id { get; set; }

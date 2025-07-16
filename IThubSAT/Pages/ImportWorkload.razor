@@ -4,17 +4,21 @@
 @using OfficeOpenXml;
 @using System.ComponentModel.DataAnnotations
 @inject SurveyService SurveyService
+@layout AdminLayout
 
-<h3>ImportWorkload</h3>
+<div class="workload-import">
+    @*Может менять заголовок в зависимости от действия*@
+    <h4>Выберите файл Excel (.xslx)</h4>
+    <p>
+        Загружаемые данные должны соответствовать шаблону
+    </p>
+    <p><a class="underlined-link" href="Workload/DownloadTemplate">Скачать шаблон</a></p>
 
-<div class="form-group">
-    <label for="fileUpload">Select Excel File (.xlsx)</label>
-    @* <input type="file" class="form-control" name="FileUpload" id="fileUpload" accept=".xlsx" required /> *@
-    <InputFile OnChange="LoadFiles" />
+    <InputFile OnChange="LoadFiles" accept=".xlsx" />
+    <button class="primary-button" @onclick=@ImportData>
+        Импортировать
+    </button>
 </div>
-<button class="btn btn-primary mt-3" @onclick=@ImportData>
-    <i class="fas fa-upload"></i> Upload and Import
-</button>
 
 @if (!string.IsNullOrEmpty(_importMessage))
 {
@@ -32,6 +36,20 @@
         </div>
     }
 </div>
+
+<style>
+    .workload-import {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .underlined-link {
+        text-decoration: underline;
+        color: #AB00EA;
+    }
+</style>
 
 @code {
     [Parameter] public int surveyId { get; set; }

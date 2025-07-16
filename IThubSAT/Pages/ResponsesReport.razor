@@ -1,0 +1,29 @@
+@page "/surveys/{SurveyId:int}/answers"
+@using IThubSAT.Components
+@using IThubSAT.Components.Tabs
+@using IThubSAT.Data
+@using IThubSAT.Data.Models
+@inject SurveyService SurveyService
+@inject AppNavigationState AppNavState
+@layout AdminLayout
+
+<TabsControl>
+    <TabPage Text="Сводка">
+        <SurveyEntriesSummary />
+    </TabPage>
+    <TabPage Text="Список ответов">
+        <SurveyAnswersTable />
+    </TabPage>
+</TabsControl>
+
+@code {
+    [Parameter] public int SurveyId { get; set; }
+    protected Survey Survey = new Survey();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? Survey;
+        AppNavState.SetTopBarData($"{Survey.Name} (ответы)", $"/surveys/{SurveyId}");
+        await base.OnInitializedAsync();
+    }
+}

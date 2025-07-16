@@ -1,0 +1,56 @@
+@*Блок секции опроса для просмотра и изменения*@
+@using IThubSAT.Data.Models
+@using IThubSAT.Data;
+@inject SurveyService SurveyService;
+
+<div class="chapter">
+    <div class="chapter-header">
+        <div class="chapter-info">
+            <p class="chapter-name">@Chapter.Name</p>
+                @* SectionDescription отображать в виде мелкого текста с иконкой вопросит. знака *@
+            <p class="chapter-desc">@Chapter.Description</p>
+        </div>
+    </div>
+
+    @if (Chapter.Questions != null && Chapter.Questions.Count > 0)
+        @foreach (var question in Chapter.Questions!) {
+            <SurveyQuestion Question=question />
+        }
+    }
+    @*Если нет вообще вопросов высветить что-то типа "если в разделе нет вопросов, он не будет отображаться студентам"*@
+    <button @onclick=AddQuestion>Добавить вопрос</button>
+</div>
+
+<style>
+    .chapter-header {
+        width: 100%;
+        border-bottom: 1px solid #EBEEF5;
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+        align-items: center;
+    }
+
+    .chapter-info {
+        display: block;
+    }
+
+    .chapter-name {
+        font-weight: bold;
+    }
+
+    .chapter-desc {
+        margin-bottom: 0 !important;
+    }
+</style>
+
+@code {
+    [Parameter] public Chapter Chapter { get; set; } = null!;
+
+    private void AddQuestion()
+    {
+        Question newQuestion = new() { Text = "Текст по умолчанию" };
+        Chapter.Questions.Add(newQuestion);
+        SurveyService.SaveChanges().GetAwaiter().OnCompleted(() => StateHasChanged());
+    }
+}
