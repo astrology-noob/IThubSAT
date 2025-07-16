@@ -1,5 +1,5 @@
 ﻿namespace IThubSAT.Shared;
-public class AppNavigationState
+public class TopBarState
 {
     public string PageTitle { get; private set; } = "Главная";
     public string HrefBack { get; private set; } = string.Empty;

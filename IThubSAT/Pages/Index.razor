@@ -5,7 +5,7 @@
 @using System.Linq
 @inject SurveyService SurveyService
 @inject NavigationManager Navigation
-@inject AppNavigationState AppNavState
+@inject TopBarState TopBarState
 @layout AdminLayout
 
 <TabsControl>
@@ -35,7 +35,7 @@
     protected async override Task OnInitializedAsync()
     {
         _surveys = await SurveyService.GetSurveys();
-        AppNavState.SetTopBarData("Главная");
+        TopBarState.SetTopBarData("Главная");
         base.OnInitialized();
     }
 

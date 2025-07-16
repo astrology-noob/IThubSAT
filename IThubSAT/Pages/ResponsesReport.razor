@@ -4,7 +4,7 @@
 @using IThubSAT.Data
 @using IThubSAT.Data.Models
 @inject SurveyService SurveyService
-@inject AppNavigationState AppNavState
+@inject TopBarState TopBarState
 @layout AdminLayout
 
 <TabsControl>
@@ -23,7 +23,7 @@
     protected override async Task OnInitializedAsync()
     {
         Survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? Survey;
-        AppNavState.SetTopBarData($"{Survey.Name} (ответы)", $"/surveys/{SurveyId}");
+        TopBarState.SetTopBarData($"{Survey.Name} (ответы)", $"/surveys/{SurveyId}");
         await base.OnInitializedAsync();
     }
 }

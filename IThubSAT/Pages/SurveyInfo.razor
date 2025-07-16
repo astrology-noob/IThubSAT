@@ -4,7 +4,7 @@
 @using IThubSAT.Data
 @using IThubSAT.Data.Models
 @inject SurveyService SurveyService
-@inject AppNavigationState AppNavState
+@inject TopBarState TopBarState
 @layout AdminLayout
 
 @if(!string.IsNullOrEmpty(Survey.Name))
@@ -36,7 +36,7 @@ else {
     {
         Survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? Survey;
         Workloads = await SurveyService.GetWorkloadBySurveyId(Survey.Id);
-        AppNavState.SetTopBarData(Survey.Name, "/");
+        TopBarState.SetTopBarData(Survey.Name, "/");
         await base.OnInitializedAsync();
     }
 }

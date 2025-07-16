@@ -15,7 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<XlsxProcessingService>();
-builder.Services.AddScoped<AppNavigationState>();
+builder.Services.AddScoped<TopBarState>();
 builder.Services.AddScoped(sp =>
 {
     var dbContext = sp.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();

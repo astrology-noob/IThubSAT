@@ -1,13 +1,13 @@
 @inject NavigationManager Navigation
-@inject AppNavigationState AppNavState
+@inject TopBarState TopBarState
 
 <div class="top-bar">
     <div class="page-name">
-        @if (AppNavState.HrefBack != string.Empty)
+        @if (TopBarState.HrefBack != string.Empty)
         {
-            <a href="@(AppNavState.HrefBack)"><img src="icons/ArrowBack.svg"/></a>
+            <a href="@(TopBarState.HrefBack)"><img src="icons/ArrowBack.svg"/></a>
         }
-        <p>@AppNavState.PageTitle</p>
+        <p>@TopBarState.PageTitle</p>
     </div>
     <div class="user-info-block">
         <div class="user-info">
@@ -82,11 +82,11 @@
 
     protected override void OnInitialized()
     {
-        AppNavState.OnChange += StateHasChanged;
+        TopBarState.OnChange += StateHasChanged;
     }
 
     public void Dispose()
     {
-        AppNavState.OnChange -= StateHasChanged;
+        TopBarState.OnChange -= StateHasChanged;
     }
 }
