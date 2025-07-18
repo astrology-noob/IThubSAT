@@ -8,16 +8,16 @@
 @if (string.IsNullOrWhiteSpace(error))
 {
     <SurveyPaginator OnGoBack=OnGoBack OnGoForward=OnGoForward>
-        @if (_currentChapterIndex == 0 && selectedGroupId == -1) {
-            <SurveyPage PageTitle="Выберите группу">
-                <Dropdown Items="allGroups" OnChoose="SetGroup" TabIndex="1" Placeholder="Группа не выбрана"/>
-            </SurveyPage>
-        }
-        else
-        {
-            @if (_workloadsByChapters[_currentChapter].Count > 0)
+        <CascadingValue Value="_surveyEntry">
+            @if (_currentChapterIndex == 0 && selectedGroupId == -1) {
+                <SurveyPage PageTitle="Выберите группу">
+                    <Dropdown Items="allGroups" OnChoose="SetGroup" TabIndex="1" Placeholder="Группа не выбрана"/>
+                </SurveyPage>
+            }
+            else
             {
-                <CascadingValue Value="_surveyEntry">
+                @if (_workloadsByChapters[_currentChapter].Count > 0)
+                {
                     <SurveyPage PageTitle="">
                         <div class="attendance-checkbox">
                             @*если чекбокс отмечен, баллы по дисциплине должны быть нулевыми (числовые данные)*@
@@ -31,9 +31,9 @@
                         }
                         </div>
                     </SurveyPage>
-                </CascadingValue>
+                }
             }
-        }
+        </CascadingValue>
     </SurveyPaginator>
 }
 else
@@ -81,6 +81,11 @@ else
     protected List<FilterItem> allSportClubs = new();
     protected int selectedSportClubId;
 
+    // короче какой вариант
+    // можно по полученной нагрузке динамически вставлять страницы после страниц с выбором группы
+    // но это чё-то капец наверное
+    private List<SurveyPage> surveyPages = new();
+
     private string error = string.Empty;
 
     private int _currentChapterIndex;
@@ -119,7 +124,7 @@ else
 
         StateHasChanged();
     }
-
+     
     private void OnGoForward()
     {
         // если номер дисциплины становится == кол-ву workloads в секции => попытаться перейти на секцию вперёд (после валидации текущей секции)
