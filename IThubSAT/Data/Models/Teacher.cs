@@ -1,12 +1,13 @@
-namespace IThubSAT.Data.Models;
 using System.ComponentModel.DataAnnotations;
+namespace IThubSAT.Data.Models;
+
 public class Teacher
 {   
     [Key]
     public int Id { get; set; } 
-    public string LastName { get; set; } = "Íîâûé";
-    public string FirstName { get; set; } = "Ïðåïîäàâàòåëü";
-    public string PaternalName { get; set; } = "Ïðåïîäàâàòåëåâè÷";
+    public string LastName { get; set; } = "ÐÐ¾Ð²Ñ‹Ð¹";
+    public string FirstName { get; set; } = "ÐŸÑ€ÐµÐ¿Ð¾Ð´Ð°Ð²Ð°Ñ‚ÐµÐ»ÑŒ";
+    public string PaternalName { get; set; } = "ÐŸÑ€ÐµÐ¿Ð¾Ð´Ð°Ð²Ð°Ñ‚ÐµÐ»ÐµÐ²";
 
     public string FullName => string.Join(' ', LastName, FirstName, PaternalName);
 }

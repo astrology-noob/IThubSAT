@@ -1,0 +1,42 @@
+@using IThubSAT.Data.Models;
+
+<div style="background-color: @_backgroundColor;" class="discipline-tag">@_name</div>
+
+<style>
+    .discipline-tag {
+        height: 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 10px;
+    }
+</style>
+
+@code {
+    [Parameter] public DisciplineType DisciplineType { get; set; }
+
+    private string _backgroundColor = string.Empty;
+    private string _name = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _name = DisciplineType switch
+        {
+            DisciplineType.General => "Общие дисциплины",
+            DisciplineType.English => "Иностранный язык",
+            DisciplineType.Sport => "Спортивные клубы",
+            _ => "Неизвестный тип"
+        };
+
+        _backgroundColor = DisciplineType switch
+        {
+            DisciplineType.General => "#FF8080",
+            DisciplineType.English => "#F4DB78",
+            DisciplineType.Sport => "#95EA90",
+            _ => "Неизвестный тип"
+        };
+
+        base.OnInitialized();
+    }
+}

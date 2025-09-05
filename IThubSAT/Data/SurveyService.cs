@@ -38,7 +38,15 @@ public class SurveyService
 
     public static async Task<int> AddSurveyAsync(Survey survey)
     {
+        // автоматически создавать 3 главы и добавлять их в опрос
+
         survey.CreatedBy = GetSingleUser();
+        
+        Chapter chapterGeneral = new Chapter() { DisciplineType = DisciplineType.General, Name = "Общие дисциплины" };
+        Chapter chapterEnglish = new Chapter() { DisciplineType = DisciplineType.English, Name = "Иностранный язык" };
+        Chapter chapterSport = new Chapter() { DisciplineType = DisciplineType.Sport, Name = "Спортивные клубы" };
+        survey.Chapters = [chapterGeneral, chapterEnglish, chapterSport];
+
         _dbContext.Surveys.Add(survey);
         await _dbContext.SaveChangesAsync();
 
@@ -51,6 +59,14 @@ public class SurveyService
         await SaveChanges();
 
         return survey;
+    }
+
+    public static async Task<Chapter> DeleteChapterAsync(Chapter chapter)
+    {
+        _dbContext.Chapters.Remove(chapter);
+        await SaveChanges();
+
+        return chapter;
     }
 
     public static async Task<List<Workload>> GetWorkloadBySurveyId(int surveyId) =>
@@ -70,6 +86,7 @@ public class SurveyService
     // дубляжа по уч. группе, преподу и уровню быть не должно
     public static async Task<Workload?> GetSpecificWorkload(EnglishGroup englishGroup, EnglishLevel englishLevel, Discipline discipline, Teacher teacher) =>
         await _dbContext.Workloads.FirstOrDefaultAsync(x => x.EnglishGroup == englishGroup && x.EnglishGroup!.EnglishLevel == englishLevel && x.Discipline == discipline && x.Teacher == teacher);
+    
     public static async Task<Workload?> GetSpecificWorkload(SportClub sportClub, Discipline discipline, Teacher teacher) =>
         await _dbContext.Workloads.FirstOrDefaultAsync(x => x.SportClub == sportClub && x.Discipline == discipline && x.Teacher == teacher);
 
@@ -81,23 +98,23 @@ public class SurveyService
     // здесь может каким-то образом получать не прям объекты а id + конкретные поля?
     #region filters
     public static async Task<List<FilterItem>?> GetGroupsFilterItems(int surveyId) =>
-        await _dbContext.Workloads.Include(w => w.Group).Where(w => w.SurveyId == surveyId)
+        await _dbContext.Workloads.Include(w => w.Group!).Where(w => w.SurveyId == surveyId)
                                     .Select(w => new FilterItem() { Id = w.Group!.Id, Name = w.Group!.Name, FilterType = FilterType.Group }).Distinct().ToListAsync();
 
     public static async Task<List<FilterItem>?> GetEnglishGroupsFilterItems(int surveyId) =>
-        await _dbContext.Workloads.Include(w => w.EnglishGroup).Where(w => w.SurveyId == surveyId)
+        await _dbContext.Workloads.Include(w => w.EnglishGroup!).Where(w => w.SurveyId == surveyId)
                                     .Select(w => new FilterItem() { Id = w.EnglishGroup!.Id, Name = w.EnglishGroup!.Name, FilterType = FilterType.EnglishGroup }).Distinct().ToListAsync();
 
     public static async Task<List<FilterItem>?> GetSportClubsFilterItems(int surveyId) =>
-        await _dbContext.Workloads.Include(w => w.SportClub).Where(w => w.SurveyId == surveyId)
+        await _dbContext.Workloads.Include(w => w.SportClub!).Where(w => w.SurveyId == surveyId)
                                     .Select(w => new FilterItem() { Id = w.SportClub!.Id, Name = w.SportClub!.Name, FilterType = FilterType.SportClub }).Distinct().ToListAsync();
 
     public static async Task<List<FilterItem>?> GetDisciplinesFilterItems(int surveyId) =>
-        await _dbContext.Workloads.Include(w => w.Discipline).Where(w => w.SurveyId == surveyId)
+        await _dbContext.Workloads.Include(w => w.Discipline!).Where(w => w.SurveyId == surveyId)
                                     .Select(w => new FilterItem() { Id = w.Discipline!.Id, Name = w.Discipline!.Name, FilterType = FilterType.Discipline }).Distinct().ToListAsync();
 
     public static async Task<List<FilterItem>?> GetTeachersFilterItems(int surveyId) =>
-        await _dbContext.Workloads.Include(w => w.Teacher).Where(w => w.SurveyId == surveyId)
+        await _dbContext.Workloads.Include(w => w.Teacher!).Where(w => w.SurveyId == surveyId)
                                     .Select(w => new FilterItem() { Id = w.Teacher!.Id, Name = w.Teacher!.FullName, FilterType = FilterType.Teacher }).Distinct().ToListAsync();
 
     public static async Task<List<FilterItem>?> GetFacultiesFilterItems(int surveyId) =>

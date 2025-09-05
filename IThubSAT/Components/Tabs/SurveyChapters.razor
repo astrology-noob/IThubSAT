@@ -1,24 +1,48 @@
 @using IThubSAT.Data.Models
+@using IThubSAT.Data
+@inject SurveyService SurveyService
 
-<div class="chapters">
-    <div>Вступление</div>
-    <input @bind-value=@Survey.IntroductionText />
+<div class="survey-information">
+    @*показывать кнопук только если появились изменения*@
+    <button class="add-fullwidth-button" @onclick=SaveSurvey>Сохранить изменения</button>
 
-    @foreach(var chapter in Survey.Chapters)
-    {
-        <SurveyChapterInfo Chapters=chapter />
-    }
+    <div class="survey-information-block">
+        <input class="underlined-input" style="width: 100%;" placeholder="Вступление" @bind-value=@Survey.IntroductionText />
+    </div>
 
-    <div>Заключение</div>
-    <input @bind-value=@Survey.ConclusionText />
+    <div class="chapters">
+        @foreach(var chapter in Survey.Chapters)
+        {
+            <SurveyChapterInfo Chapter=chapter />
+        }
+    </div>
+
+    <div class="survey-information-block">
+        <input class="underlined-input" style="width: 100%;" placeholder="Заключение" @bind-value=@Survey.ConclusionText />
+    </div>
 </div>
 
 <style>
+    .survey-information {
+        width: 100%;
+        display: flex;
+        gap: 20px;
+        flex-direction: column;
+    }
+
     .chapters {
         width: 100%;
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
     }
 </style>
 
 @code {
-    [Parameter] public Survey Survey { get; set; } = null!; 
+    [Parameter] public Survey Survey { get; set; } = null!;
+
+    private async Task SaveSurvey()
+    {
+        await SurveyService.SaveChanges();
+    }
 }

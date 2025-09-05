@@ -32,6 +32,25 @@ main {
     justify-content: center;
 }
 
+.add-fullwidth-button {
+    margin-top: 10px;
+    width: 100%;
+    background-color: #F7F9FC;
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.survey-information-block {
+    width: 100%;
+    border: solid 1px #EBEEF5;
+    border-radius: 10px;
+    padding: 15px 20px;
+}
+
 #popup.active {
     width: 100vw;
     height: 100vh;
@@ -46,7 +65,7 @@ main {
     width: 650px;
     min-height: 350px;
     border-radius: 10px;
-    background: #FFFFFF; 
+    background: #FFFFFF;
 }
 
 .popup-header {
@@ -82,23 +101,24 @@ main {
     justify-content: center;
     gap: 20px;
 }
+
     .popup-buttons button {
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 15px;
-    height: 40px;
-    width: 250px;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 15px;
+        height: 40px;
+        width: 250px;
     }
 
-    .popup-buttons button .primary-button {
-    background-color: #AB00EA;
-    color: #ffffff;
-    }
+        .popup-buttons button .primary-button {
+            background-color: #AB00EA;
+            color: #ffffff;
+        }
 
-    .popup-buttons button .secondary-button {
-    border: solid 1px #BEC2CC;
-    background-color: #FFFFFF;
-    }
+        .popup-buttons button .secondary-button {
+            border: solid 1px #BEC2CC;
+            background-color: #FFFFFF;
+        }
 
 .primary-button {
     width: 125px;
@@ -109,16 +129,21 @@ main {
     color: #FFFFFF;
     border: none;
     font-size: 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.primary-button:hover {
-    cursor: pointer;
-}
+    .primary-button:hover {
+        cursor: pointer;
+        color: #FFFFFF;
+    }
 
-.primary-button:focus {
-    cursor: pointer;
-    background-color: #9100c5;
-}
+    .primary-button:focus {
+        cursor: pointer;
+        background-color: #9100c5;
+    }
 
 .fat-button {
     min-height: 50px;
@@ -137,6 +162,8 @@ main {
 
 .dropdown-bar {
     display: flex;
+    max-width: 100%;
+    flex-wrap: wrap;
     gap: 5px;
 }
 
@@ -148,16 +175,33 @@ main {
 
     .table-row div {
         display: flex;
-        align-items: center;
+/*        align-items: center;*/
         flex: 1;
+    }
+
+.table-content .table-row {
+    align-items: center;
+}
+
+.underlined-input {
+    border: none;
+    border-bottom: solid 1px #EBEEF5;
+}
+
+    .underlined-input:focus {
+        border: none;
+        border-bottom: solid 1px #AB00EA;
+        outline: none;
     }
 
 /* Стили вопросов */
 .survey-question-info {
-    width: 100%;
-    border: 1px solid #EBEEF5;
-    border-radius: 10px;
     padding: 15px 20px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
 }
 
 .question-title {
@@ -193,9 +237,9 @@ main {
     height: 100px !important;
 }
 
-.short-text-input:focus, .long-text-input:focus {
-    outline: none;
-}
+    .short-text-input:focus, .long-text-input:focus {
+        outline: none;
+    }
 /* End: стили вопросов */
 
 #blazor-error-ui {

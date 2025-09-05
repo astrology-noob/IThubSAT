@@ -5,45 +5,39 @@
 
 @* не забыть фильтровать сами наборы данных - или оставить на 2 версию? *@
 <div class="tool-bar">
-    <div class="dropdown-bar">
-        <Dropdown Placeholder="Кафедра" Items=Faculties OnChoose=UpdateData TabIndex=0 />
-        <Dropdown Placeholder="Группа" Items=Groups OnChoose=UpdateData TabIndex=1 />
-        <Dropdown Placeholder="Подгруппа" Items=EnglishGroups OnChoose=UpdateData TabIndex=2 />
-        <Dropdown Placeholder="Клуб" Items=SportClubs OnChoose=UpdateData TabIndex=3 />
-        <Dropdown Placeholder="Дисциплина" Items=Disciplines OnChoose=UpdateData TabIndex=4 />
-        <Dropdown Placeholder="Преподаватель" Items=Teachers OnChoose=UpdateData TabIndex=5 />
-        <Dropdown Placeholder="Учебный год" Items=StudyYears OnChoose=UpdateData TabIndex=6 />
-    </div>
-
     <a class="primary-button" href="/surveys/@(Survey.Id)/import">Импорт</a>
     <button class="primary-button">Экспорт</button>
 </div>
 
 <div class="table-wrapper">
     <div class="table-row table-header">
-        <div>Кафедра</div>
-        <div>Курс</div>
-        <div>Группа</div>
-        <div>Подгруппа</div>
-        <div>Спортклуб</div>
-        <div>Дисциплина</div>
-        <div>Преподаватель</div>
+        <div><Dropdown Placeholder="Кафедра" Items=Faculties OnChoose=UpdateData TabIndex=0 /></div>
+        <div><Dropdown Placeholder="Курс" Items=StudyYears OnChoose=UpdateData TabIndex=1 /></div>
+        <div><Dropdown Placeholder="Группа" Items=Groups OnChoose=UpdateData TabIndex=2 /></div>
+        <div><Dropdown Placeholder="Подгруппа" Items=EnglishGroups OnChoose=UpdateData TabIndex=3 /></div>
+        <div><Dropdown Placeholder="Спортклуб" Items=SportClubs OnChoose=UpdateData TabIndex=4 /></div>
+        <div><Dropdown Placeholder="Дисциплина" Items=Disciplines OnChoose=UpdateData TabIndex=5 /></div>
+        <div><Dropdown Placeholder="Преподаватель" Items=Teachers OnChoose=UpdateData TabIndex=6 /></div>
         <div>Часы в неделю</div>
         <div>Часы всего</div>
     </div>
+
+    <div class="add-fullwidth-button" @onclick=AddWorkload>Добавить нагрузку +</div>
     
     <div class="table-content @(FilteredWorkloads.Count > 0 ? "table-scrollable" : string.Empty)">
-        @if (FilteredWorkloads.Count() > 0) {
-            @foreach (var workloadRow in FilteredWorkloads) {
+        @if (FilteredWorkloads.Count() > 0) 
+        {
+            @foreach (var workloadRow in FilteredWorkloads) 
+            {
                 <WorkloadRow Workload=workloadRow />
             }
         }
-        else {
+        else 
+        {
             <div class="table-row">Пока нет вообще никакой нагрузки</div>
         }
     </div>
 
-    <div class="table-row workload-add-button" @onclick=AddWorkload>+</div>
 </div>
 
 <style>
@@ -90,6 +84,7 @@
     // обновлять списки фильтров при изменении строки
     // если вручную добавился элемент - похуй, он пустой всё равно
     // если был массовый импорт, то само подтягивается (потому что всё равно страница обновляется)
+    #region filters
     public List<FilterItem> Faculties { get; set; } = new();
     public List<FilterItem> Groups { get; set; } = new();
     public List<FilterItem> EnglishGroups { get; set; } = new();
@@ -105,6 +100,7 @@
     public List<FilterItem> FilteredTeachers { get; set; } = new();
     public List<FilterItem> FilteredDisciplines { get; set; } = new();
     public List<FilterItem> FilteredStudyYears { get; set; } = new();
+    #endregion
 
     // Pagination properties - не уверена насчёт того нужно это или нет, скорее всего да, для оптимизации, но хз
     public int CurrentPage { get; set; }
@@ -206,8 +202,7 @@
 
     public async Task AddWorkload()
     {
-        // не создавать новые а получать дефолтные (если они есть)
-        Workloads.Add(new(){Discipline=new(), Teacher=new(), Survey=Survey });
+        // вызывать попап
         await SurveyService.SaveChanges();
     }
 

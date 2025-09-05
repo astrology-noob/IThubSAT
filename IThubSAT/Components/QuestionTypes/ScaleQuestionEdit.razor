@@ -2,20 +2,81 @@
 @using IThubSAT.Data.Models.QuestionTypes;
 @using Newtonsoft.Json;
 
-@* <QuestionTypeTag QuestionType=Question.QuestionType BackgroundColor="#efefef" /> *@
-<div class="survey-question-info">@Question.Text</div>
+@*сюда передавать только QuestionTypeInfo*@
+
 @if(scaleQuestion != null)
 {
-    <input @bind-value=@scaleQuestion.MinPoints>
-    <input @bind-value=@scaleQuestion.MaxPoints>
-    <input @bind-value=@scaleQuestion.MinPointsText>
-    <input @bind-value=@scaleQuestion.MaxPointsText>
+    <div class="rows-of-properties">
+        <div class="row-of-properties">
+            <div class="">
+                <p>Минимальное значение шкалы:</p>
+                <input type="number" @bind-value=@scaleQuestion.MinPoints>
+            </div>
+            <div>
+                <p>Подпись минимального значения:</p>
+                <input type="text" @bind-value=@scaleQuestion.MinPointsText>
+            </div>
+        </div>
+        <div class="row-of-properties">
+            <div>
+                <p>Максимальное значение шкалы:</p>
+                <input type="number" @bind-value=@scaleQuestion.MaxPoints>
+            </div>
+            <div>
+                <p>Подпись максимального значения:</p>
+                <input type="text" @bind-value=@scaleQuestion.MaxPointsText>
+            </div>
+        </div>
+    </div>
 }
 else
 {
     <p>@error</p>
 }
+
 <button @onclick=SaveQuestionInfo>Сохранить</button>
+
+<style>
+    .rows-of-properties {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .row-of-properties {
+        display: flex;
+        gap: 20px;
+    }
+
+    .row-of-properties div {
+        display: flex;
+        height: 40px;
+        align-items: center;
+    }
+
+    .row-of-properties div p {
+        margin-right: 10px;
+        margin-bottom: 0;
+    }
+
+    .row-of-properties div input {
+        height: 100%;
+        background: #F7F9FC;
+        border-radius: 10px;
+        outline: none;
+        border: none;
+        padding: 0 10px;
+    }
+
+    .row-of-properties div input[type=number] {
+        width: 80px;
+    }
+
+    .row-of-properties div input[type=text] {
+        width: 200px;
+    }
+    
+</style>
 
 @code {
     [Parameter] public Question Question { get; set; } = null!;

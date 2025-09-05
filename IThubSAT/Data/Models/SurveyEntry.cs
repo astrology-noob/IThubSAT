@@ -1,6 +1,6 @@
-namespace IThubSAT.Data.Models;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+namespace IThubSAT.Data.Models;
+
 public class SurveyEntry
 {   
     [Key]
@@ -9,5 +9,5 @@ public class SurveyEntry
     public Survey Survey { get; set; } = null!;
     public string SubmittedAt { get; set; } = string.Empty;
     public List<Answer> Answers { get; set; } = new();
-    // а может добавить сюда список ответов?
+    // Р° РјРѕР¶РµС‚ РґРѕР±Р°РІРёС‚СЊ СЃСЋРґР° СЃРїРёСЃРѕРє РѕС‚РІРµС‚РѕРІ?
 }

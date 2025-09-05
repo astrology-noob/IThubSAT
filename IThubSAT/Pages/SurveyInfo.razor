@@ -7,6 +7,8 @@
 @inject TopBarState TopBarState
 @layout AdminLayout
 
+@*получать в параметрах #tab=название и автоматически делать эту вкладку активной *@
+
 @if(!string.IsNullOrEmpty(Survey.Name))
 {
     <TabsControl>

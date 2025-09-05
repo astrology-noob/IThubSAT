@@ -4,7 +4,9 @@
 @using OfficeOpenXml;
 @using System.ComponentModel.DataAnnotations
 @inject SurveyService SurveyService
+@inject TopBarState TopBarState
 @layout AdminLayout
+
 
 <div class="workload-import">
     @*Может менять заголовок в зависимости от действия*@
@@ -59,6 +61,13 @@
     private int _totalImportedRows;
     private string _importMessage = string.Empty;
     private List<ImportError> _importErrors = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        TopBarState.SetTopBarData("Импорт нагрузки", $"/surveys/{surveyId}");
+
+        await base.OnInitializedAsync();
+    }
 
     private async Task LoadFiles(InputFileChangeEventArgs e)
     {

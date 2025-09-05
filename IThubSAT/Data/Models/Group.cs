@@ -1,5 +1,6 @@
-namespace IThubSAT.Data.Models;
 using System.ComponentModel.DataAnnotations;
+namespace IThubSAT.Data.Models;
+
 public class Group
 {   
     [Key]

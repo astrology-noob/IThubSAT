@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-
 namespace IThubSAT.Data.Models;
 
 public class Question
@@ -11,7 +10,7 @@ public class Question
     public int ChapterId { get; set; }
     public Chapter Chapter { get; set; } = null!;
     public QuestionType QuestionType { get; set; }
-    // в целом здесь можно json хранить, а обрабатывать в конкретном компоненте с описанной моделькой (+ получать сериализованную строку из этой модельки)
+    // РІ С†РµР»РѕРј Р·РґРµСЃСЊ РјРѕР¶РЅРѕ json С…СЂР°РЅРёС‚СЊ, Р° РѕР±СЂР°Р±Р°С‚С‹РІР°С‚СЊ РІ РєРѕРЅРєСЂРµС‚РЅРѕРј РєРѕРјРїРѕРЅРµРЅС‚Рµ СЃ РѕРїРёСЃР°РЅРЅРѕР№ РјРѕРґРµР»СЊРєРѕР№ (+ РїРѕР»СѓС‡Р°С‚СЊ СЃРµСЂРёР°Р»РёР·РѕРІР°РЅРЅСѓСЋ СЃС‚СЂРѕРєСѓ РёР· СЌС‚РѕР№ РјРѕРґРµР»СЊРєРё)
     public string QuestionTypeInfo { get; set; } = string.Empty;
 }
 

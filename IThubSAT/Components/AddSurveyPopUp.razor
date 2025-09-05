@@ -5,12 +5,12 @@
 <div>
     @if (ShowDialog)  
     {  
-        <div class="modal fade show d-block" id="exampleModal" tabindex="-1" role="dialog">
+        <div class="modal fade show d-block" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="titleLabel">Новый опрос</h5>
-                        <button type="button" class="close" @onclick="@Close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title">Новый опрос</h5>
+                        <button class="modal-close" @onclick="@Close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
@@ -18,18 +18,27 @@
                         <EditForm Model="@NewSurvey" OnValidSubmit="@HandleValidSubmit">
                             <DataAnnotationsValidator />
                             <ValidationSummary />
-                            <div class="form-group">
-                                <label for="title">Название: </label>
-                                <InputText id="title" class="form-control" @bind-Value="@NewSurvey.Name"></InputText>
-                                <ValidationMessage For="@(() => NewSurvey.Name)" />
+                            <div class="modal-input-group">
+                                <div class="form-group">
+                                    <label for="title">Название: </label>
+                                    @* вынести в отдельный компонент?*@
+                                    <InputText id="title" class="modal-input" 
+                                        @bind-Value="@NewSurvey.Name"></InputText>
+                                    <ValidationMessage For="@(() => NewSurvey.Name)" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Описание (необязательно): </label>
+                                    <InputText id="description" class="modal-input" 
+                                        @bind-Value="@NewSurvey.Description"></InputText>
+                                    <ValidationMessage For="@(() => NewSurvey.Description)" />
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="description">Описание (необязательно): </label>
-                                <InputText id="description" class="form-control" @bind-Value="@NewSurvey.Description"></InputText>
-                                <ValidationMessage For="@(() => NewSurvey.Description)" />
+                            <div class="modal-footer">
+                                <div class="button-group">
+                                    <button class="modal-secondary-button" @onclick="@Close">Отменить</button>
+                                    <button class="modal-primary-button" type="submit">Сохранить</button>
+                                </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Сохранить</button>
-                            <a class="btn btn-outline-primary" @onclick="@Close">Закрыть</a>
                         </EditForm>
                     </div>
                 </div>
@@ -37,6 +46,76 @@
         </div> 
     }  
 </div>
+
+<style>
+    .modal {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-dialog {
+        min-width: 650px;
+    }
+
+    .modal-input {
+        width: 100%;
+        background: #F7F9FC;
+        border: #EBEEF5;
+        border-radius: 10px;
+        height: 50px;
+        padding-left: 10px;
+    }
+
+    .modal-input:focus {
+        border: solid 1px #AB00EA;
+        outline: none;
+    }
+
+    .modal-close {
+        border: none;
+        background: none;
+    }
+
+    .modal-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .modal-footer {
+        height: 60px;
+        border-top: solid 1px #EBEEF5;
+        padding: 10px 0 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .button-group * {
+        height: 40px;
+        width: 250px;
+        border-radius: 10px;
+    }
+
+    .modal-primary-button {
+        background-color: #AB00EA;
+        color: #FFFFFF;
+        border: none;
+        font-weight: bold;
+    }
+
+    .modal-secondary-button {
+        background: none;
+        border: solid 1px #BEC2CC;
+    }
+
+    label {
+        font-size: 14px;
+        margin: 0 0 15px 15px;
+    }
+</style>
 
 @code {
     public Survey NewSurvey { get; set; } = new(); 

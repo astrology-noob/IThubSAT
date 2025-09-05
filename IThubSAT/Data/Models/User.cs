@@ -1,6 +1,6 @@
-namespace IThubSAT.Data.Models;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+namespace IThubSAT.Data.Models;
+
 public class User
 {   
     [Key]

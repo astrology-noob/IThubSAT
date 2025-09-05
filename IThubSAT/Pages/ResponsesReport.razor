@@ -8,10 +8,10 @@
 @layout AdminLayout
 
 <TabsControl>
-    <TabPage Text="Сводка">
+    <TabPage Text="РЎРІРѕРґРєР°">
         <SurveyEntriesSummary />
     </TabPage>
-    <TabPage Text="Список ответов">
+    <TabPage Text="РЎРїРёСЃРѕРє РѕС‚РІРµС‚РѕРІ">
         <SurveyAnswersTable />
     </TabPage>
 </TabsControl>
@@ -23,7 +23,7 @@
     protected override async Task OnInitializedAsync()
     {
         Survey = await SurveyService.GetSurveyByIdAsync(SurveyId) ?? Survey;
-        TopBarState.SetTopBarData($"{Survey.Name} (ответы)", $"/surveys/{SurveyId}");
+        TopBarState.SetTopBarData($"{Survey.Name} (РѕС‚РІРµС‚С‹)", $"/surveys/{SurveyId}");
         await base.OnInitializedAsync();
     }
 }

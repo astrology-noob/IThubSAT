@@ -5,7 +5,6 @@
         @if (ChosenOption.Id == 0)
         {
             <span>@Placeholder</span>
-            <span>ջ</span>
         }
         else
         {
@@ -16,26 +15,28 @@
 
     @if (showDropdown)
     {
+        // если в отфильтрованных данных ничего нет, выводить кнопку "создать новый"
+        // (создаю filteritem с именем и инвоукаю метод который создаст в род. элементе нужный элемент на основе типа этого filteritem)
+        // а может передавать в childcontent?
+        // нужен тогда метод на "создание нового" (хотя это в фильтре не должно работать, только в инпуте в таблице)
         <DropdownMenu Options="Items" SetOption="SetOption" />
     }
 </div>
 
 <style>
     .filter-area {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: start;
+        width: 300px;
     }
 
     .filter {
-        /* background-color: #F7F9FC; */
+        background-color: #F7F9FC;
+        border-radius: 10px;
+        border: 1px solid #EBEEF5;
         padding-left: 10px;
-        height: 100%;
+        width: inherit;
+        min-height: 35px;
         display: flex;
         justify-content: space-between;
-        /* border-radius: 10px;
-        border: 1px solid #EBEEF5; */
     }
 
     .filter:focus {

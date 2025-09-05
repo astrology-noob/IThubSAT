@@ -3,7 +3,7 @@
 <div class="dropdown-menu">
     @if(Options.Count == 0)
     {
-        <span>Ничего нет</span>
+        <span>РќРёС‡РµРіРѕ РЅРµС‚</span>
     }
     @foreach(var option in Options) {
         <div @onclick=@(() => SetOption.InvokeAsync(option))>@option.Name</div>
@@ -14,9 +14,9 @@
     .dropdown-menu {
         display: block;
         position: absolute;
-        margin-top: 10px;
+        margin-top: 40px;
         height: 200px;
-        width: inherit;
+        width: 200px;
         overflow: scroll;
     }
 </style>

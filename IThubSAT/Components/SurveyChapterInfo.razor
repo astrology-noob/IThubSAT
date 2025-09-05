@@ -3,28 +3,44 @@
 @using IThubSAT.Data;
 @inject SurveyService SurveyService;
 
-<div class="chapter">
+<div class="chapter survey-information-block">
     <div class="chapter-header">
         <div class="chapter-info">
-            <p class="chapter-name">@Chapter.Name</p>
-                @* SectionDescription отображать в виде мелкого текста с иконкой вопросит. знака *@
-            <p class="chapter-desc">@Chapter.Description</p>
+            <DisciplineTypeTag DisciplineType=Chapter.DisciplineType />
+            @*нельзя чтобы был пустой*@
+            <input placeholder="Название главы" type="text" class="underlined-input chapter-name" @bind=@Chapter.Name />
         </div>
+
+        @* вместо кнопки удаления сделать кнопку скрытия *@
+        <button class="icon-button"
+                @onclick=ToggleChapterVisibility>
+            <img style="@(IsFullyVisible ? "transform: rotateX(180deg)" : "")" src="icons/Collapse.svg" />
+        </button>
     </div>
 
-    @if (Chapter.Questions != null && Chapter.Questions.Count > 0)
-        @foreach (var question in Chapter.Questions!) {
-            <SurveyQuestion Question=question />
+    @if(IsFullyVisible)
+    {
+        @* SectionDescription отображать в виде мелкого текста с иконкой вопросит. знака - почему??? *@
+        <input placeholder="Описание главы" type="text" class="chapter-desc underlined-input" @bind=@Chapter.Description />
+
+        @if (Chapter.Questions != null && Chapter.Questions.Count > 0)
+        {
+            @foreach (var question in Chapter.Questions!) {
+                <SurveyQuestion Question=question />
+            }
         }
+        else
+        {
+            <p>Если в разделе нет вопросов, он не будет отображаться студентам</p>
+        }
+
+        <button class="add-fullwidth-button" @onclick=AddQuestion>Добавить вопрос</button>
     }
-    @*Если нет вообще вопросов высветить что-то типа "если в разделе нет вопросов, он не будет отображаться студентам"*@
-    <button @onclick=AddQuestion>Добавить вопрос</button>
 </div>
 
 <style>
     .chapter-header {
         width: 100%;
-        border-bottom: 1px solid #EBEEF5;
         display: flex;
         justify-content: space-between;
         padding: 20px;
@@ -32,11 +48,14 @@
     }
 
     .chapter-info {
-        display: block;
+        display: flex;
+        flex: 1;
+        gap: 10px;
     }
 
     .chapter-name {
         font-weight: bold;
+        flex: 1;
     }
 
     .chapter-desc {
@@ -46,11 +65,17 @@
 
 @code {
     [Parameter] public Chapter Chapter { get; set; } = null!;
+    private bool IsFullyVisible = true;
 
     private void AddQuestion()
     {
         Question newQuestion = new() { Text = "Текст по умолчанию" };
         Chapter.Questions.Add(newQuestion);
         SurveyService.SaveChanges().GetAwaiter().OnCompleted(() => StateHasChanged());
+    }
+
+    private void ToggleChapterVisibility() {
+        IsFullyVisible = !IsFullyVisible;
+        StateHasChanged();
     }
 }

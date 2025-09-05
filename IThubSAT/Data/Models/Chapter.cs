@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
 namespace IThubSAT.Data.Models;
 
 public class Chapter

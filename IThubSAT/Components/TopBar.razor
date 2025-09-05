@@ -5,7 +5,7 @@
     <div class="page-name">
         @if (TopBarState.HrefBack != string.Empty)
         {
-            <a href="@(TopBarState.HrefBack)"><img src="icons/ArrowBack.svg"/></a>
+            <a href="@(TopBarState.HrefBack)"><img src="icons/ArrowBack.svg" /></a>
         }
         <p>@TopBarState.PageTitle</p>
     </div>
@@ -34,8 +34,9 @@
     }
 
         .page-name p {
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
+            margin: 0;
         }
 
         .page-name a {
