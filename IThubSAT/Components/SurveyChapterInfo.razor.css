@@ -1,0 +1,22 @@
+﻿.chapter-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    align-items: center;
+}
+
+.chapter-info {
+    display: flex;
+    flex: 1;
+    gap: 10px;
+}
+
+.chapter-name {
+    font-weight: bold;
+    flex: 1;
+}
+
+.chapter-desc {
+    margin-bottom: 0 !important;
+}

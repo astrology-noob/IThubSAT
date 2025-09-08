@@ -1,0 +1,32 @@
+﻿.tabs-bar {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    border-bottom: 1px solid #EBEEF5;
+    margin-bottom: 15px;
+}
+
+    .tabs-bar p {
+        padding: 0px 5px 2px 5px;
+        min-width: 50px;
+        text-align: center;
+        margin-bottom: 0px !important;
+    }
+
+        .tabs-bar p:hover {
+            cursor: pointer;
+        }
+
+.tab-is-active {
+    color: #AB00EA;
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 2px solid #AB00EA;
+}
+
+.tab-content {
+    width: 100%;
+    flex: 1;
+    flex: 750px;
+}

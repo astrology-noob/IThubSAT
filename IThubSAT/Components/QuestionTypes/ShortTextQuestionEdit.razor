@@ -1,0 +1,32 @@
+﻿@using IThubSAT.Data.Models;
+@using IThubSAT.Data.Models.QuestionTypes;
+@using Newtonsoft.Json;
+
+<input type="text" @bind-value=@shortTextQuestion.Example />
+
+<button @onclick=SaveQuestionInfo>Сохранить</button>
+
+@code {
+    [Parameter] public Question Question { get; set; } = null!;
+    [Parameter] public EventCallback OnSaveQuestion { get; set; }
+    private ShortTextQuestionType? shortTextQuestion;
+
+    protected override void OnInitialized()
+    {
+        try
+        {    
+            shortTextQuestion = JsonConvert.DeserializeObject<ShortTextQuestionType>(Question.QuestionTypeInfo) ?? new();
+        }
+        catch (Exception ex)
+        {
+        }
+        base.OnInitialized();
+    }
+
+    private void SaveQuestionInfo()
+    {
+        // сначала валидация
+        Question.QuestionTypeInfo = JsonConvert.SerializeObject(shortTextQuestion);
+        OnSaveQuestion.InvokeAsync();
+    }
+}

@@ -11,30 +11,15 @@
         <input class="underlined-input" @bind-value=@Question.Text />
     </div>
 
-    @if (Question.QuestionType == QuestionType.Scale)
-    {
-        <ScaleQuestionEdit Question=Question OnSaveQuestion=SaveQuestion/>
-    }
-    else
-    {
-        <div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>
-    }
+    @(Question.QuestionType switch {
+        QuestionType.Scale => @<ScaleQuestionEdit Question=Question OnSaveQuestion=SaveQuestion />,
+        QuestionType.ShortText => @<ShortTextQuestionEdit Question=Question OnSaveQuestion=SaveQuestion />,
+        QuestionType.LongText => @<LongTextQuestionEdit Question=Question OnSaveQuestion=SaveQuestion />,
+        @* QuestionType.SingleChoice => @<ShortTextQuestionAnswer Question=Question OnSaveQuestion=SaveQuestion />,
+        QuestionType.MultipleChoice => @<ShortTextQuestionAnswer Question=Question OnSaveQuestion=SaveQuestion />, *@
+        _ => @<div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>
+    })
 </div>
-
-<style>
-    .question-block {
-        border: 1px solid #EBEEF5;
-        border-radius: 10px;
-        padding: 20px;
-    }
-
-    .question-header {
-        width: 100%;
-        display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-</style>
 
 @code {
     // при рендере конкретного вопроса десериализовывать модельку из строки
@@ -45,7 +30,9 @@
     // в базу данных?
     private List<FilterItem> QuestionTypes = new()
     {
-        new() { Id = 1, Name = "Шкала", FilterType = FilterType.QuestionType }
+        new() { Id = 1, Name = "Шкала", FilterType = FilterType.QuestionType },
+        new() { Id = 2, Name = "Короткий текст", FilterType = FilterType.QuestionType },
+        new() { Id = 3, Name = "Длинный текст", FilterType = FilterType.QuestionType },
     };
 
     private void SetQuestionType(FilterItem filterItem)

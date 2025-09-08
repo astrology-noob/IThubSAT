@@ -77,6 +77,8 @@ public class SurveyService
 
     // вообще возможно не понадобится
     //public static async Task<List<Question>> GetQuestionsBySurveyId(int surveyId) => await _dbContext.Questions.Where(q => q.SurveyId == surveyId).ToListAsync();
+    public static async Task<List<Question>> GetQuestionsByChapterId(int chapterId) 
+        => await _dbContext.Questions.Where(q => q.ChapterId == chapterId).ToListAsync();
 
     // метод для проверки дублирующейся нагрузки (если уже есть набор дисциплина+(группа/подгруппа/клуб)+преподаватель)
     public static async Task<Workload?> GetSpecificWorkload(Group group, Discipline discipline, Teacher teacher) =>

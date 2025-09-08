@@ -28,63 +28,6 @@
     </div>
 }
 
-<style>
-    .survey-preview {
-        width: 100%;
-        height: 100%;
-        overflow-y: scroll;
-    }
-
-    .faculty-preview {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .faculty-preview-header {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-    }
-
-    .preview-cards {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 30px;
-        justify-content: space-between;
-    }
-
-    .preview-card {
-        width: 150px;
-        height: 200px;
-        background-color: #fff;
-        border-radius: 5px;
-    }
-
-    .preview-header {
-        width: 100%;
-        height: 30px;
-        border-bottom: #EBEEF5 1px solid;
-        display: flex;
-        justify-content: center;
-    }
-
-    .preview-header p {
-        font-weight: bold;
-    }
-
-    .preview-content {
-        width: 100%;
-        height: 170px;
-        overflow-y: scroll;
-    }
-
-    .preview-item {
-        width: 100%;
-        min-height: 25px;
-    }
-</style>
-
 @code {
     [Parameter] public List<Workload> Workloads { get; set; } = new();
 

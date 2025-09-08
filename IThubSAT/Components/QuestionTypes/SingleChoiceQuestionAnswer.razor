@@ -1,0 +1,27 @@
+﻿@using IThubSAT.Data.Models;
+@using IThubSAT.Data.Models.QuestionTypes;
+@using Newtonsoft.Json;
+
+<p class="question-title">
+    <span class="question-text">@(Question.Text)</span>
+    @if (Question.IsRequired)
+    {
+        <span class="required-mark-span">*</span>
+    }
+</p>
+
+<div class="long-text-question">
+    <input type="textarea" @bind-value=Answer @onclick=SaveAnswer />
+</div>
+
+@code {
+    [Parameter] public Question Question { get; set; } = null!;
+    [Parameter] public EventCallback<string> OnAnswerQuestion { get; set; }
+
+    private string Answer = string.Empty;
+
+    private void SaveAnswer()
+    {
+        OnAnswerQuestion.InvokeAsync(Answer);
+    }
+}

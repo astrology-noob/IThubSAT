@@ -17,8 +17,8 @@ public class Question
 public enum QuestionType
 {
     Scale = 1,
-    SingleChoice = 2,
-    MultipleChoice = 3,
-    ShortText = 4,
-    LongText = 5
+    ShortText = 2,
+    LongText = 3,
+    SingleChoice = 4,
+    MultipleChoice = 5,
 }

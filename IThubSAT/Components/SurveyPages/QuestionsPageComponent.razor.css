@@ -1,0 +1,25 @@
+﻿.attendance-checkbox {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+    .attendance-checkbox p {
+        margin-bottom: 0;
+    }
+
+    .attendance-checkbox .checkbox {
+        border: 1px solid #AB00EA;
+        width: 15px;
+        height: 15px;
+    }
+
+.answer-survey-questions {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}

@@ -1,0 +1,41 @@
+﻿@using IThubSAT.Data.Models;
+@using IThubSAT.Data.Models.QuestionTypes;
+@using Newtonsoft.Json;
+
+<p class="question-title">
+    <span class="question-text">@(Question.Text)</span>
+    @if (Question.IsRequired)
+    {
+        <span class="required-mark-span">*</span>
+    }
+</p>
+
+<div class="long-text-question">
+    <textarea @bind=Answer @onclick=SaveAnswer placeholder=@longTextQuestion.Example></textarea>
+</div>
+
+@code {
+    [Parameter] public Question Question { get; set; } = null!;
+    [Parameter] public EventCallback<string> OnAnswerQuestion { get; set; }
+
+    private LongTextQuestionType? longTextQuestion;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            longTextQuestion = JsonConvert.DeserializeObject<LongTextQuestionType>(Question.QuestionTypeInfo) ?? new();
+        }
+        catch (Exception ex)
+        {
+        }
+        base.OnInitialized();
+    }
+
+    private string Answer = string.Empty;
+
+    private void SaveAnswer()
+    {
+        OnAnswerQuestion.InvokeAsync(Answer);
+    }
+}

@@ -1,0 +1,20 @@
+﻿@using IThubSAT.Data.Models
+@using IThubSAT.Data
+@inject SurveyService SurveyService
+
+<div class="survey-page">
+    <p class="survey-page-name">@Page.PageTitle</p>
+    <Dropdown Items="Page.allGroups" OnChoose="SetGroup" TabIndex="1" Placeholder="Группа не выбрана" />
+</div>
+
+@code {
+    [Parameter] public GroupSelectionPage Page { get; set; }
+    [Parameter] public EventCallback<int> OnChangeGroup { get; set; }
+
+    // если просто снять выбор с варианта, метод тоже срабатывает, хотя не должен
+    private async void SetGroup(FilterItem item)
+    {
+        Page.selectedGroupId = item.Id;
+        await OnChangeGroup.InvokeAsync(item.Id);
+    }
+}

@@ -40,38 +40,6 @@
 
 </div>
 
-<style>
-    .table-wrapper {
-        width: 100%;
-        height: 700px;
-    }
-
-    .table-header {
-        background-color: #EBEEF5;
-        font-weight: bold;
-        height: 30px;
-    }
-
-    .table-content {
-        width: 100%;
-        height: calc(100% - 60px);
-    }
-
-    .table-scrollable {
-        overflow-y: scroll;
-    }
-
-    .workload-add-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #FFFFFF;
-        text-decoration: none;
-        height: 30px;
-        background-color: #AB00EA;
-    }
-</style>
-
 @code {
     [Parameter] public Survey Survey { get; set; } = null!;
 

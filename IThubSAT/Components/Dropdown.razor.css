@@ -1,0 +1,20 @@
+﻿.filter-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.filter {
+    /* background-color: #F7F9FC; */
+    padding-left: 10px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    /* border-radius: 10px;
+        border: 1px solid #EBEEF5; */
+}
+
+    .filter:focus {
+        outline: 1px solid #AB00EA;
+    }

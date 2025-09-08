@@ -1,0 +1,9 @@
+﻿.white-background-content {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border: 1px solid #EBEEF5;
+    padding: 30px 50px;
+    flex: 1;
+    margin: 0px 50px;
+    min-height: 850px;
+}

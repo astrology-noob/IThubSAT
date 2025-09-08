@@ -1,0 +1,15 @@
+﻿@using IThubSAT.Data;
+
+<div class="survey-page">
+    <p class="survey-page-name">@Page.PageTitle</p>
+    <h3>@Page.IntroductionText</h3>
+</div>
+
+@code {
+    [Parameter] public IntroPage Page { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}

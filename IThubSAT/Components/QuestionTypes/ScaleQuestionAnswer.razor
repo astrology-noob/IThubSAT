@@ -12,8 +12,8 @@
         }
     </p>
 
-    <div class="=scale-question">
-        <div class="=scale-min-max">
+    <div class="scale-question">
+        <div class="scale-min-max">
             @scaleQuestion.MinPointsText
         </div>
         <div class="scale-buttons">
@@ -25,44 +25,11 @@
                 </div>
             }
         </div>
-        <div class="=scale-min-max">
+        <div class="scale-min-max">
             @scaleQuestion.MaxPointsText
         </div>
     </div>
 }
-
-<style>
-    .scale-question {
-        display: flex;
-        text-align: center;
-        justify-content: center;
-        gap: 15px;
-    }
-
-    .scale-min-max {
-        width: 125px;
-        font-size: 13px;
-    }
-
-    .scale-buttons {
-        display: flex;
-        width: 270px;
-        justify-content: space-between;
-    }
-
-    .scale-button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .scale-radio-button {
-        width: 21px;
-        height: 21px;
-        border: solid 1px #EBEEF5;
-        border-radius: 15px;
-    }
-</style>
 
 @code {
     [Parameter] public Question Question { get; set; } = null!;

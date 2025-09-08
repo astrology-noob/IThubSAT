@@ -1,0 +1,7 @@
+﻿.question-type-tag {
+    height: 20px;
+    min-width: 50px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}

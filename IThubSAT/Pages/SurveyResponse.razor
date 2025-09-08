@@ -1,73 +1,24 @@
 @page "/surveys/{SurveyId:int}/answer"
 @using IThubSAT.Components
+@using IThubSAT.Components.SurveyPages;
 @using IThubSAT.Data.Models
 @using IThubSAT.Data
 @inject SurveyService SurveyService
+@inject TopBarState TopBarState
+
 @layout StudentLayout
+
 
 @if (string.IsNullOrWhiteSpace(error))
 {
-    <SurveyPaginator OnGoBack=OnGoBack OnGoForward=OnGoForward>
-        <CascadingValue Value="_surveyEntry">
-            @if (_currentChapterIndex == 0 && selectedGroupId == -1) {
-                <SurveyPage PageTitle="Выберите группу">
-                    <Dropdown Items="allGroups" OnChoose="SetGroup" TabIndex="1" Placeholder="Группа не выбрана"/>
-                </SurveyPage>
-            }
-            else
-            {
-                @if (_workloadsByChapters[_currentChapter].Count > 0)
-                {
-                    <SurveyPage PageTitle="">
-                        <div class="attendance-checkbox">
-                            @*если чекбокс отмечен, баллы по дисциплине должны быть нулевыми (числовые данные)*@
-                            <div class="checkbox"></div>
-                            <p>Я не ходил(-а) на этот предмет</p>
-                        </div>
-                        <div class="answer-survey-questions">
-                        @foreach (var question in _currentChapter.Questions)
-                        {                                
-                            <SurveyResponseQuestion Question=question />
-                        }
-                        </div>
-                    </SurveyPage>
-                }
-            }
-        </CascadingValue>
-    </SurveyPaginator>
+    <CascadingValue Value=_surveyEntry>
+        <SurveyPaginator Pages=surveyPages OnChangePage=StateHasChanged OnChangeGroup=GetWorkloadsByGroupId />
+    </CascadingValue>
 }
 else
 {
     <ResponseError ErrorText=@error />
 }
-
-<style>
-    .attendance-checkbox {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-        .attendance-checkbox p {
-            margin-bottom: 0;
-        }
-
-        .attendance-checkbox .checkbox {
-            border: 1px solid #AB00EA;
-            width: 15px;
-            height: 15px;
-        }
-
-    .answer-survey-questions {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 30px;
-    }
-</style>
 
 @code {
     [Parameter] public int SurveyId { get; set; }
@@ -75,11 +26,15 @@ else
     private Survey? _survey;
 
     protected List<FilterItem> allGroups = new();
-    protected int selectedGroupId;
+    // protected int selectedGroupId = -1;
     protected List<FilterItem> englishLevels = new();
-    protected int selectedEnglishGroupId;
+    protected int selectedEnglishGroupId = -1;
     protected List<FilterItem> allSportClubs = new();
-    protected int selectedSportClubId;
+    protected int selectedSportClubId = -1;
+
+    List<Question> generalQuestions;
+    List<Question> englishQuestions;
+    List<Question> sportQuestions;
 
     // короче какой вариант
     // можно по полученной нагрузке динамически вставлять страницы после страниц с выбором группы
@@ -88,104 +43,13 @@ else
 
     private string error = string.Empty;
 
-    private int _currentChapterIndex;
-    // неудобно просто по индексу постоянно доставать секцию из опроса
-    private Chapter _currentChapter;
-    private int _currentWorkloadIndex;
+    private List<Workload> _workloads = new();
 
-    // может здесь вместо самой секции хранить id секции?
-    private Dictionary<Chapter, List<Workload>> _workloadsByChapters = new();
-
-    private void OnGoBack()
-    {
-        // если номер дисциплины становится -1 => попытаться вернуться на секцию назад
-        //   если секция становится -1 => ничего не делать
-        //   если секция может меняться, присвоить индексу дисциплины последний номер в этой секции
-        // если номер дисциплины норм уменьшается, меняется только дисциплина
-        int newWorkloadIndex = --_currentWorkloadIndex;
-        int newChapterIndex = --_currentChapterIndex;
-
-        // а такого же быть вообще не должно, не должно быть возможности кликать по нему в целом
-        if (newWorkloadIndex == -1)
-        {
-            if (newChapterIndex == -1) return;
-            else
-            {
-                _currentChapterIndex = newChapterIndex;
-                _currentChapter = _survey!.Chapters[_currentChapterIndex];
-                // берём секции из объекта опроса
-                _currentWorkloadIndex = _workloadsByChapters[_currentChapter].Count - 1;
-            }
-        }
-        else
-        {
-            _currentWorkloadIndex = newWorkloadIndex;
-        }
-
-        StateHasChanged();
-    }
-     
-    private void OnGoForward()
-    {
-        // если номер дисциплины становится == кол-ву workloads в секции => попытаться перейти на секцию вперёд (после валидации текущей секции)
-        //   если номер секции становится == кол-ву секций в разделе => переходим к завершению опроса (ничего не делать)
-        //   если секция может меняться, присвоить индексу дисциплины 0 (если в секции есть в целом дисциплины)
-        // если номер дисциплины норм увеличивается, меняется только дисциплина
-        int newWorkloadIndex = ++_currentWorkloadIndex;
-        int newChapterIndex = ++_currentChapterIndex;
-
-        // а такого же быть вообще не должно, не должно быть возможности кликать по нему в целом
-        if (newWorkloadIndex == _workloadsByChapters[_currentChapter].Count)
-        {
-            if (newChapterIndex == _workloadsByChapters.Keys.Count) return;
-            else
-            {
-                _currentChapterIndex = newChapterIndex;
-                _currentChapter = _survey!.Chapters[_currentChapterIndex];
-                // берём секции из объекта опроса
-                _currentWorkloadIndex = _workloadsByChapters[_currentChapter].Count + 1;
-            }
-        }
-        else
-        {
-            _currentWorkloadIndex = newWorkloadIndex;
-        }
-
-        StateHasChanged();
-
-        // сохранять данные по ответам в бд
-    }
-
-
-    // если просто снять выбор с варианта, метод тоже срабатывает, хотя не должен
-    private async void SetGroup(FilterItem item) 
-    {
-        selectedGroupId = item.Id;
-        await GetWorkloadsByGroupId();
-    }
-
-    // получать их по смене секции
-    private async Task GetWorkloadsByGroupId()
-    {
-        // _currentChapter должен быть первым только, это метод только для получения нагрузки по группе (для обычных дисциплин, аааа блять, нет)
-        foreach (var chapter in _survey!.Chapters)
-        {
-            // здесь получать данные только по конкретному типу дисциплины
-            // _workloadsByChapters[chapter] = await Survey
-        }
-        _workloadsByChapters[_currentChapter] = await SurveyService.GetWorkloadsBySurveyIdAndStudyGroupId(SurveyId, selectedGroupId) ?? new();
-        if (selectedGroupId != 0 && _workloadsByChapters[_currentChapter].Count == 0)
-        {   
-            // это должно высвечиваться под дропдауном, чтобы у студента была возможность поменять выбор
-            // + в таком случае должна блокироваться стрелочка вперёд
-            error = "По вашей группе нет данных. Выберите другую группу или обратитесь к администратору";
-            return;
-        }
-    }
 
     protected async override Task OnInitializedAsync()
     {
         _survey = await SurveyService.GetSurveyByIdAsync(SurveyId);
+
         if (_survey == null)
         {
             error = "Такого опроса не нашли :(";
@@ -198,20 +62,58 @@ else
             return;
         }
 
+        TopBarState.SetTopBarData(_survey.Name);
+
         _surveyEntry.Survey = _survey!;
 
         allGroups = await SurveyService.GetGroupsFilterItems(_survey.Id) ?? allGroups;
 
-        foreach (var chapter in _survey.Chapters)
-        {
-            _workloadsByChapters.Add(chapter, new());
-        }
+        surveyPages = new() {
+            new IntroPage() { IntroductionText = _survey.IntroductionText, PageTitle = "Введение" },
+            new GroupSelectionPage() { allGroups = allGroups, PageTitle = "Выбери группу" }
+        };
 
-        if (_survey.Chapters.Count > 0)
-        {        
-            _currentChapter = _survey.Chapters[0];
-        }
+        generalQuestions = await SurveyService.GetQuestionsByChapterId(_survey.Chapters.First(x => x.DisciplineType == DisciplineType.General).Id);
+        englishQuestions = await SurveyService.GetQuestionsByChapterId(_survey.Chapters.First(x => x.DisciplineType == DisciplineType.English).Id);
+        sportQuestions = await SurveyService.GetQuestionsByChapterId(_survey.Chapters.First(x => x.DisciplineType == DisciplineType.Sport).Id);
 
         await base.OnInitializedAsync();
+    }
+
+    private async Task GetWorkloadsByGroupId(int selectedGroupId)
+    {
+        Console.WriteLine(selectedGroupId);
+        // _currentChapter должен быть первым только, это метод только для получения нагрузки по группе (для обычных дисциплин, аааа блять, нет)
+        _workloads = await SurveyService.GetWorkloadsBySurveyIdAndStudyGroupId(SurveyId, selectedGroupId);
+
+        if (selectedGroupId != 0 && _workloads.Count == 0)
+        {
+            // это должно высвечиваться под дропдауном, чтобы у студента была возможность поменять выбор
+            // + в таком случае должна блокироваться стрелочка вперёд
+            error = "По вашей группе нет данных. Выберите другую группу или обратитесь к администратору";
+            return;
+        }
+
+        var index = 2;
+
+
+        foreach (var workload in _workloads.Where(x => x.Discipline.DisciplineType == DisciplineType.General).ToList())
+        {
+            surveyPages.Insert(index++, new QuestionsPage()
+            {
+                PageTitle = workload.Discipline.Name,
+                Questions = generalQuestions
+            });
+        }
+
+        // а ещё если workloads содержит английский и спорт
+        if (englishQuestions.Count > 0) {
+            surveyPages.Add(new QuestionsPage() { PageTitle = "Иностранный язык", Questions = englishQuestions });
+        }
+
+        if (sportQuestions.Count > 0)
+        {
+            surveyPages.Add(new QuestionsPage() { PageTitle = "Спортивные клубы", Questions = sportQuestions });
+        }
     }
 }

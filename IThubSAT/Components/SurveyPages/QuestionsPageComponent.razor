@@ -1,0 +1,44 @@
+﻿@using IThubSAT.Data;
+@using IThubSAT.Data.Models;
+
+<div class="survey-page">
+    <p class="survey-page-name">@Page.PageTitle</p>
+
+    <div class="attendance-checkbox">
+        @*если чекбокс отмечен, баллы по дисциплине должны быть нулевыми (числовые данные)*@
+        <div class="checkbox" @onclick=ToggleAttendance>
+            @if (DidNotAttend) { <span>x</span> }
+        </div>
+        <p>Я не ходил(-а) на этот предмет</p>
+    </div>
+    <div class="answer-survey-questions">
+        @foreach (var question in Page.Questions)
+        {
+            <SurveyResponseQuestion Question=question />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public QuestionsPage Page { get; set; }
+    [CascadingParameter] public SurveyEntry _surveyEntry { get; set; }
+
+    private bool DidNotAttend;
+
+    private void ToggleAttendance()
+    {
+        DidNotAttend = !DidNotAttend;
+
+        foreach(var question in Page.Questions)
+        {
+            _surveyEntry.Answers.Add(
+                new()
+                {
+                    Question = question,
+                    AnswerData = string.Empty
+                }
+            );
+        }
+
+    }
+}

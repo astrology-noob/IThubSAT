@@ -18,14 +18,6 @@
     Создать +
 </button>
 
-<style>
-    .surveys-list {
-        border-radius: 10px;
-        border: 1px solid #EBEEF5;
-        overflow: hidden;
-    }
-</style>
-
 @code {
     [Parameter] public List<Survey> Surveys { get; set; } = new();
     [Parameter] public EventCallback AddSurvey { get; set; }

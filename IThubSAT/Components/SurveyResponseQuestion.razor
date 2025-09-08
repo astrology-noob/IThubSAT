@@ -4,34 +4,20 @@
 @inject SurveyService SurveyService;
 
 <div class="answer-survey-question">
-    @*Конечно, надо бы получше переписать, чтобы не условиями определять компоненты*@
-    @if (Question.QuestionType == QuestionType.Scale)
-    {
-        <ScaleQuestionAnswer Question=Question OnAnswerQuestion=SaveQuestionAnswer />
-    }
-    else
-    {
-        <div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>
-    }
+    @(Question.QuestionType switch {
+        QuestionType.Scale => @<ScaleQuestionAnswer Question=Question OnAnswerQuestion=SaveQuestionAnswer />,
+        QuestionType.ShortText => @<ShortTextQuestionAnswer Question=Question OnAnswerQuestion=SaveQuestionAnswer />,
+        QuestionType.LongText => @<LongTextQuestionAnswer Question=Question OnAnswerQuestion=SaveQuestionAnswer />,
+        QuestionType.SingleChoice => @<ShortTextQuestionAnswer Question=Question OnAnswerQuestion=SaveQuestionAnswer />,
+        QuestionType.MultipleChoice => @<ShortTextQuestionAnswer Question=Question OnAnswerQuestion=SaveQuestionAnswer />,
+        _ => @<div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>
+    })
 </div>
-
-<style>
-    .answer-survey-question {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 15px 25px 20px 25px;
-        background-color: #FFFFFF;
-        border: solid 1px #EBEEF5;
-        border-radius: 10px;
-        width: 100%;
-    }
-</style>
 
 @code {
     [Parameter] public Question Question { get; set; } = null!;
     [CascadingParameter] public SurveyEntry SurveyEntry { get; set; }
-    private Answer Answer {get; set; }
+    private Answer Answer { get; set; }
 
     public void SaveQuestionAnswer(string data)
     {
@@ -42,8 +28,6 @@
 
         Answer.AnswerData = data;
         SurveyEntry.Answers.Add(Answer);
-
-        // OnAnswerQuestion.InvokeAsync(Answer);
     }
 
     protected override Task OnInitializedAsync()

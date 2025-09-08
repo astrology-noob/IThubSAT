@@ -1,58 +1,108 @@
-﻿<div class="answer-survey-content">
-    @ChildContent
+﻿@using IThubSAT.Data;
+@using IThubSAT.Data.Models;
+@using IThubSAT.Components.SurveyPages;
+
+<div class="answer-survey-content">
+
+    @(Pages[_currentPageIndex] switch 
+    {
+        IntroPage p => (@<IntroPageComponent Page=p />),
+        GroupSelectionPage g => (@<GroupSelectionPageComponent Page=g OnChangeGroup=OnChangeGroup />),
+        QuestionsPage q => (@<QuestionsPageComponent Page=q />),
+        _ => (@<div>А</div>)
+    })
+
     <div class="bottom-navigation">
         <button @onclick=GoBack>Назад</button>
         <button @onclick=GoForward>Вперёд</button>
     </div>
 </div>
 
-<style>
-    .answer-survey-content {
-        display: flex;
-        align-items: start;
-        gap: 30px;
-    }
-
-    .bottom-navigation button {
-        width: calc((100% - 5px)/2);
-        border-radius: 10px;
-        height: 60px;
-        font-size: 16px;
-        font-weight: bold;
-        background-color: #ffffff;
-    }
-
-        .bottom-navigation button:first-child {
-            border: solid 1px #EBEEF5;
-            color: #898989;
-        }
-
-        .bottom-navigation button:last-child {
-            border: solid 1px #EBEEF5;
-            color: #000000;
-        }
-
-        .bottom-navigation button:hover {
-            background-color: #EBEEF5;
-        }
-
-        .bottom-navigation button:focus {
-            color: #898989;
-        }
-</style>
-
 @code {
-    [Parameter] public RenderFragment ChildContent { get; set; } = null!;
-    [Parameter] public EventCallback OnGoForward { get; set; }
-    [Parameter] public EventCallback OnGoBack { get; set; }
+    [Parameter] public List<SurveyPage> Pages { get; set; }
+    [Parameter] public EventCallback OnChangePage { get; set; }
+    [Parameter] public EventCallback<int> OnChangeGroup { get; set; }
+
+    private int _currentPageIndex;
+    // private int _currentChapterIndex;
+    // неудобно просто по индексу постоянно доставать секцию из опроса
+    // private Chapter _currentChapter;
+    // private int _currentWorkloadIndex;
+
+    // private Dictionary<Chapter, List<Workload>> _workloadsByChapters = new();
+
 
     private void GoForward()
     {
-        OnGoForward.InvokeAsync();
+        // если номер дисциплины становится == кол-ву workloads в секции => попытаться перейти на секцию вперёд (после валидации текущей секции)
+        //   если номер секции становится == кол-ву секций в разделе => переходим к завершению опроса (ничего не делать)
+        //   если секция может меняться, присвоить индексу дисциплины 0 (если в секции есть в целом дисциплины)
+        // если номер дисциплины норм увеличивается, меняется только дисциплина
+        // int newWorkloadIndex = ++_currentWorkloadIndex;
+        // int newChapterIndex = ++_currentChapterIndex;
+        int newPageIndex = _currentPageIndex + 1;
+
+        if (newPageIndex >= Pages.Count) return;
+        else
+        {
+            _currentPageIndex++;
+        }
+
+        // а такого же быть вообще не должно, не должно быть возможности кликать по нему в целом
+        // if (newWorkloadIndex == _workloadsByChapters[_currentChapter].Count)
+        // {
+        //     if (newChapterIndex == _workloadsByChapters.Keys.Count) return;
+        //     else
+        //     {
+        //         _currentChapterIndex = newChapterIndex;
+        //         _currentChapter = _survey!.Chapters[_currentChapterIndex];
+        //         берём секции из объекта опроса
+        //         _currentWorkloadIndex = _workloadsByChapters[_currentChapter].Count + 1;
+        //     }
+        // }
+        // else
+        // {
+        //     _currentWorkloadIndex = newWorkloadIndex;
+        // }
+
+        // сохранять данные по ответам в бд
+        OnChangePage.InvokeAsync();
     }
 
     private void GoBack()
     {
-        OnGoBack.InvokeAsync();
+        // если номер дисциплины становится -1 => попытаться вернуться на секцию назад
+        //   если секция становится -1 => ничего не делать
+        //   если секция может меняться, присвоить индексу дисциплины последний номер в этой секции
+        // если номер дисциплины норм уменьшается, меняется только дисциплина
+        // int newWorkloadIndex = --_currentWorkloadIndex;
+        // int newChapterIndex = --_currentChapterIndex;
+
+        int newPageIndex = _currentPageIndex - 1;
+
+        if (newPageIndex < 0) return;
+        else
+        {
+            _currentPageIndex--;
+        }
+
+        // а такого же быть вообще не должно, не должно быть возможности кликать по нему в целом
+        // if (newWorkloadIndex == -1)
+        // {
+        //     if (newChapterIndex == -1) return;
+        //     else
+        //     {
+        //         _currentChapterIndex = newChapterIndex;
+        //         _currentChapter = _survey!.Chapters[_currentChapterIndex];
+        //         берём секции из объекта опроса
+        //         _currentWorkloadIndex = _workloadsByChapters[_currentChapter].Count - 1;
+        //     }
+        // }
+        // else
+        // {
+        //     _currentWorkloadIndex = newWorkloadIndex;
+        // }
+
+        OnChangePage.InvokeAsync();
     }
 }
