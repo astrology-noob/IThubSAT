@@ -6,10 +6,13 @@
 
 <div class="question-block">
     <div class="question-header">
-        @*написать тег, в котором использовать менюшку*@
-        <Dropdown Items=QuestionTypes OnChoose=SetQuestionType Placeholder="Тип вопроса" TabIndex="1" />
+        <div class="question-type-tag-dropdown">
+            <Dropdown Items=QuestionTypes OnChoose=SetQuestionType Placeholder="Тип вопроса" TabIndex="1" ChosenItem="QuestionTypes.First(x => x.Id == (int)Question.QuestionType)" />
+        </div>
         <input class="underlined-input" @bind-value=@Question.Text />
     </div>
+
+    @*TODO: добавить кнопку удаления и кнопки перемещения вопросов местами*@
 
     @(Question.QuestionType switch {
         QuestionType.Scale => @<ScaleQuestionEdit Question=Question OnSaveQuestion=SaveQuestion />,

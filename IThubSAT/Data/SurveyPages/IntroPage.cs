@@ -2,6 +2,6 @@
 {
     public class IntroPage : SurveyPage
     {
-        public string IntroductionText;
+        public string IntroductionText = string.Empty;
     }
 }

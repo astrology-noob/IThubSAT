@@ -25,6 +25,7 @@
     [Parameter] public List<FilterItem> Items { get; set; } = new();
     [Parameter] public EventCallback<FilterItem> OnChoose { get; set; } = new();
     [Parameter] public int TabIndex { get; set; }
+    [Parameter] public FilterItem? ChosenItem { get; set; }
 
     public List<FilterItem> FilteredItems { get; set; } = new();
     private string searchText = string.Empty;
@@ -34,6 +35,7 @@
     protected override void OnInitialized()
     {
         FilteredItems = Items;
+        ChosenOption = ChosenItem ?? ChosenOption;
     }
 
     public void SetOption(FilterItem chosenItem)

@@ -29,7 +29,7 @@ namespace IThubSAT.Data
             using var package = new ExcelPackage();
 
             var worksheet = package.Workbook.Worksheets.Add("Template");
-            worksheet = GenerateHeaders(worksheet);
+            worksheet = await Task.Run(() => GenerateHeaders(worksheet));
 
             var fileBytes = package.GetAsByteArray();
 

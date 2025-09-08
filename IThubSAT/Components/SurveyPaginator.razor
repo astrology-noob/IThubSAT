@@ -1,25 +1,29 @@
 ﻿@using IThubSAT.Data;
 @using IThubSAT.Data.Models;
+@using IThubSAT.Data.SurveyPages;
 @using IThubSAT.Components.SurveyPages;
 
 <div class="answer-survey-content">
 
-    @(Pages[_currentPageIndex] switch 
+    @if(Pages is not null && Pages.Count > 0)
     {
-        IntroPage p => (@<IntroPageComponent Page=p />),
-        GroupSelectionPage g => (@<GroupSelectionPageComponent Page=g OnChangeGroup=OnChangeGroup />),
-        QuestionsPage q => (@<QuestionsPageComponent Page=q />),
-        _ => (@<div>А</div>)
-    })
+        @(Pages[_currentPageIndex] switch 
+        {
+            IntroPage p => (@<IntroPageComponent Page=p />),
+            GroupSelectionPage g => (@<GroupSelectionPageComponent Page=g OnChangeGroup=OnChangeGroup />),
+            QuestionsPage q => (@<QuestionsPageComponent Page=q />),
+            _ => (@<div>А</div>)
+        })
 
-    <div class="bottom-navigation">
-        <button @onclick=GoBack>Назад</button>
-        <button @onclick=GoForward>Вперёд</button>
-    </div>
+        <div class="bottom-navigation">
+            <button @onclick=GoBack>Назад</button>
+            <button @onclick=GoForward>Вперёд</button>
+        </div>
+    }
 </div>
 
 @code {
-    [Parameter] public List<SurveyPage> Pages { get; set; }
+    [Parameter] public List<SurveyPage> Pages { get; set; } = new();
     [Parameter] public EventCallback OnChangePage { get; set; }
     [Parameter] public EventCallback<int> OnChangeGroup { get; set; }
 

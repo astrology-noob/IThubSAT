@@ -33,7 +33,7 @@
 
     private Dictionary<Faculty, Dictionary<Group, List<Discipline>>> PreviewData = new();
 
-    protected async override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         List<Faculty> faculties = Workloads.Select(x => x.Group!.Faculty).Distinct().ToList();
         List<Discipline> disciplines;

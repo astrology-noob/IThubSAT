@@ -9,7 +9,7 @@
 @code {
     [Parameter] public Question Question { get; set; } = null!;
     [Parameter] public EventCallback OnSaveQuestion { get; set; }
-    private ShortTextQuestionType? shortTextQuestion;
+    private ShortTextQuestionType shortTextQuestion = new();
 
     protected override void OnInitialized()
     {
@@ -19,6 +19,7 @@
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex);
         }
         base.OnInitialized();
     }

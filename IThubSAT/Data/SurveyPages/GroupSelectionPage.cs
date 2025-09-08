@@ -1,4 +1,4 @@
-﻿namespace IThubSAT.Data
+﻿namespace IThubSAT.Data.SurveyPages
 {
     public class GroupSelectionPage : SurveyPage
     {

@@ -1,4 +1,5 @@
 ﻿@using IThubSAT.Data.Models
+@using IThubSAT.Data.SurveyPages
 @using IThubSAT.Data
 @inject SurveyService SurveyService
 
@@ -8,7 +9,7 @@
 </div>
 
 @code {
-    [Parameter] public GroupSelectionPage Page { get; set; }
+    [Parameter] public GroupSelectionPage Page { get; set; } = new();
     [Parameter] public EventCallback<int> OnChangeGroup { get; set; }
 
     // если просто снять выбор с варианта, метод тоже срабатывает, хотя не должен

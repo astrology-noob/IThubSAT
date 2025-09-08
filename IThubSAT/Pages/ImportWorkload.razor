@@ -55,7 +55,7 @@
         await base.OnInitializedAsync();
     }
 
-    private async Task LoadFiles(InputFileChangeEventArgs e)
+    private void LoadFiles(InputFileChangeEventArgs e)
     {
         FileUpload = e.File;
 
@@ -68,6 +68,11 @@
 
     private async Task ImportData()
     {
+        if (FileUpload is null)
+        {
+            return;
+        }
+
         MemoryStream ms = new MemoryStream();
         await FileUpload.OpenReadStream().CopyToAsync(ms);
         ExcelPackage.License.SetNonCommercialPersonal("IThub");
@@ -116,7 +121,7 @@
                     if (!string.IsNullOrWhiteSpace(facultyName))
                     {
                         faculty = await SurveyService.GetFacultyByName(facultyName);
-                        if (faculty == null)
+                        if (faculty is null)
                         {
                             faculty = new() { Name = facultyName };
                             await SurveyService.AddNewFaculty(faculty);
@@ -127,8 +132,15 @@
                     if (!string.IsNullOrWhiteSpace(groupName))
                     {
                         group = await SurveyService.GetGroupByName(groupName);
-                        if (group == null)
+                        if (group is null)
                         {
+                            // если кафедры нет, выдавать ошибку
+                            if (faculty is null)
+                            {
+                                AddImportError(importError, "Для группы не указана кафедра");
+                                continue;
+                            }
+
                             group = new() { Faculty = faculty, Name = groupName, StudyYear = studyYear, StudentsInGroup = studentsInGroup };
                             await SurveyService.AddNewGroup(group);
                             await SurveyService.SaveChanges();
@@ -166,7 +178,7 @@
                     if (!string.IsNullOrWhiteSpace(sportClubName))
                     {
                         sportClub = await SurveyService.GetSportClubByName(sportClubName);
-                        if (sportClub == null)
+                        if (sportClub is null)
                         {
                             sportClub = new() { Name = sportClubName };
                             await SurveyService.AddNewSportClub(sportClub);
@@ -186,7 +198,7 @@
                     // проблема походу в том что дисциплин пока нет в бд и поэтому он не находит
                     // а ещё возможно не находит потому что это всё асинхронные методы и они не дожидаются друг друга
                     var discipline = await SurveyService.GetDisciplineByName(disciplineName);
-                    if (discipline == null)
+                    if (discipline is null)
                     {
                         // получать чекбокс, является ли факультативом
                         discipline = new() { Name = disciplineName, IsOptional = false, DisciplineType = disciplineType };
@@ -197,7 +209,7 @@
                     var teacherFio = teacherName.Split(' ');
 
                     var teacher = await SurveyService.GetTeacherByFio(teacherFio);
-                    if (teacher == null)
+                    if (teacher is null)
                     {
                         teacher = new() { LastName = teacherFio[0], FirstName = teacherFio[1], PaternalName = teacherFio[2] };
                         await SurveyService.AddNewTeacher(teacher);
@@ -212,7 +224,7 @@
                         _ => throw new ArgumentOutOfRangeException(nameof(disciplineType), $"Not expected direction value: {disciplineType}"),
                     };
 
-                    if (workload == null)
+                    if (workload is null)
                     {
                         workload = new Workload
                         {

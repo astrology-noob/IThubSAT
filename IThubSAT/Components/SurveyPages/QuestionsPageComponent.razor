@@ -20,8 +20,9 @@
 </div>
 
 @code {
-    [Parameter] public QuestionsPage Page { get; set; }
-    [CascadingParameter] public SurveyEntry _surveyEntry { get; set; }
+    [Parameter] public QuestionsPage Page { get; set; } = new();
+    // должен быть создан обязательно
+    [CascadingParameter] public SurveyEntry _surveyEntry { get; set; } = null!;
 
     private bool DidNotAttend;
 

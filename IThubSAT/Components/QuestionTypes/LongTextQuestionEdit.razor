@@ -2,14 +2,14 @@
 @using IThubSAT.Data.Models.QuestionTypes;
 @using Newtonsoft.Json;
 
-<input type="text" @bind-value=@longTextQuestion.Example />
+<input type="text" @bind-value=@longTextQuestion!.Example />
 
 <button @onclick=SaveQuestionInfo>Сохранить</button>
 
 @code {
     [Parameter] public Question Question { get; set; } = null!;
     [Parameter] public EventCallback OnSaveQuestion { get; set; }
-    private LongTextQuestionType? longTextQuestion;
+    private LongTextQuestionType longTextQuestion = new();
 
     protected override void OnInitialized()
     {
@@ -19,6 +19,7 @@
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex);
         }
         base.OnInitialized();
     }
