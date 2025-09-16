@@ -69,6 +69,19 @@ public class SurveyService
         return chapter;
     }
 
+    public static async Task<Question> DeleteQuestionAsync(Question question)
+    {
+        _dbContext.Questions.Remove(question);
+        await SaveChanges();
+
+        return question;
+    }
+
+    /// <summary>
+    /// Gets the list of workloads including Teachers, Groups, Disciplines
+    /// </summary>
+    /// <param name="surveyId"></param>
+    /// <returns></returns>
     public static async Task<List<Workload>> GetWorkloadBySurveyId(int surveyId) =>
         (await _dbContext.Surveys.Include(s => s.Workloads).ThenInclude(w => w.Teacher)
                                     .Include(s => s.Workloads).ThenInclude(w => w.Group).ThenInclude(g => g != null ? g.Faculty : null)

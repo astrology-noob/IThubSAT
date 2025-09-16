@@ -1,29 +1,12 @@
 @using IThubSAT.Data.Models;
+@using IThubSAT.Data;
 
 @if (PreviewData.Count > 0)
 {
     <div class="survey-preview">
         @foreach (var faculty in PreviewData.Keys)
         {
-            <div class="faculty-preview">
-                <div class="faculty-preview-headrer">@faculty.Name</div>
-                <div class="preview-cards">
-                    @foreach (var group in PreviewData[faculty].Keys)
-                    {    
-                        <div class="preview-card">
-                            <div class="preview-header">
-                                <p>@group.Name</p>
-                            </div>
-                            <div class="preview-content">
-                                @foreach (var discipline in PreviewData[faculty][group])
-                                {
-                                    <div class="preview-item">@discipline.Name</div>
-                                }
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
+            <FacultyPreview Data=PreviewData[faculty] Faculty=faculty />
         }
     </div>
 }
@@ -31,24 +14,30 @@
 @code {
     [Parameter] public List<Workload> Workloads { get; set; } = new();
 
-    private Dictionary<Faculty, Dictionary<Group, List<Discipline>>> PreviewData = new();
+    private Dictionary<Faculty, Dictionary<Group, List<DisciplinePreviewData>>> PreviewData = new();
 
     protected override void OnInitialized()
     {
         List<Faculty> faculties = Workloads.Select(x => x.Group!.Faculty).Distinct().ToList();
-        List<Discipline> disciplines;
+        List<DisciplinePreviewData> disciplinesAndTeachers;
         List<Group> groups;
-        Dictionary<Group, List<Discipline>> groupData;
+        Dictionary<Group, List<DisciplinePreviewData>> groupData;
 
         foreach(var faculty in faculties)
         {
             groupData = new();
             groups = Workloads.Where(x => x.Group!.Faculty == faculty).Select(x => x.Group!).Distinct().ToList();
-            
+
             foreach (var group in groups)
             {
-                disciplines = Workloads.Where(x => x.Group! == group).Select(x => x.Discipline).ToList();
-                groupData.Add(group, disciplines);
+                disciplinesAndTeachers = Workloads
+                                            .Where(x => x.Group! == group)
+                                            .Select(x => new DisciplinePreviewData { 
+                                                Name = x.Discipline.Name, 
+                                                TeacherFullName = x.Teacher.FullName,
+                                                Hours = x.WeeklyHours
+                                            }).ToList();
+                groupData.Add(group, disciplinesAndTeachers);
             }
             
             PreviewData.Add(faculty, groupData);

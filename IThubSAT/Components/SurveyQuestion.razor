@@ -15,11 +15,9 @@
     @*TODO: добавить кнопку удаления и кнопки перемещения вопросов местами*@
 
     @(Question.QuestionType switch {
-        QuestionType.Scale => @<ScaleQuestionEdit Question=Question OnSaveQuestion=SaveQuestion />,
-        QuestionType.ShortText => @<ShortTextQuestionEdit Question=Question OnSaveQuestion=SaveQuestion />,
-        QuestionType.LongText => @<LongTextQuestionEdit Question=Question OnSaveQuestion=SaveQuestion />,
-        @* QuestionType.SingleChoice => @<ShortTextQuestionAnswer Question=Question OnSaveQuestion=SaveQuestion />,
-        QuestionType.MultipleChoice => @<ShortTextQuestionAnswer Question=Question OnSaveQuestion=SaveQuestion />, *@
+        QuestionType.Scale => @<ScaleQuestionEdit Question=Question OnSaveQuestion=SaveQuestion OnDeleteQuestion=DeleteQuestion />,
+        QuestionType.ShortText => @<ShortTextQuestionEdit Question=Question OnSaveQuestion=SaveQuestion OnDeleteQuestion=DeleteQuestion />,
+        QuestionType.LongText => @<LongTextQuestionEdit Question=Question OnSaveQuestion=SaveQuestion OnDeleteQuestion=DeleteQuestion />,
         _ => @<div>НЕТ ТАКОГО ТИПА ВОПРОСА</div>
     })
 </div>
@@ -30,7 +28,6 @@
     // в методе модельку с доп. данными сериализовывать в строку и сохранять в нужное поле
     [Parameter] public Question Question { get; set; } = null!;
 
-    // в базу данных?
     private List<FilterItem> QuestionTypes = new()
     {
         new() { Id = 1, Name = "Шкала", FilterType = FilterType.QuestionType },
@@ -40,7 +37,6 @@
 
     private void SetQuestionType(FilterItem filterItem)
     {
-        // придумать как здесь цвет выбирать нужный
         Question.QuestionType = (QuestionType)filterItem.Id;
         SurveyService.SaveChanges().GetAwaiter().OnCompleted(() => StateHasChanged());
     }
@@ -48,5 +44,11 @@
     public async Task SaveQuestion()
     {
         await SurveyService.SaveChanges();
+    }
+
+    public async Task DeleteQuestion(Question question)
+    {
+        await SurveyService.DeleteQuestionAsync(question);
+        StateHasChanged();
     }
 }

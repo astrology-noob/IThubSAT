@@ -20,3 +20,14 @@
 .chapter-desc {
     margin-bottom: 0 !important;
 }
+
+.chapter-questions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.chapter-content {
+    width: 100%;
+}

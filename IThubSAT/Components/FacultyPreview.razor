@@ -1,0 +1,36 @@
+﻿@using IThubSAT.Data.Models;
+@using IThubSAT.Data;
+
+<div class="faculty-preview">
+    <div class="faculty-preview-header">
+        <button class="icon-button"
+                @onclick=ToggleVisibility>
+            <img style="@(IsFullyVisible ? "transform: rotateX(180deg)" : "")" src="icons/Collapse.svg" />
+        </button>
+
+        <strong>@Faculty.Name * @Data.Keys.Count групп</strong>
+    </div>
+
+    @if(IsFullyVisible)
+    {
+        <div class="preview-cards">
+            @foreach (var group in Data.Keys)
+            {
+                <PreviewCard Data=Data[group] Group=group/>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public Dictionary<Group, List<DisciplinePreviewData>> Data { get; set; } = null!;
+    [Parameter] public Faculty Faculty { get; set; } = null!;
+
+    private bool IsFullyVisible = true;
+
+    private void ToggleVisibility()
+    {
+        IsFullyVisible = !IsFullyVisible;
+        StateHasChanged();
+    }
+}

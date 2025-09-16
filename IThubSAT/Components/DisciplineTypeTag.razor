@@ -1,11 +1,12 @@
 @using IThubSAT.Data.Models;
 
-<div style="background-color: @_backgroundColor;" class="discipline-tag">@_name</div>
+<div style="background-color: @_backgroundColor; color: @_textColor;" class="discipline-tag">@_name</div>
 
 @code {
     [Parameter] public DisciplineType DisciplineType { get; set; }
 
     private string _backgroundColor = string.Empty;
+    private string _textColor = string.Empty;
     private string _name = string.Empty;
 
     protected override void OnInitialized()
@@ -20,9 +21,17 @@
 
         _backgroundColor = DisciplineType switch
         {
-            DisciplineType.General => "#FF8080",
-            DisciplineType.English => "#F4DB78",
-            DisciplineType.Sport => "#95EA90",
+            DisciplineType.General => "#ffd9d9",
+            DisciplineType.English => "#fff5d9",
+            DisciplineType.Sport => "#e3ffd6",
+            _ => "Неизвестный тип"
+        };
+
+        _textColor = DisciplineType switch
+        {
+            DisciplineType.General => "#e54e4e",
+            DisciplineType.English => "#bf7900",
+            DisciplineType.Sport => "#39990f",
             _ => "Неизвестный тип"
         };
 

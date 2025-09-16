@@ -32,11 +32,15 @@ else
     <p>@error</p>
 }
 
-<button @onclick=SaveQuestionInfo>Сохранить</button>
+<div class="buttons">
+    <button class="delete-question-button" @onclick=DeleteQuestion>Удалить</button>
+    <button class="save-question-button" @onclick=SaveQuestionInfo>Сохранить</button>
+</div>
 
 @code {
     [Parameter] public Question Question { get; set; } = null!;
     [Parameter] public EventCallback OnSaveQuestion { get; set; }
+    [Parameter] public EventCallback<Question> OnDeleteQuestion { get; set; }
     private ScaleQuestionType? scaleQuestion;
     private string error = string.Empty;
 
@@ -58,5 +62,10 @@ else
         // сначала валидация
         Question.QuestionTypeInfo = JsonConvert.SerializeObject(scaleQuestion);
         OnSaveQuestion.InvokeAsync();
+    }
+
+    private void DeleteQuestion()
+    {
+        OnDeleteQuestion.InvokeAsync(Question);
     }
 }

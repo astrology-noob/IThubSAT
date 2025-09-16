@@ -2,13 +2,19 @@
 @using IThubSAT.Data.Models.QuestionTypes;
 @using Newtonsoft.Json;
 
-<input type="text" @bind-value=@shortTextQuestion.Example />
+<div class="text-input-edit">
+    <input type="text" @bind-value=@shortTextQuestion.Example />
+</div>
 
-<button @onclick=SaveQuestionInfo>Сохранить</button>
+<div class="buttons">
+    <button class="delete-question-button" @onclick=DeleteQuestion>Удалить</button>
+    <button class="save-question-button" @onclick=SaveQuestionInfo>Сохранить</button>
+</div>
 
 @code {
     [Parameter] public Question Question { get; set; } = null!;
     [Parameter] public EventCallback OnSaveQuestion { get; set; }
+    [Parameter] public EventCallback<Question> OnDeleteQuestion { get; set; }
     private ShortTextQuestionType shortTextQuestion = new();
 
     protected override void OnInitialized()
@@ -29,5 +35,10 @@
         // сначала валидация
         Question.QuestionTypeInfo = JsonConvert.SerializeObject(shortTextQuestion);
         OnSaveQuestion.InvokeAsync();
+    }
+
+    private void DeleteQuestion()
+    {
+        OnDeleteQuestion.InvokeAsync(Question);
     }
 }

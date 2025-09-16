@@ -1,0 +1,31 @@
+﻿@using IThubSAT.Data.Models;
+@using IThubSAT.Data;
+
+<div class="preview-card">
+    <div class="preview-card-header">
+        <div><strong>@Group.Name</strong> * @Data.Count дисциплин</div>
+    </div>
+    <div class="preview-card-content">
+        @foreach (var previewData in Data)
+        {
+            <div class="preview-card-item">
+                <div>
+                    <div>
+                        @(string.IsNullOrWhiteSpace(previewData.Name) ? "-" : previewData.Name)
+                    </div>
+                    <div>
+                        @(string.IsNullOrWhiteSpace(previewData.TeacherFullName) ? "-" : previewData.TeacherFullName)
+                    </div>
+                </div>
+                <div>
+                    @previewData.Hours ч
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public List<DisciplinePreviewData> Data { get; set; } = null!;
+    [Parameter] public Group Group { get; set; } = null!;
+}
