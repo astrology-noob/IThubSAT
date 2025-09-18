@@ -13,7 +13,10 @@
 @if (string.IsNullOrWhiteSpace(error))
 {
     <CascadingValue Value=_surveyEntry>
-        <SurveyPaginator Pages=surveyPages OnChangePage=StateHasChanged OnChangeGroup=GetWorkloadsByGroupId />
+        <SurveyPaginator 
+            Pages=surveyPages 
+            OnChangePage=StateHasChanged 
+        />
     </CascadingValue>
 }
 else
@@ -27,31 +30,38 @@ else
     private Survey? _survey;
 
     protected List<FilterItem> allGroups = new();
-    // protected int selectedGroupId = -1;
     protected List<FilterItem> englishLevels = new();
-    protected int selectedEnglishGroupId = -1;
-    protected List<FilterItem> allSportClubs = new();
-    protected int selectedSportClubId = -1;
+    protected List<FilterItem> sportClubs = new();
 
-    List<Question> generalQuestions;
-    List<Question> englishQuestions;
-    List<Question> sportQuestions;
+    List<Question> generalQuestions = new();
+    List<Question> englishQuestions = new();
+    List<Question> sportQuestions = new();
 
-    // короче какой вариант
-    // можно по полученной нагрузке динамически вставлять страницы после страниц с выбором группы
-    // но это чё-то капец наверное
-    private List<SurveyPage> surveyPages = new();
+    // TODO: сборный филд, который на get из страниц собирает весь путь
+    private List<SurveyPage> surveyPages { get; set; } = new();
+
+    private List<SurveyPage> GeneralPages = new();
+    private List<SurveyPage>? EnglishPages;
+    private List<SurveyPage>? SportPages;
+
+    private SurveyPage intro = new();
+    private SurveyPage groupSelect = new();
+    private SurveyPage englishLevelSelect = new();
+    private SurveyPage sportClubSelect = new();
+    private SurveyPage conclusion = new();
+
 
     private string error = string.Empty;
 
-    private List<Workload> _workloads = new();
 
+    private List<Workload> _workloads = new();
+    private List<Workload> _sportWorkloads = new();
 
     protected async override Task OnInitializedAsync()
     {
         _survey = await SurveyService.GetSurveyByIdAsync(SurveyId);
 
-        if (_survey == null)
+        if (_survey is null)
         {
             error = "Такого опроса не нашли :(";
             return;
@@ -69,19 +79,41 @@ else
 
         allGroups = await SurveyService.GetGroupsFilterItems(_survey.Id) ?? allGroups;
 
-        surveyPages = new() {
-            new IntroPage() { IntroductionText = _survey.IntroductionText, PageTitle = "Введение" },
-            new GroupSelectionPage() { allGroups = allGroups, PageTitle = "Выбери группу" }
-        };
+        sportClubs = await SurveyService.GetSportClubsFilterItems(_survey.Id) ?? sportClubs;
+        _sportWorkloads = await SurveyService.GetSportClubsBySurveyId(_survey.Id) ?? _sportWorkloads;
 
-        generalQuestions = await SurveyService.GetQuestionsByChapterId(_survey.Chapters.First(x => x.DisciplineType == DisciplineType.General).Id);
-        englishQuestions = await SurveyService.GetQuestionsByChapterId(_survey.Chapters.First(x => x.DisciplineType == DisciplineType.English).Id);
-        sportQuestions = await SurveyService.GetQuestionsByChapterId(_survey.Chapters.First(x => x.DisciplineType == DisciplineType.Sport).Id);
+        Console.WriteLine(_sportWorkloads.Count);
+
+        intro = new IntroPage() { IntroductionText = _survey.IntroductionText, PageTitle = "Введение" };
+        conclusion = new IntroPage() { IntroductionText = _survey.ConclusionText, PageTitle = "Заключение" };
+
+        generalQuestions = await SurveyService.GetQuestionsByChapterId(_survey.Chapters.First(x => x.DisciplineType == DisciplineType.General).Id) ?? generalQuestions;
+        englishQuestions = await SurveyService.GetQuestionsByChapterId(_survey.Chapters.First(x => x.DisciplineType == DisciplineType.English).Id) ?? englishQuestions;
+        sportQuestions = await SurveyService.GetQuestionsByChapterId(_survey.Chapters.First(x => x.DisciplineType == DisciplineType.Sport).Id) ?? sportQuestions;
+
+        if (generalQuestions.Count > 0)
+        {
+            groupSelect = new ItemSelectionPage() { AllItems = allGroups, PageTitle = "Выбери группу", OnChooseItem = GeneratePagesByGroupId };
+        }
+
+        if (englishQuestions.Count > 0)
+        {
+            EnglishPages = new();
+        }
+
+        if (sportQuestions.Count > 0)
+        {
+            SportPages = new();
+
+            sportClubSelect = new ItemSelectionPage() { AllItems = sportClubs, PageTitle = "Выбери спорт клуб", OnChooseItem = GenerateQuestionPageBySportClub };
+        }
+
+        UpdateSurveyPages();
 
         await base.OnInitializedAsync();
     }
 
-    private async Task GetWorkloadsByGroupId(int selectedGroupId)
+    private async Task GeneratePagesByGroupId(int selectedGroupId)
     {
         Console.WriteLine(selectedGroupId);
         // _currentChapter должен быть первым только, это метод только для получения нагрузки по группе (для обычных дисциплин, аааа блять, нет)
@@ -95,26 +127,120 @@ else
             return;
         }
 
-        var index = 2;
-
+        // TODO: возможно сохранять ворклоады в словаре по группам?
+        GeneralPages.Clear();
 
         foreach (var workload in _workloads.Where(x => x.Discipline.DisciplineType == DisciplineType.General).ToList())
         {
-            surveyPages.Insert(index++, new QuestionsPage()
+            GeneralPages.Add(new QuestionsPage()
             {
+                Workload = workload,
                 PageTitle = workload.Discipline.Name,
                 Questions = generalQuestions
             });
         }
 
-        // а ещё если workloads содержит английский и спорт
-        if (englishQuestions.Count > 0) {
-            surveyPages.Add(new QuestionsPage() { PageTitle = "Иностранный язык", Questions = englishQuestions });
+        if (EnglishPages is not null)
+        {
+            // TODO: сначала проверить если по выбранной группе есть ворклоады с типом дисциплины иностранный язык. Если нет, то страницы удаляем нахуй
+            // а, мне же нужно брать конкретные уровни которые есть у выбранной группы, чёрт
+
+            englishLevels = await SurveyService.GetEnglishLevelsFilterItems(_survey!.Id) ?? englishLevels;
+
+            if (englishLevels.Count > 0)
+            {            
+                englishLevelSelect = new ItemSelectionPage() { AllItems = englishLevels, PageTitle = "Выбери уровень английского", OnChooseItem = GenerateQuestionsPageByEnglishGroupId };
+            }
+            else
+            {
+                EnglishPages = null;
+            }
         }
 
-        if (sportQuestions.Count > 0)
+        UpdateSurveyPages();
+    }
+
+    private void UpdateSurveyPages()
+    {
+        List<SurveyPage> newPages = new();
+        newPages.Add(intro);
+        newPages.Add(groupSelect);
+        if (GeneralPages is not null && GeneralPages.Count > 0)
         {
-            surveyPages.Add(new QuestionsPage() { PageTitle = "Спортивные клубы", Questions = sportQuestions });
+            newPages.AddRange(GeneralPages);
+        }
+        if (EnglishPages is not null)
+        {
+            newPages.Add(englishLevelSelect);
+            newPages.AddRange(EnglishPages);
+        }
+        if (SportPages is not null)
+        {
+            newPages.Add(sportClubSelect);
+            newPages.AddRange(SportPages);
+        }
+        newPages.Add(conclusion);
+
+        surveyPages = newPages;
+    }
+
+    private async Task GenerateQuestionsPageByEnglishGroupId(int englishGroupId)
+    {
+        var englishWorkload = await Task.Run(() => _workloads.Where(x => 
+                                    x.Discipline.DisciplineType == DisciplineType.English 
+                                    &&
+                                    x.EnglishGroupId == englishGroupId).ToList());
+
+        // TODO: if there are several englishworkloads, generate a page with a teacher
+        // TODO: create a separate method to add the questionspage
+
+        if (englishWorkload is not null && englishWorkload.Count > 0)
+        {
+            if (englishWorkload.Count > 1)
+            {
+
+            }
+            else
+            {
+                CreateAnEnglishQuestionsPage(englishWorkload[0]);
+            }
+
+            UpdateSurveyPages();
+        }
+
+    }
+
+    private void CreateAnEnglishQuestionsPage(Workload workload)
+    {
+        if (EnglishPages is not null)
+        {
+            EnglishPages.Clear();
+            EnglishPages.Add(new QuestionsPage() { Workload = workload, PageTitle = "Иностранный язык", Questions = englishQuestions });
+        }
+    }
+
+    private async Task GenerateQuestionPageBySportClub(int sportClubId)
+    {
+        Console.WriteLine(sportClubId);
+        var sportWorkload = await Task.Run(() => _sportWorkloads.FirstOrDefault(x => x.SportClubId == sportClubId));
+
+        Console.WriteLine(sportWorkload?.Id);
+        // TODO: if there are several sportclubworkloads, generate a page with a teacher
+        // TODO: create a separate method to add the questionspage
+
+        if (sportWorkload is not null)
+        {
+            CreateASportQuestionsPage(sportWorkload);
+            UpdateSurveyPages();
+        }
+    }
+
+    private void CreateASportQuestionsPage(Workload workload)
+    {
+        if (SportPages is not null)
+        {
+            SportPages.Clear();
+            SportPages.Add(new QuestionsPage() { Workload = workload, PageTitle = "Спортивные клубы", Questions = sportQuestions });
         }
     }
 }

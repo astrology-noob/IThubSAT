@@ -1,7 +1,7 @@
 ﻿@using IThubSAT.Data.Models;
 
 <div class="table-row">
-    <div>
+    <div @onclick=@OpenContextMenu>
         @(Workload.Group?.Faculty.Name ?? string.Empty)
     </div>
     
@@ -40,5 +40,8 @@
 @code {
     [Parameter] public Workload Workload { get; set; }
 
-
+    private void OpenContextMenu()
+    {
+        
+    }
 }

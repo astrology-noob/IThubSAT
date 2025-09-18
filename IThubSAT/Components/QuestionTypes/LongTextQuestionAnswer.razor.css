@@ -1,0 +1,19 @@
+﻿textarea {
+    background: #F7F9FC;
+    border: 1px solid #EBEEF5;
+    padding: 40px 20px;
+    height: 100px;
+    border-radius: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+    textarea:focus {
+        outline: none;
+    }
+
+.long-text-question {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

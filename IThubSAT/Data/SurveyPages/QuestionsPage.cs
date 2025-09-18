@@ -4,8 +4,10 @@ namespace IThubSAT.Data
 {
     public class QuestionsPage : SurveyPage
     {
-        public List<Question> Questions { get; set; }
+        public Workload Workload { get; set; } = null!;
 
-        public string DisciplineName;
+        public List<Question> Questions { get; set; } = null!;
+
+        public string DisciplineName = null!;
     }
 }

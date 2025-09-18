@@ -133,7 +133,7 @@
 
             if (_searchModel.FacultyId != 0)
             {            
-                filteredIEnumerable = filteredIEnumerable.Where(x => x.Group!.FacultyId == _searchModel.FacultyId);
+                filteredIEnumerable = filteredIEnumerable.Where(x => x.Group != null).Where(x => x.Group!.FacultyId == _searchModel.FacultyId);
             }
             if (_searchModel.GroupId != 0)
             {            

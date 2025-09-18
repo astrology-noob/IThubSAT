@@ -6,11 +6,11 @@
 <div class="answer-survey-content">
 
     @if(Pages is not null && Pages.Count > 0)
-    {
+    {        
         @(Pages[_currentPageIndex] switch 
         {
             IntroPage p => (@<IntroPageComponent Page=p />),
-            GroupSelectionPage g => (@<GroupSelectionPageComponent Page=g OnChangeGroup=OnChangeGroup />),
+            ItemSelectionPage g => (@<ItemSelectionPageComponent Page=g />),
             QuestionsPage q => (@<QuestionsPageComponent Page=q />),
             _ => (@<div>А</div>)
         })
@@ -25,25 +25,11 @@
 @code {
     [Parameter] public List<SurveyPage> Pages { get; set; } = new();
     [Parameter] public EventCallback OnChangePage { get; set; }
-    [Parameter] public EventCallback<int> OnChangeGroup { get; set; }
 
     private int _currentPageIndex;
-    // private int _currentChapterIndex;
-    // неудобно просто по индексу постоянно доставать секцию из опроса
-    // private Chapter _currentChapter;
-    // private int _currentWorkloadIndex;
-
-    // private Dictionary<Chapter, List<Workload>> _workloadsByChapters = new();
-
 
     private void GoForward()
     {
-        // если номер дисциплины становится == кол-ву workloads в секции => попытаться перейти на секцию вперёд (после валидации текущей секции)
-        //   если номер секции становится == кол-ву секций в разделе => переходим к завершению опроса (ничего не делать)
-        //   если секция может меняться, присвоить индексу дисциплины 0 (если в секции есть в целом дисциплины)
-        // если номер дисциплины норм увеличивается, меняется только дисциплина
-        // int newWorkloadIndex = ++_currentWorkloadIndex;
-        // int newChapterIndex = ++_currentChapterIndex;
         int newPageIndex = _currentPageIndex + 1;
 
         if (newPageIndex >= Pages.Count) return;
@@ -52,36 +38,12 @@
             _currentPageIndex++;
         }
 
-        // а такого же быть вообще не должно, не должно быть возможности кликать по нему в целом
-        // if (newWorkloadIndex == _workloadsByChapters[_currentChapter].Count)
-        // {
-        //     if (newChapterIndex == _workloadsByChapters.Keys.Count) return;
-        //     else
-        //     {
-        //         _currentChapterIndex = newChapterIndex;
-        //         _currentChapter = _survey!.Chapters[_currentChapterIndex];
-        //         берём секции из объекта опроса
-        //         _currentWorkloadIndex = _workloadsByChapters[_currentChapter].Count + 1;
-        //     }
-        // }
-        // else
-        // {
-        //     _currentWorkloadIndex = newWorkloadIndex;
-        // }
-
         // сохранять данные по ответам в бд
         OnChangePage.InvokeAsync();
     }
 
     private void GoBack()
     {
-        // если номер дисциплины становится -1 => попытаться вернуться на секцию назад
-        //   если секция становится -1 => ничего не делать
-        //   если секция может меняться, присвоить индексу дисциплины последний номер в этой секции
-        // если номер дисциплины норм уменьшается, меняется только дисциплина
-        // int newWorkloadIndex = --_currentWorkloadIndex;
-        // int newChapterIndex = --_currentChapterIndex;
-
         int newPageIndex = _currentPageIndex - 1;
 
         if (newPageIndex < 0) return;
@@ -89,23 +51,6 @@
         {
             _currentPageIndex--;
         }
-
-        // а такого же быть вообще не должно, не должно быть возможности кликать по нему в целом
-        // if (newWorkloadIndex == -1)
-        // {
-        //     if (newChapterIndex == -1) return;
-        //     else
-        //     {
-        //         _currentChapterIndex = newChapterIndex;
-        //         _currentChapter = _survey!.Chapters[_currentChapterIndex];
-        //         берём секции из объекта опроса
-        //         _currentWorkloadIndex = _workloadsByChapters[_currentChapter].Count - 1;
-        //     }
-        // }
-        // else
-        // {
-        //     _currentWorkloadIndex = newWorkloadIndex;
-        // }
 
         OnChangePage.InvokeAsync();
     }
