@@ -9,6 +9,20 @@
 
 @*получать в параметрах #tab=название и автоматически делать эту вкладку активной *@
 
+<div class="survey-actions-bar">
+    @if (Survey.IsOpen)
+    {
+        <button class="primary-button" @onclick=GetSurveyResponseLink>Получить ссылку</button>
+        <a class="secondary-button" href="/surveys/@(Survey.Id)/answers">Перейти к ответам</a>
+        <button class="secondary-button" @onclick=StopSurvey>Остановить</button>
+    }
+    else
+    {
+        <button class="primary-button" @onclick=PublishSurvey>Опубликовать</button>
+        <button class="secondary-button" @onclick=DeleteSurvey>Удалить</button>
+    }
+</div>
+
 @if(!string.IsNullOrEmpty(Survey.Name))
 {
     <TabsControl>
@@ -40,5 +54,27 @@ else {
         Workloads = await SurveyService.GetWorkloadBySurveyId(Survey.Id);
         TopBarState.SetTopBarData(Survey.Name, "/");
         await base.OnInitializedAsync();
+    }
+
+    private async Task StopSurvey()
+    {
+        await SurveyService.StopSurvey(Survey);
+        StateHasChanged();
+    }
+
+    private async Task PublishSurvey()
+    {
+        await SurveyService.PublishSurvey(Survey);
+        StateHasChanged();
+    }
+
+    private void DeleteSurvey()
+    {
+
+    }
+
+    private void GetSurveyResponseLink()
+    {
+        
     }
 }

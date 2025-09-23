@@ -1,9 +1,12 @@
 ﻿.survey-list-item {
-    border-top: 1px solid #EBEEF5;
     padding: 15px 30px 15px 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.survey-list-item:not(:first-child) {
+    border-top: 1px solid #EBEEF5;
 }
 
 .survey-info {

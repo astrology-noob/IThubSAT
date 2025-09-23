@@ -23,9 +23,8 @@
             <button @onclick=@OpenPopUp><img src="icons/Pause.svg" /></button>
         }
         else {
-            <button @onclick=@OpenPopUp><img src="icons/Export.svg"/></button>
+            <button @onclick=@PublishSurvey><img src="icons/Export.svg"/></button>
         }
-        <button><img src="icons/Menu.svg"/></button>
     </div>
 </div>
 
@@ -39,7 +38,6 @@
 
 @code {
     [Parameter] public Survey Survey { get; set; } = null!;
-    [Parameter] public EventCallback StopSurvey { get; set; }
 
     // [Inject] public PopUp popUp { get; set; }
 
@@ -47,4 +45,17 @@
 
     private void ClosePopUp() => PopUpState = false;
     private void OpenPopUp() => PopUpState = true;
+
+    private async Task StopSurvey()
+    {
+        await SurveyService.StopSurvey(Survey);
+        ClosePopUp();
+        StateHasChanged();
+    }
+
+    private async Task PublishSurvey()
+    {
+        await SurveyService.PublishSurvey(Survey);
+        StateHasChanged();
+    }
 } 

@@ -8,15 +8,19 @@
 @inject TopBarState TopBarState
 @layout AdminLayout
 
+<button class="add-fullwidth-button" style="margin-bottom: 10px;" @onclick=@AddSurvey>
+    Создать опрос +
+</button>
+
 <TabsControl>
     <TabPage Text="Активные">
-        <SurveyList Surveys="_surveys.Where(s => s.IsOpen == true).ToList()" AddSurvey="AddSurvey" />
+        <SurveyList Surveys="_surveys.Where(s => s.IsOpen == true).ToList()" />
     </TabPage>
     <TabPage Text="Остановленные">
-        <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.EndDate != string.Empty)).ToList()" AddSurvey="AddSurvey" />
+        <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.EndDate != string.Empty)).ToList()" />
     </TabPage>
     <TabPage Text="Черновики">
-        <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.StartDate != string.Empty)).ToList()" AddSurvey="AddSurvey" />
+        <SurveyList Surveys="_surveys.Where(s => (s.IsOpen == false) & (s.StartDate == string.Empty)).ToList()" />
     </TabPage>
     <TabPage Text="Все">
         <SurveyList Surveys="_surveys" />

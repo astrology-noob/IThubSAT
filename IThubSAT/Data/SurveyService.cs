@@ -36,6 +36,24 @@ public class SurveyService
     public static async Task<Survey?> GetSurveyByIdAsync(int SurveyId) =>
         await _dbContext.Surveys.Include(s => s.Chapters).ThenInclude(s => s.Questions).Where(s => s.Id == SurveyId).FirstOrDefaultAsync();
 
+    public static async Task StopSurvey(Survey survey)
+    {
+        survey.IsOpen = false;
+        string date = DateTime.Now.ToString();
+        survey.EndDate = date;
+        survey.ModifiedAt = date;
+        await SaveChanges();
+    }
+
+    public static async Task PublishSurvey(Survey survey)
+    {
+        survey.IsOpen = true;
+        string date = DateTime.Now.ToString();
+        survey.EndDate = date;
+        survey.ModifiedAt = date;
+        await SaveChanges();
+    }
+
     public static async Task<int> AddSurveyAsync(Survey survey)
     {
         survey.CreatedBy = GetSingleUser();

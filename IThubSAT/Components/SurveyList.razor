@@ -14,11 +14,6 @@
     }
 </div>
 
-<button class="add-fullwidth-button" @onclick=@AddSurvey>
-    Создать +
-</button>
-
 @code {
     [Parameter] public List<Survey> Surveys { get; set; } = new();
-    [Parameter] public EventCallback AddSurvey { get; set; }
 }
