@@ -1,5 +1,21 @@
-﻿<h3>КОНЕЦ</h3>
+﻿@page "/surveys/{SurveyId:int}/end"
+@using IThubSAT.Components
+@using IThubSAT.Components.SurveyPages;
+@using IThubSAT.Data.Models
+@using IThubSAT.Data.SurveyPages
+@using IThubSAT.Data
+@inject TopBarState TopBarState
+@layout StudentLayout
+
+<h3>КОНЕЦ</h3>
 
 @code {
+    [Parameter] public int SurveyId { get; set; }
+    private Survey? _survey;
 
+    protected async override Task OnInitializedAsync()
+    {
+        _survey = await SurveyService.GetSurveyByIdAsync(SurveyId);
+        TopBarState.SetTopBarData(_survey?.Name ?? string.Empty);
+    }
 }
