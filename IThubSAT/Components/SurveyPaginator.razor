@@ -17,7 +17,14 @@
 
         <div class="bottom-navigation">
             <button @onclick=GoBack>Назад</button>
-            <button @onclick=GoForward>Вперёд</button>
+            @if (_currentPageIndex != Pages.Count - 1)
+            {
+                <button @onclick=GoForward>Вперёд</button>
+            }
+            else
+            {
+                <button style="background: #AB00EA; color: #FFFFFF" @onclick=SubmitEntry>Отправить ответ</button>
+            }
         </div>
     }
 </div>
@@ -25,6 +32,7 @@
 @code {
     [Parameter] public List<SurveyPage> Pages { get; set; } = new();
     [Parameter] public EventCallback OnChangePage { get; set; }
+    [Parameter] public EventCallback OnSubmitEntry { get; set; }
 
     private int _currentPageIndex;
 
@@ -53,5 +61,10 @@
         }
 
         OnChangePage.InvokeAsync();
+    }
+
+    private void SubmitEntry()
+    {
+        OnSubmitEntry.InvokeAsync();
     }
 }

@@ -5,6 +5,7 @@
 @using IThubSAT.Data.SurveyPages
 @using IThubSAT.Data
 @inject SurveyService SurveyService
+@inject NavigationManager Navigation
 @inject TopBarState TopBarState
 
 @layout StudentLayout
@@ -15,9 +16,15 @@
     <CascadingValue Value=_surveyEntry>
         <SurveyPaginator 
             Pages=surveyPages 
-            OnChangePage=StateHasChanged 
+            OnChangePage=StateHasChanged
+            OnSubmitEntry=SubmitEntry
         />
     </CascadingValue>
+
+    if (!string.IsNullOrEmpty(savingError))
+    {
+        <div style="color: red">@savingError</div>
+    }
 }
 else
 {
@@ -52,6 +59,7 @@ else
 
 
     private string error = string.Empty;
+    private string savingError = string.Empty;
 
 
     private List<Workload> _workloads = new();
@@ -242,5 +250,24 @@ else
             SportPages.Clear();
             SportPages.Add(new QuestionsPage() { Workload = workload, PageTitle = "Спортивные клубы", Questions = sportQuestions });
         }
+    }
+
+    private async Task SubmitEntry()
+    {
+        try
+        {
+            _surveyEntry.SubmittedAt = DateTime.Now.ToString();
+            int res = await SurveyService.AddSurveyEntryAsync(_surveyEntry);
+            Navigation.NavigateTo($"/surveys/{SurveyId}/end");
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            savingError = $"Error appeared: {ex}. Try again";
+        }
+        // save the entry
+        // check if the entry is saved correctly
+        // if an error appeared, don't redirect
+        // if everything's okay, redirect to the closing page
     }
 }

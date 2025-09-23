@@ -11,7 +11,7 @@
 </p>
 
 <div class="short-text-question">
-    <input type="text" @bind-value=Answer @onclick=SaveAnswer placeholder="@shortTextQuestion.Example" />
+    <input type="text" @bind-value=Answer @oninput=SaveAnswer placeholder="@shortTextQuestion.Example" />
 </div>
 
 @code {

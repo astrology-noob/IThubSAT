@@ -16,26 +16,29 @@
 
 @code {
     [Parameter] public Question Question { get; set; } = null!;
-    [CascadingParameter] public SurveyEntry SurveyEntry { get; set; }
-    private Answer Answer { get; set; }
+    [Parameter] public Workload Workload { get; set; } = null!;
+    [CascadingParameter] public SurveyEntry SurveyEntry { get; set; } = null!;
+    private Answer Answer { get; set; } = new();
 
     public void SaveQuestionAnswer(string data)
     {
         if (Answer is null)
         {
-            Answer = new() { Question = Question };
+            Answer = new() { QuestionId = Question.Id, WorkloadId = Workload.Id };
         }
 
         Answer.AnswerData = data;
         SurveyEntry.Answers.Add(Answer);
+        
+        Answer = new() { QuestionId = Question.Id, WorkloadId = Workload.Id };
     }
 
     protected override Task OnInitializedAsync()
     {
-        if (Question.IsRequired)
-        {
-            Answer = new() { Question = Question };
-        }
+        // if (Question.IsRequired)
+        // {
+        Answer = new() { QuestionId = Question.Id, WorkloadId = Workload.Id };
+        // }
 
         return base.OnInitializedAsync();
     }

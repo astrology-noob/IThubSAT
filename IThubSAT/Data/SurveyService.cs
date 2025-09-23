@@ -1,8 +1,8 @@
 namespace IThubSAT.Data;
 using IThubSAT.Data.Models;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 public class FilterItem
 {
@@ -38,8 +38,6 @@ public class SurveyService
 
     public static async Task<int> AddSurveyAsync(Survey survey)
     {
-        // автоматически создавать 3 главы и добавлять их в опрос
-
         survey.CreatedBy = GetSingleUser();
         
         Chapter chapterGeneral = new Chapter() { DisciplineType = DisciplineType.General, Name = "Общие дисциплины" };
@@ -48,9 +46,21 @@ public class SurveyService
         survey.Chapters = [chapterGeneral, chapterEnglish, chapterSport];
 
         _dbContext.Surveys.Add(survey);
-        await _dbContext.SaveChangesAsync();
+        await SaveChanges();
 
         return survey.Id;
+    }
+
+    public static async Task<int> AddSurveyEntryAsync(SurveyEntry surveyEntry)
+    {
+        Console.WriteLine(surveyEntry.Answers.Count);
+        Console.WriteLine(surveyEntry.Answers[0].AnswerData);
+        Console.WriteLine(surveyEntry.Answers[0].QuestionId);
+        Console.WriteLine(surveyEntry.Answers[0].WorkloadId);
+        Console.WriteLine(surveyEntry.Answers[0].SurveyEntryId);
+        _dbContext.SurveyEntries.Add(surveyEntry);
+        await SaveChanges();
+        return surveyEntry.Id;
     }
 
     public static async Task<Survey> DeleteSurveyAsync(Survey survey)

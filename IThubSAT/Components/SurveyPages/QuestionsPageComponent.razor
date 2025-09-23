@@ -11,17 +11,18 @@
         </div>
         <p>Я не ходил(-а) на этот предмет</p>
     </div>
-    <div class="answer-survey-questions">
-        @foreach (var question in Page.Questions)
-        {
-            <SurveyResponseQuestion Question=question />
-        }
-    </div>
+    @if (!DidNotAttend) {
+        <div class="answer-survey-questions">
+            @foreach (var question in Page.Questions)
+            {
+                <SurveyResponseQuestion Question=question Workload=Page.Workload />
+            }
+        </div>
+    }
 </div>
 
 @code {
     [Parameter] public QuestionsPage Page { get; set; } = new();
-    // должен быть создан обязательно
     [CascadingParameter] public SurveyEntry _surveyEntry { get; set; } = null!;
 
     private bool DidNotAttend;
@@ -35,12 +36,15 @@
             _surveyEntry.Answers.Add(
                 new()
                 {
-                    Workload = Page.Workload,
-                    Question = question,
+                    WorkloadId = Page.Workload.Id,
+                    // Workload = Page.Workload,
+                    QuestionId = question.Id,
+                    // Question = question,
                     AnswerData = string.Empty
                 }
             );
         }
 
+        StateHasChanged();
     }
 }

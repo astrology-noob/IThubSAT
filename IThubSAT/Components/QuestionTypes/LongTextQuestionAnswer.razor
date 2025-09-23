@@ -11,7 +11,7 @@
 </p>
 
 <div class="long-text-question">
-    <textarea @bind=Answer @onclick=SaveAnswer placeholder=@longTextQuestion?.Example></textarea>
+    <textarea @bind=Answer @oninput=SaveAnswer placeholder=@longTextQuestion?.Example></textarea>
 </div>
 
 @code {

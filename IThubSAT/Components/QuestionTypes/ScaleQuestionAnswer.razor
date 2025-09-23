@@ -19,9 +19,16 @@
         <div class="scale-buttons">
             @for (int i = scaleQuestion.MinPoints; i <= scaleQuestion.MaxPoints; i++)
             {
-                <div class="scale-button" @onclick=@(() => OnAnswerQuestion.InvokeAsync(i.ToString()))>
-                    <div class="scale-radio-button"></div>
-                    <p>@i</p>
+                var localI = i;
+
+                <div class="scale-button" @onclick=@(() => AnswerQuestion(localI))>
+                    <div class="scale-radio-button">
+                        @if (chosenScaleOption == localI)
+                        {
+                            <span>x</span>
+                        }
+                    </div>
+                    <p>@localI</p>
                 </div>
             }
         </div>
@@ -37,6 +44,7 @@
 
     private ScaleQuestionType? scaleQuestion;
     private string error = string.Empty;
+    private int chosenScaleOption = -1;
 
     protected override void OnInitialized()
     {
@@ -50,5 +58,12 @@
         }
 
         base.OnInitialized();
+    }
+
+    private void AnswerQuestion(int scaleOption)
+    {
+        Console.WriteLine(scaleOption);
+        chosenScaleOption = scaleOption;
+        OnAnswerQuestion.InvokeAsync(scaleOption.ToString());
     }
 }
