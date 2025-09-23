@@ -58,9 +58,9 @@ public class SurveyService
     {
         survey.CreatedBy = GetSingleUser();
         
-        Chapter chapterGeneral = new Chapter() { DisciplineType = DisciplineType.General, Name = "Общие дисциплины" };
-        Chapter chapterEnglish = new Chapter() { DisciplineType = DisciplineType.English, Name = "Иностранный язык" };
-        Chapter chapterSport = new Chapter() { DisciplineType = DisciplineType.Sport, Name = "Спортивные клубы" };
+        Chapter chapterGeneral = new Chapter() { DisciplineType = DisciplineType.General };
+        Chapter chapterEnglish = new Chapter() { DisciplineType = DisciplineType.English };
+        Chapter chapterSport = new Chapter() { DisciplineType = DisciplineType.Sport };
         survey.Chapters = [chapterGeneral, chapterEnglish, chapterSport];
 
         _dbContext.Surveys.Add(survey);
