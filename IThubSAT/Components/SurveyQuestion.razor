@@ -12,6 +12,9 @@
         <input class="underlined-input" @bind-value=@Question.Text />
     </div>
 
+    <button @onclick=ToggleIsRequired style="background-color: @(Question.IsRequired ? "red" : "")">
+        Обязательный вопрос
+    </button>
     @*TODO: добавить кнопку удаления и кнопки перемещения вопросов местами*@
 
     @(Question.QuestionType switch {
@@ -51,4 +54,6 @@
         await SurveyService.DeleteQuestionAsync(question);
         StateHasChanged();
     }
+
+    private void ToggleIsRequired() => Question.IsRequired = !Question.IsRequired;
 }

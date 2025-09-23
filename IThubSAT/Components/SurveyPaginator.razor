@@ -38,29 +38,38 @@
 
     private void GoForward()
     {
-        int newPageIndex = _currentPageIndex + 1;
+        // validation
 
-        if (newPageIndex >= Pages.Count) return;
-        else
+        if (Pages[_currentPageIndex].IsValid)
         {
-            _currentPageIndex++;
+            int newPageIndex = _currentPageIndex + 1;
+
+            if (newPageIndex >= Pages.Count) return;
+            else
+            {
+                _currentPageIndex++;
+            }
+
+            // сохранять данные по ответам в бд
+            OnChangePage.InvokeAsync();
         }
 
-        // сохранять данные по ответам в бд
-        OnChangePage.InvokeAsync();
     }
 
     private void GoBack()
     {
-        int newPageIndex = _currentPageIndex - 1;
-
-        if (newPageIndex < 0) return;
-        else
+        if (Pages[_currentPageIndex].IsValid)
         {
-            _currentPageIndex--;
-        }
+            int newPageIndex = _currentPageIndex - 1;
 
-        OnChangePage.InvokeAsync();
+            if (newPageIndex < 0) return;
+            else
+            {
+                _currentPageIndex--;
+            }
+
+            OnChangePage.InvokeAsync();
+        }
     }
 
     private void SubmitEntry()

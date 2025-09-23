@@ -7,5 +7,6 @@
         public int SelectedItemId = -1;
 
         public Func<int, Task> OnChooseItem;
+
     }
 }
